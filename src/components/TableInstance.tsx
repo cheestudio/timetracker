@@ -6,6 +6,7 @@ import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Button
 
 import SubmitTime from "./SubmitTime";
 import { supabase } from "@/lib/utils";
+import toast from 'react-hot-toast';
 
 interface TimeEntryProps {
   key: string;
@@ -121,6 +122,7 @@ const TableInstance = ({ client, week }: { client: string, week: string }) => {
     window.dispatchEvent(new CustomEvent('timeEntryAdded'));
     setSelectedKeys([]);
     setTableKey((prevKey) => prevKey + 1);
+    toast.success('Removed');
   }
 
 
