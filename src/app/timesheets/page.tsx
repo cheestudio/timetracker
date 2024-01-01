@@ -16,6 +16,7 @@ const TimeSheet = () => {
   const [weekCount, setWeekCount] = useState(0);
   const params = useSearchParams();
   const { currentClient, currentWeek, setCurrentClient, setCurrentWeek } = useTimesheet();
+  const [paginationKey, setPaginationKey] = useState(0);
 
   useEffect(() => {
     setCurrentClient(params.get('client') || '1');
@@ -63,13 +64,14 @@ const TimeSheet = () => {
     toast.success('New timesheet created');
     // window.location.href = `/timesheets/?client=${currentClient}&week=${nextWeek}`;
     setCurrentWeek(nextWeek.toString());
+    setPaginationKey((prevKey) => prevKey + 1);
   }
 
   return (
     <>
       <div className="flex flex-col gap-10">
         <TableInstance client={currentClient} week={currentWeek} />
-        <PaginateTables count={weekCount} week={currentWeek} />
+        <PaginateTables key={paginationKey} count={weekCount} week={currentWeek} />
 
         <Divider className="my-2" />
 

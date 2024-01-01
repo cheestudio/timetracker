@@ -21,6 +21,7 @@ const PaginateTables = ({ count = 0, week }: { count: number, week: string }) =>
     setCurrentWeek(newPage.toString());
     // window.history.replaceState(null, null!, `/timesheets/?client=${currentClient}&week=${newPage}`);
     router.push(`/timesheets/?client=${currentClient}&week=${newPage}`);
+    router.refresh();
   }
 
   /*  Populate Pagination (required due to rendering delay with NextUI from Supabase)
