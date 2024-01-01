@@ -11,7 +11,7 @@ export async function signInWithGoogle() {
   const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-          redirectTo: "http://localhost:3000/week/1"
+          redirectTo: "https://chee-time-tracker.vercel.app"
       }
   })
 }
