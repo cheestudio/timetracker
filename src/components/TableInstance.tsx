@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 
-import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Button } from "@nextui-org/react";
+import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Button, SortDescriptor } from "@nextui-org/react";
 
 import SubmitTime from "./SubmitTime";
 import { supabase } from "@/lib/utils";
@@ -14,7 +14,10 @@ interface TimeEntryProps {
   task: string;
   time_tracked: string;
   entry_id: string;
+  owner: string;
 }
+
+type SortDirection = 'ascending' | 'descending' | undefined;
 
 const TableInstance = ({ client, week }: { client: string, week: string }) => {
 
@@ -125,18 +128,61 @@ const TableInstance = ({ client, week }: { client: string, week: string }) => {
     toast.success('Removed');
   }
 
+  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
+    column: "",
+    direction: undefined as SortDirection,
+  });
+
+  const sort = (column:any) => {
+    
+    let newDirection: SortDirection = 'ascending';
+    
+    if (column.column === sortDescriptor.column && sortDescriptor.direction === 'ascending') {
+      newDirection = 'descending';
+    }
+    const colSort = {
+      column: column.column,
+      direction: newDirection,
+    };
+    setSortDescriptor(colSort);
+
+    const sortedEntries = [...timeEntries].sort((a, b) => {
+      
+      let valueA = a[colSort.column];
+      let valueB = b[colSort.column];
+
+      if (colSort.column === 'date') {
+        valueA = new Date(valueA);
+        valueB = new Date(valueB);
+      }
+      if (colSort.column === 'time_tracked') {
+        valueA = parseInt(valueA, 10);
+        valueB = parseInt(valueB, 10);
+      }
+      if (colSort.direction === 'ascending') {
+        return valueA < valueB ? -1 : 1;
+      } else {
+        return valueA > valueB ? -1 : 1;
+      }
+
+    });
+    setTimeEntries(sortedEntries);
+  }
 
   return (
     <div className="flex flex-col gap-8 table-instance">
       <Table
         selectionMode="multiple"
         onSelectionChange={handleSelectedKeys}
+        sortDescriptor={sortDescriptor}
+        onSortChange={sort}
         key={tableKey}
       >
         <TableHeader>
-          <TableColumn>Date</TableColumn>
-          <TableColumn>Task</TableColumn>
-          <TableColumn>Time</TableColumn>
+          <TableColumn key="date" allowsSorting>Date</TableColumn>
+          <TableColumn key="task" allowsSorting>Task</TableColumn>
+          <TableColumn key="time_tracked" allowsSorting>Time</TableColumn>
+          <TableColumn key="owner" allowsSorting>Owner</TableColumn>
         </TableHeader>
         <TableBody>
           {timeEntries.map((row: TimeEntryProps) => (
@@ -144,6 +190,7 @@ const TableInstance = ({ client, week }: { client: string, week: string }) => {
               <TableCell>{formatDate(row.date)}</TableCell>
               <TableCell>{row.task}</TableCell>
               <TableCell>{convertTime(row.time_tracked)}</TableCell>
+              <TableCell>{row.owner}</TableCell>
             </TableRow>
           ))}
         </TableBody>
