@@ -1,13 +1,13 @@
 "use client";
-
+export const dynamic = 'force-dynamic';
 import { useEffect, useState } from 'react';
+import { unstable_noStore as noStore } from 'next/cache';
 import { supabase } from '@/lib/utils';
 import { signInWithGoogle } from '@/lib/utils';
 import { Button, Divider, Input, Link } from '@nextui-org/react';
 import { useRouter } from 'next/navigation'
 import ListClients from '@/components/ListClients';
 import toast from 'react-hot-toast';
-
 export default function Home() {
 
   const [loggedIn, setLoggedIn] = useState(false);
@@ -37,6 +37,7 @@ export default function Home() {
   }, [loggedIn]);
 
   const createClient = async (e: any) => {
+    noStore();
     e.preventDefault();
     const { data: clientData, error: clientError } = await supabase
       .from('Clients')

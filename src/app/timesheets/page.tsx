@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/utils';
+import { useSearchParams } from 'next/navigation';
 import TableInstance from '@/components/TableInstance';
 import { useTimesheet } from '@/lib/TimesheetContext';
 import PaginateTables from '@/components/Pagination';
@@ -13,7 +14,13 @@ const TimeSheet = () => {
 
   const router = useRouter();
   const [weekCount, setWeekCount] = useState(0);
-  const { currentClient, currentWeek, setCurrentWeek } = useTimesheet();
+  const params = useSearchParams();
+  const { currentClient, currentWeek, setCurrentClient, setCurrentWeek } = useTimesheet();
+
+  useEffect(() => {
+    setCurrentClient(params.get('client') || '1');
+    setCurrentWeek(params.get('week') || '1');
+  }, [params, setCurrentClient, setCurrentWeek]);
 
   /*  Current Client Tables
   ========================================================= */
@@ -32,7 +39,7 @@ const TimeSheet = () => {
 
       setWeekCount(count || 0);
     })();
-  }, [currentWeek, currentClient]);
+  }, [currentWeek, currentClient, setCurrentClient]);
 
   /* Add Client Table
   ========================================================= */
@@ -52,9 +59,9 @@ const TimeSheet = () => {
       console.error('Error fetching data: ', instanceError);
       return [];
     }
-    // router.push(`/timesheets/?client=${currentClient}&week=${nextWeek}`);
+    router.push(`/timesheets/?client=${currentClient}&week=${nextWeek}`);
     toast.success('New timesheet created');
-    window.location.href = `/timesheets/?client=${currentClient}&week=${nextWeek}`;
+    // window.location.href = `/timesheets/?client=${currentClient}&week=${nextWeek}`;
     setCurrentWeek(nextWeek.toString());
   }
 
