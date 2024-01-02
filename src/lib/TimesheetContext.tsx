@@ -25,7 +25,7 @@ export const TimesheetProvider = ({children}: {children: React.ReactNode}) => {
   const week = searchParams.get('week') || '1';
   const [currentWeek, setCurrentWeek] = useState(week);
   const [currentClient, setCurrentClient] = useState(client);
-
+  
   const value = {
     currentWeek,
     currentClient,
