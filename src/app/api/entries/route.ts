@@ -1,22 +1,27 @@
 import { supabase } from "@/lib/utils";
 
-export async function POST (request: Request) {
-  
-  const {week, client} = await request.json();
+export async function POST(request: Request): Promise<Response> {
 
-  try {
-    const { data, error } = await supabase
-    .from('TimeEntries')
-    .select('*')
-    .eq('week_id', week)
-    .eq('client_id', client)
-    .order('date', { ascending: true });
-  if (error) {
-    console.error('Error fetching data: ', error);
-    return [];
-  }
-    return Response.json(data);
-  } catch (error) {
-    Response.json({ error: (error as Error).message },{status: 500});
-  }
+  const {week, client} = await request.json();
+  
+    try {
+        const { data, error } = await supabase
+        .from('TimeEntries')
+        .select('*')
+        .eq('week_id', week)
+        .eq('client_id', client)
+        .order('date', { ascending: true });
+        
+        if (error) throw error;
+
+        return new Response(JSON.stringify(data), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    } catch (error) {
+        return new Response(JSON.stringify({ error: (error as Error).message }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    }
 }
