@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/utils';
 import { Button, Input, Select, SelectItem } from '@nextui-org/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import parse from 'parse-duration'
 import toast from 'react-hot-toast';
@@ -18,7 +18,6 @@ const SubmitTime = ({ client, week }: { client: string, week: string }) => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     const { data, error } = await supabase
       .from('TimeEntries')
       .insert([
