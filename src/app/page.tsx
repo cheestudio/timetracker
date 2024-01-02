@@ -15,15 +15,15 @@ export default function Home() {
   const router = useRouter();
 
   const listClients = async () => {
-    const { data, error } = await supabase
-      .from('Clients')
-      .select('*')
-      .order('client_name', { ascending: true });
+    const response = await fetch('/api/clients',{
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
+      cache: 'no-store'
+    });
+    const data = await response.json();
     setClients(data);
-    if (error) {
-      console.error('Error fetching data: ', error);
-      return [];
-    }
   }
 
   async function checkUser() {
@@ -37,7 +37,6 @@ export default function Home() {
   }, [loggedIn]);
 
   const createClient = async (e: any) => {
-    noStore();
     e.preventDefault();
     const { data: clientData, error: clientError } = await supabase
       .from('Clients')
