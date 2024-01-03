@@ -1,5 +1,7 @@
 "use client";
 
+import { unstable_noStore as noStore } from 'next/cache';
+
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 
 import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Button, SortDescriptor, Pagination, Select, SelectItem } from "@nextui-org/react";
@@ -21,6 +23,8 @@ type SortDirection = 'ascending' | 'descending' | undefined;
 
 const TableInstance = ({ client }: { client: string }) => {
 
+  noStore();
+
   /* Time Converison
   ========================================================= */
 
@@ -40,14 +44,15 @@ const TableInstance = ({ client }: { client: string }) => {
     setCalculatedTime(totalHours);
   };
 
-  function formatDate(date: string) {
-    let d = new Date(date),
-      month = '' + (d.getMonth() + 1),
-      day = '' + d.getDate(),
-      year = d.getFullYear();
-
-    return [month, day, year].join('/');
+  function formatDate(dateString: string) {
+    const [year, month, day] = dateString.split('-').map(part => parseInt(part, 10));
+    const date = new Date(year, month - 1, day);
+    const formattedMonth = String(date.getMonth() + 1);
+    const formattedDay = String(date.getDate());
+    const formattedYear = date.getFullYear();
+    return `${formattedMonth}/${formattedDay}/${formattedYear}`;
   }
+  
 
   /* Time Entries
   ========================================================= */
@@ -57,39 +62,40 @@ const TableInstance = ({ client }: { client: string }) => {
 
   const getTodayRange = () => {
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Start of today
+    today.setHours(0, 0, 0, 0);
     const end = new Date(today);
-    end.setHours(23, 59, 59, 999); // End of today
-    console.log(today, end);
+    end.setHours(23, 59, 59, 999);
+    console.log('today', today, end);
     return [today, end];
   };
-  
+
   const getThisWeekRange = () => {
     const today = new Date();
-    const first = today.getDate() - today.getDay(); // First day is the day of the month - the day of the week
-    const last = first + 6; // last day is the first day + 6
-  
-    const start = new Date(today.setDate(first));
-    start.setHours(0, 0, 0, 0); // Start of first day
-  
-    const end = new Date(today.setDate(last));
-    end.setHours(23, 59, 59, 999); // End of last day
-  
+    const dayOfWeek = today.getDay();
+
+    const start = new Date(today);
+    start.setDate(today.getDate() - dayOfWeek);
+    start.setHours(0, 0, 0, 0);
+    
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+    end.setHours(23, 59, 59, 999);
     return [start, end];
   };
-  
+
+
   const getThisMonthRange = () => {
     const date = new Date();
     const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
     const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59, 999);
-  
+    console.log('month', firstDay, lastDay);
     return [firstDay, lastDay];
   };
-  
+
   const handleDateRange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedDateRange(e.target.value);
   };
-  
+
   useEffect(() => {
     const fetchTimeEntries = async () => {
       let query = supabase
@@ -98,24 +104,24 @@ const TableInstance = ({ client }: { client: string }) => {
         .eq('client_id', client)
         .order('date', { ascending: true });
 
-        if (selectedDateRange !== 'all') {
-          let range;
-          if (selectedDateRange === 'today') {
-            console.log('today');
-            range = getTodayRange();
-          } else if (selectedDateRange === 'this_week') {
-            range = getThisWeekRange();
-          } else if (selectedDateRange === 'this_month') {
-            range = getThisMonthRange();
-          }
-          if (range) {
-            query = query
-              .gte('date', range[0].toISOString())
-              .lte('date', range[1].toISOString());
-          }
+      if (selectedDateRange !== 'all') {
+        let range;
+        if (selectedDateRange === 'today') {
+          range = getTodayRange();
+        } else if (selectedDateRange === 'this_week') {
+          range = getThisWeekRange();
+        } else if (selectedDateRange === 'this_month') {
+          range = getThisMonthRange();
         }
+        if (range) {
+          query = query
+            .gte('date', range[0].toISOString())
+            .lte('date', range[1].toISOString());
+        }
+      }
 
-        const { data, error } = await query;
+      noStore();
+      const { data, error } = await query;
 
       if (error) {
         console.error('Error fetching data: ', error);
@@ -244,7 +250,7 @@ const TableInstance = ({ client }: { client: string }) => {
     setPage(1);
     setPaginationKey((prevKey) => prevKey + 1);
   }
-  
+
 
   return (
     <div className="flex flex-col gap-8 table-instance">
@@ -271,7 +277,7 @@ const TableInstance = ({ client }: { client: string }) => {
           </Select>
         </div>
         <div className="flex-[0_0_200px]">
-        <Select
+          <Select
             value={selectedDateRange}
             onChange={handleDateRange}
             variant="bordered"
@@ -330,19 +336,19 @@ const TableInstance = ({ client }: { client: string }) => {
       </div>
       <SubmitTime client={client} />
       {viewableRows != -1 &&
-      <Pagination
-        className="flex justify-center"
-        color="primary"
-        variant="light"
-        page={page}
-        total={pages}
-        onChange={(page) => setPage(page)}
-        showControls={true}
-        key={paginationKey}
-        dotsJump={10}
-        boundaries={5}
-      />
-    }
+        <Pagination
+          className="flex justify-center"
+          color="primary"
+          variant="light"
+          page={page}
+          total={pages}
+          onChange={(page) => setPage(page)}
+          showControls={true}
+          key={paginationKey}
+          dotsJump={10}
+          boundaries={5}
+        />
+      }
     </div>
   );
 };
