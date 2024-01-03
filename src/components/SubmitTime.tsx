@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import parse from 'parse-duration'
 import toast from 'react-hot-toast';
 
-const SubmitTime = ({ client, week }: { client: string, week: string }) => {
+const SubmitTime = ({ client }: { client: string }) => {
 
   const [date, setDate] = useState('');
   const [task, setTask] = useState('');
@@ -26,7 +26,6 @@ const SubmitTime = ({ client, week }: { client: string, week: string }) => {
           task,
           time_tracked: parse(timeTracked, 'm'),
           entry_id: uuidv4(),
-          week_id: week,
           client_id: client,
           owner: owner,
         }
