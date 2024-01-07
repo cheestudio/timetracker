@@ -29,11 +29,43 @@ const SubmitTime = ({ client }: { client: string }) => {
     return hours + ':' + minutesStr + ' ' + ampm;
   }
 
-
-  const calculateElapsedTime = (startTime:number, endTime:number) => {
+  const calculateElapsedTime = (startTime: number, endTime: number) => {
     const duration = endTime - startTime; // Duration in milliseconds
     return Math.floor(duration / 60000); // Convert to minutes
   };
+
+  const convertToTimeFormat = (input: string) => {
+    const cleanInput = String(input).replace(/\D/g, '').replace(/^0+/, '');
+    let 
+    hours: string|number = '0', 
+    minutes: string|number = '00', 
+    seconds: string|number = '00';
+
+    if (cleanInput.length === 1 || cleanInput.length === 2) {
+      minutes = cleanInput.padStart(2, '0');
+
+      const totalMinutes = parseInt(cleanInput, 10);
+
+      if (totalMinutes >= 0 && totalMinutes <= 99) {
+        hours = Math.floor(totalMinutes / 60);
+        minutes = totalMinutes % 60;
+      }
+
+    } else if (cleanInput.length === 3) {
+      hours = cleanInput.substring(0, 1);
+      minutes = cleanInput.substring(1, 3);
+    } else if (cleanInput.length === 4) {
+      hours = cleanInput.substring(0, 2);
+      minutes = cleanInput.substring(2, 4);
+    } else {
+      hours = cleanInput.substring(0, cleanInput.length - 4);
+      minutes = cleanInput.substring(cleanInput.length - 4, cleanInput.length - 2);
+      seconds = cleanInput.substring(cleanInput.length - 2);
+    }
+    console.log(`${hours}:${minutes}:${seconds}`);
+    return `${hours}:${minutes}:${seconds}`;
+  };
+
 
   const toggleTimer = () => {
     setTimerRunning(!timerRunning);
@@ -41,15 +73,25 @@ const SubmitTime = ({ client }: { client: string }) => {
   const restartTimer = () => {
     setTimerRunning(false);
     setTimerSeconds(0);
+    setTimeTracked('0:00:00');
   }
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
+
+    const formatAutoTime = () => {
+      const hours = Math.floor(timerSeconds / 3600);
+      const minutes = Math.floor((timerSeconds % 3600) / 60);
+      const seconds = timerSeconds % 60;
+      setTimeTracked(`${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`);
+    };
+
     if (timerRunning) {
       setTimerRunning(true);
       interval = setInterval(() => {
         setTimerSeconds((prev) => prev + 1);
       }, 1000);
+      formatAutoTime();
     }
     else {
       setTimerRunning(false);
@@ -57,16 +99,18 @@ const SubmitTime = ({ client }: { client: string }) => {
     return () => {
       clearInterval(interval);
     }
-    
-  }, [timerRunning]);
 
+  }, [timerRunning, timerSeconds]);
 
-  const formatTime = () => {
-    const hours = Math.floor(timerSeconds / 3600);
-    const minutes = Math.floor((timerSeconds % 3600) / 60);
-    const seconds = timerSeconds % 60;
-    return `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-  };
+  const handleManualTime = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!timerRunning) {
+      setTimeTracked(e.target.value);
+      const formattedTime = convertToTimeFormat(e.target.value);
+      const [hours, minutes, seconds] = formattedTime.split(':').map(Number);
+      const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+      setTimerSeconds(totalSeconds);
+    }
+  }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -94,6 +138,19 @@ const SubmitTime = ({ client }: { client: string }) => {
     }
   };
 
+  const handleFocus = (e: any) => {
+    e.target.select();
+  };
+
+  const handleBlur = (e: any) => {
+    const currentValue = e.target.value;
+    const formattedCurrentValue = convertToTimeFormat(currentValue);
+    if (formattedCurrentValue === timeTracked) {
+      return;
+    }
+    setTimeTracked(formattedCurrentValue);
+  };
+  
   return (
     <div className="time-submit-form">
       <form onSubmit={handleSubmit}>
@@ -177,31 +234,29 @@ const SubmitTime = ({ client }: { client: string }) => {
                 <div id="timer-toggle" className="flex items-center justify-center gap-5">
                   <div className="timer-results min-w-[65px]">
                     {/* <div>{timeTracked ? timeTracked : '00:00:00'}</div> */}
-                   
+
                     <Input
-                  isRequired
-                  variant="underlined"
-                  label=""
-                  labelPlacement="outside"
-                  // placeholder="e.g. 1h 30m or 1.5h or 90m"
-                  // className="block w-full mb-5 text-xl font-bold text-white"
-                  classNames={{
-                    input: 'text-lg font-bold text-white',
-                  }}
-                  type="text"
-                  id="end_time"
-                  onChange={(e) => setEndTime(e.target.value)}
-                  value={formatTime()}
-                />
+                      isRequired
+                      variant="underlined"
+                      label=""
+                      labelPlacement="outside"
+                      classNames={{
+                        input: 'text-lg font-bold text-white',
+                      }}
+                      type="text"
+                      id="end_time"
+                      onFocus={handleFocus}
+                      onBlur={handleBlur}
+                      onChange={(e) => handleManualTime(e)}
+                      value={timeTracked}
+                    />
                   </div>
                   <Button className="" variant="light" isIconOnly onPress={() => toggleTimer()}>
-                    {timerRunning ? <PauseCircleIcon/> : <PlayCircleIcon/>}
+                    {timerRunning ? <PauseCircleIcon /> : <PlayCircleIcon />}
                   </Button>
-                  {timerRunning &&
-                  <Button  variant="light" isIconOnly onPress={() => restartTimer()}>
-                    <ArrowPathIcon className="w-[30px]"/>
+                  <Button variant="light" isIconOnly onPress={() => restartTimer()}>
+                    <ArrowPathIcon className="w-[30px]" />
                   </Button>
-                  }
                 </div>
               </div>
             </div>
