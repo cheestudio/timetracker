@@ -8,7 +8,6 @@ export async function POST(request: Request): Promise<Response> {
         const { data, error } = await supabase
         .from('TimeEntries')
         .select('*')
-        .eq('week_id', week)
         .eq('client_id', client)
         .order('date', { ascending: true });
         

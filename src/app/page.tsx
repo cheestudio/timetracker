@@ -52,13 +52,13 @@ export default function Home() {
     const clientId = clientData[0].id;
     const { error: tableInstanceError } = await supabase
       .from('TableInstances')
-      .insert([{ client_id: clientId, week_id: 1, }]);
+      .insert([{ client_id: clientId }]);
 
     if (tableInstanceError) {
       console.error('Error creating table instance: ', tableInstanceError);
     }
     toast.success('Client created successfully!');
-    router.push(`/timesheets/?client=${clientId}&week=1`);
+    router.push(`/timesheets/?client=${clientId}`);
   }
 
 
