@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/utils';
 import { Button, Input, Switch, RadioGroup, Radio, Select, SelectItem } from '@nextui-org/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { PlayCircleIcon, PauseCircleIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
 import parse from 'parse-duration'
@@ -8,15 +8,18 @@ import toast from 'react-hot-toast';
 
 const SubmitTime = ({ client }: { client: string }) => {
 
+  const timeInputRef = useRef('');
   const [date, setDate] = useState('');
   const [task, setTask] = useState('');
   const [startTime, setStartTime] = useState<string>("");
   const [endTime, setEndTime] = useState<string>("");
-  const [timerToggle, setTimerToggle] = useState(false);
   const [timerRunning, setTimerRunning] = useState(false);
   const [timerSeconds, setTimerSeconds] = useState(0);
-  const [timeTracked, setTimeTracked] = useState('');
+  const [timeTracked, setTimeTracked] = useState('0:00:00');
   const [timeMode, setTimeMode] = useState("entry");
+
+  /* Time Conversions
+  ========================================================= */
 
   function getCurrentTimeFormatted() {
     const now = new Date();
@@ -29,17 +32,76 @@ const SubmitTime = ({ client }: { client: string }) => {
     return hours + ':' + minutesStr + ' ' + ampm;
   }
 
-  const calculateElapsedTime = (startTime: number, endTime: number) => {
-    const duration = endTime - startTime; // Duration in milliseconds
-    return Math.floor(duration / 60000); // Convert to minutes
+  const formatTime = (time: string) => {
+    const regexPattern = /^(\d{1,2})(?::(\d{2}))?\s*(am|pm|AM|PM)?$/;
+    const militaryTimePattern = /^([01]?\d|2[0-3]):([0-5]\d)$/;
+    let match = time.match(regexPattern);
+    
+    if (match) {
+      let hours = parseInt(match[1], 10);
+      const minutes = match[2] ? match[2] : '00';
+      const ampm = match[3] ? match[3].toUpperCase() : (hours < 12 ? 'AM' : 'PM');
+      if (hours === 12) {
+        hours = ampm === 'AM' ? 0 : 12;
+      } else if (ampm === 'PM') {
+        hours += 12;
+      }
+      return `${hours % 12 || 12}:${minutes} ${ampm}`;
+    }
+
+    match = time.match(militaryTimePattern);
+    if (match) {
+      let hours = parseInt(match[1], 10);
+      const minutes = match[2];
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+
+      return `${hours % 12 || 12}:${minutes} ${ampm}`;
+    }
+    return time;
+    
   };
+
+
+  const calculateElapsedTime = (startTime:string, endTime:string) => {
+    const convertToMinutes = (timeStr:string) => {
+        const [time, modifier] = timeStr.split(/(am|pm|AM|PM)/);
+        let [hours, minutes] = time.split(':').map(Number);
+
+        // Convert hours in PM to 24-hour format
+        if ((modifier?.toLowerCase() === 'pm') && hours < 12) hours += 12;
+        // Convert 12AM to 0 hours
+        if ((modifier?.toLowerCase() === 'am') && hours === 12) hours = 0;
+
+        return hours * 60 + minutes;
+    };
+
+    const startMinutes = convertToMinutes(startTime);
+    const endMinutes = convertToMinutes(endTime);
+
+    let elapsedMinutes = endMinutes - startMinutes;
+
+    // Handle overnight time spans
+    if (elapsedMinutes < 0) elapsedMinutes += 24 * 60;
+
+    // Format the elapsed time
+    const elapsedHours = Math.floor(elapsedMinutes / 60);
+    const remainingMinutes = elapsedMinutes % 60;
+
+    return `${elapsedHours}:${String(remainingMinutes).padStart(2, '0')}`;
+};
+
+const handleStartBlur = (e:any) => {
+  setStartTime(formatTime(e.target.value));
+  calculateElapsedTime(startTime, endTime)
+  console.log(endTime);
+}
 
   const convertToTimeFormat = (input: string) => {
     const cleanInput = String(input).replace(/\D/g, '').replace(/^0+/, '');
-    let 
-    hours: string|number = '0', 
-    minutes: string|number = '00', 
-    seconds: string|number = '00';
+    let
+      hours: string | number = '0',
+      minutes: string | number = '00',
+      seconds: string | number = '00';
 
     if (cleanInput.length === 1 || cleanInput.length === 2) {
       minutes = cleanInput.padStart(2, '0');
@@ -62,14 +124,15 @@ const SubmitTime = ({ client }: { client: string }) => {
       minutes = cleanInput.substring(cleanInput.length - 4, cleanInput.length - 2);
       seconds = cleanInput.substring(cleanInput.length - 2);
     }
-    console.log(`${hours}:${minutes}:${seconds}`);
     return `${hours}:${minutes}:${seconds}`;
   };
 
-
+  /* Timer Controls
+  ========================================================= */
   const toggleTimer = () => {
     setTimerRunning(!timerRunning);
   }
+
   const restartTimer = () => {
     setTimerRunning(false);
     setTimerSeconds(0);
@@ -78,14 +141,12 @@ const SubmitTime = ({ client }: { client: string }) => {
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
-
     const formatAutoTime = () => {
       const hours = Math.floor(timerSeconds / 3600);
       const minutes = Math.floor((timerSeconds % 3600) / 60);
       const seconds = timerSeconds % 60;
       setTimeTracked(`${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`);
     };
-
     if (timerRunning) {
       setTimerRunning(true);
       interval = setInterval(() => {
@@ -99,10 +160,12 @@ const SubmitTime = ({ client }: { client: string }) => {
     return () => {
       clearInterval(interval);
     }
-
   }, [timerRunning, timerSeconds]);
 
-  const handleManualTime = (e: React.ChangeEvent<HTMLInputElement>) => {
+  /* Timer Input
+  
+  ========================================================= */
+  const handleTimerInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!timerRunning) {
       setTimeTracked(e.target.value);
       const formattedTime = convertToTimeFormat(e.target.value);
@@ -111,6 +174,24 @@ const SubmitTime = ({ client }: { client: string }) => {
       setTimerSeconds(totalSeconds);
     }
   }
+
+  const handleTimerFocus = (e: any) => {
+    e.target.select();
+    timeInputRef.current = e.target.value;
+  };
+
+  const handleTimerBlur = (e: any) => {
+    const currentValue = e.target.value;
+    if (currentValue === timeInputRef.current) {
+      return;
+    }
+    const formattedTime = convertToTimeFormat(currentValue);
+    setTimeTracked(formattedTime);
+  };
+
+
+  /* Supabase
+  ========================================================= */
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -138,19 +219,8 @@ const SubmitTime = ({ client }: { client: string }) => {
     }
   };
 
-  const handleFocus = (e: any) => {
-    e.target.select();
-  };
 
-  const handleBlur = (e: any) => {
-    const currentValue = e.target.value;
-    const formattedCurrentValue = convertToTimeFormat(currentValue);
-    if (formattedCurrentValue === timeTracked) {
-      return;
-    }
-    setTimeTracked(formattedCurrentValue);
-  };
-  
+
   return (
     <div className="time-submit-form">
       <form onSubmit={handleSubmit}>
@@ -210,20 +280,22 @@ const SubmitTime = ({ client }: { client: string }) => {
                   type="text"
                   id="start_time"
                   onChange={(e) => setStartTime(e.target.value)}
+                  onBlur={handleStartBlur}
                   value={startTime ? startTime : getCurrentTimeFormatted()}
                 />
               </div>
               <div className="flex-auto">
-                <Input
+              <Input
                   isRequired
                   variant="bordered"
-                  label="End Time"
+                  label="Start Time"
                   labelPlacement="outside"
-                  placeholder="e.g. 1h 30m or 1.5h or 90m"
+                  placeholder="Enter valid time"
                   className="block w-full mb-5 text-white"
                   type="text"
                   id="end_time"
                   onChange={(e) => setEndTime(e.target.value)}
+                  onBlur={(e: any) => setEndTime(formatTime(e.target.value))}
                   value={endTime ? endTime : getCurrentTimeFormatted()}
                 />
               </div>
@@ -245,9 +317,9 @@ const SubmitTime = ({ client }: { client: string }) => {
                       }}
                       type="text"
                       id="end_time"
-                      onFocus={handleFocus}
-                      onBlur={handleBlur}
-                      onChange={(e) => handleManualTime(e)}
+                      onChange={(e) => handleTimerInput(e)}
+                      onFocus={handleTimerFocus}
+                      onBlur={handleTimerBlur}
                       value={timeTracked}
                     />
                   </div>
