@@ -21,6 +21,11 @@ const SubmitTime = ({ client }: { client: string }) => {
   /* Time Conversions
   ========================================================= */
 
+  function timeToSeconds(time:string) {
+    const [hours, minutes] = time.split(':').map(Number);
+    return (hours * 3600) + (minutes * 60);
+  }
+
   function getCurrentTimeFormatted() {
     const now = new Date();
     let hours = now.getHours();
@@ -36,7 +41,7 @@ const SubmitTime = ({ client }: { client: string }) => {
     const regexPattern = /^(\d{1,2})(?::(\d{2}))?\s*(am|pm|AM|PM)?$/;
     const militaryTimePattern = /^([01]?\d|2[0-3]):([0-5]\d)$/;
     let match = time.match(regexPattern);
-    
+
     if (match) {
       let hours = parseInt(match[1], 10);
       const minutes = match[2] ? match[2] : '00';
@@ -58,21 +63,21 @@ const SubmitTime = ({ client }: { client: string }) => {
       return `${hours % 12 || 12}:${minutes} ${ampm}`;
     }
     return time;
-    
+
   };
 
 
-  const calculateElapsedTime = (startTime:string, endTime:string) => {
-    const convertToMinutes = (timeStr:string) => {
-        const [time, modifier] = timeStr.split(/(am|pm|AM|PM)/);
-        let [hours, minutes] = time.split(':').map(Number);
+  const calculateElapsedTime = (startTime: string, endTime: string) => {
+    const convertToMinutes = (timeStr: string) => {
+      const [time, modifier] = timeStr.split(/(am|pm|AM|PM)/);
+      let [hours, minutes] = time.split(':').map(Number);
 
-        // Convert hours in PM to 24-hour format
-        if ((modifier?.toLowerCase() === 'pm') && hours < 12) hours += 12;
-        // Convert 12AM to 0 hours
-        if ((modifier?.toLowerCase() === 'am') && hours === 12) hours = 0;
+      // Convert hours in PM to 24-hour format
+      if ((modifier?.toLowerCase() === 'pm') && hours < 12) hours += 12;
+      // Convert 12AM to 0 hours
+      if ((modifier?.toLowerCase() === 'am') && hours === 12) hours = 0;
 
-        return hours * 60 + minutes;
+      return hours * 60 + minutes;
     };
 
     const startMinutes = convertToMinutes(startTime);
@@ -88,19 +93,21 @@ const SubmitTime = ({ client }: { client: string }) => {
     const remainingMinutes = elapsedMinutes % 60;
 
     return `${elapsedHours}:${String(remainingMinutes).padStart(2, '0')}`;
-};
+  };
 
-const handleStartBlur = (e:any) => {
-  setStartTime(formatTime(e.target.value));
-  calculateElapsedTime(startTime, endTime)
-  console.log(endTime);
-}
+  const handleStartBlur = (e: any) => {
+    setStartTime(formatTime(e.target.value));
+    const elapsedTime = calculateElapsedTime(startTime, endTime);
+    const totalSeconds = timeToSeconds(elapsedTime);
+    console.log(totalSeconds);
+
+  }
 
   const convertToTimeFormat = (input: string) => {
     const cleanInput = String(input).replace(/\D/g, '').replace(/^0+/, '');
     let
       hours: string | number = '0',
-      minutes: string | number = '00',
+      minutes: string | number = '0',
       seconds: string | number = '00';
 
     if (cleanInput.length === 1 || cleanInput.length === 2) {
@@ -111,6 +118,7 @@ const handleStartBlur = (e:any) => {
       if (totalMinutes >= 0 && totalMinutes <= 99) {
         hours = Math.floor(totalMinutes / 60);
         minutes = totalMinutes % 60;
+        minutes = minutes.toString().padStart(2, '0');
       }
 
     } else if (cleanInput.length === 3) {
@@ -285,7 +293,7 @@ const handleStartBlur = (e:any) => {
                 />
               </div>
               <div className="flex-auto">
-              <Input
+                <Input
                   isRequired
                   variant="bordered"
                   label="Start Time"
