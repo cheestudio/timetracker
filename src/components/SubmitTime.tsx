@@ -1,9 +1,10 @@
 import { supabase } from '@/lib/utils';
 import { Button, Input, Switch, RadioGroup, Radio, Select, SelectItem } from '@nextui-org/react';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useReducer } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { PlayCircleIcon, PauseCircleIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
-import parse from 'parse-duration'
+import { PlayCircleIcon, PauseCircleIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import moment from 'moment-timezone';
+import parse from 'parse-duration';
 import toast from 'react-hot-toast';
 
 const SubmitTime = ({ client }: { client: string }) => {
@@ -18,10 +19,15 @@ const SubmitTime = ({ client }: { client: string }) => {
   const [timeTracked, setTimeTracked] = useState('0:00:00');
   const [timeMode, setTimeMode] = useState("entry");
 
+
   /* Time Conversions
   ========================================================= */
 
-  function timeToSeconds(time:string) {
+  const startTimeUTC = moment(new Date()).tz('America/Los_Angeles').format('ha z');
+  const endTimeUTC = moment(endTime).tz('UTC').format('ha z');
+  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  function timeToSeconds(time: string) {
     const [hours, minutes] = time.split(':').map(Number);
     return (hours * 3600) + (minutes * 60);
   }
@@ -38,9 +44,11 @@ const SubmitTime = ({ client }: { client: string }) => {
   }
 
   const formatTime = (time: string) => {
+    const currentDate = moment().format('YYYY-MM-DD');
     const regexPattern = /^(\d{1,2})(?::(\d{2}))?\s*(am|pm|AM|PM)?$/;
     const militaryTimePattern = /^([01]?\d|2[0-3]):([0-5]\d)$/;
     let match = time.match(regexPattern);
+    let formattedTime;
 
     if (match) {
       let hours = parseInt(match[1], 10);
@@ -51,7 +59,9 @@ const SubmitTime = ({ client }: { client: string }) => {
       } else if (ampm === 'PM') {
         hours += 12;
       }
-      return `${hours % 12 || 12}:${minutes} ${ampm}`;
+      formattedTime = `${hours % 12 || 12}:${minutes} ${ampm}`;
+      const localTime = moment.tz(`${currentDate} ${formattedTime}`, 'YYYY-MM-DD h:mmA', 'America/New_York');
+      return localTime.utc().format();
     }
 
     match = time.match(militaryTimePattern);
@@ -60,48 +70,53 @@ const SubmitTime = ({ client }: { client: string }) => {
       const minutes = match[2];
       const ampm = hours >= 12 ? 'PM' : 'AM';
 
-      return `${hours % 12 || 12}:${minutes} ${ampm}`;
+      formattedTime = `${hours % 12 || 12}:${minutes} ${ampm}`;
     }
-    return time;
-
+    return formattedTime;
   };
 
 
-  const calculateElapsedTime = (startTime: string, endTime: string) => {
-    const convertToMinutes = (timeStr: string) => {
-      const [time, modifier] = timeStr.split(/(am|pm|AM|PM)/);
-      let [hours, minutes] = time.split(':').map(Number);
+  // const calculateElapsedTime = (startTime: string, endTime: string) => {
+  //   const convertToMinutes = (timeStr: string) => {
+  //     const [time, modifier] = timeStr.split(/(am|pm|AM|PM)/);
+  //     let [hours, minutes] = time.split(':').map(Number);
 
-      // Convert hours in PM to 24-hour format
-      if ((modifier?.toLowerCase() === 'pm') && hours < 12) hours += 12;
-      // Convert 12AM to 0 hours
-      if ((modifier?.toLowerCase() === 'am') && hours === 12) hours = 0;
+  //     // Convert hours in PM to 24-hour format
+  //     if ((modifier?.toLowerCase() === 'pm') && hours < 12) hours += 12;
+  //     // Convert 12AM to 0 hours
+  //     if ((modifier?.toLowerCase() === 'am') && hours === 12) hours = 0;
 
-      return hours * 60 + minutes;
-    };
+  //     return hours * 60 + minutes;
+  //   };
 
-    const startMinutes = convertToMinutes(startTime);
-    const endMinutes = convertToMinutes(endTime);
+  //   const startMinutes = convertToMinutes(startTime);
+  //   const endMinutes = convertToMinutes(endTime);
 
-    let elapsedMinutes = endMinutes - startMinutes;
+  //   let elapsedMinutes = endMinutes - startMinutes;
 
-    // Handle overnight time spans
-    if (elapsedMinutes < 0) elapsedMinutes += 24 * 60;
+  //   // Handle overnight time spans
+  //   if (elapsedMinutes < 0) elapsedMinutes += 24 * 60;
 
-    // Format the elapsed time
-    const elapsedHours = Math.floor(elapsedMinutes / 60);
-    const remainingMinutes = elapsedMinutes % 60;
+  //   // Format the elapsed time
+  //   const elapsedHours = Math.floor(elapsedMinutes / 60);
+  //   const remainingMinutes = elapsedMinutes % 60;
 
-    return `${elapsedHours}:${String(remainingMinutes).padStart(2, '0')}`;
-  };
+  //   return `${elapsedHours}:${String(remainingMinutes).padStart(2, '0')}`;
+  // };
 
-  const handleStartBlur = (e: any) => {
-    setStartTime(formatTime(e.target.value));
-    const elapsedTime = calculateElapsedTime(startTime, endTime);
-    const totalSeconds = timeToSeconds(elapsedTime);
-    console.log(totalSeconds);
-
+  const timeReducer = (state: any, action: any) => {
+    switch (action.type) {
+      case 'SET_START_TIME':
+        return { ...state, startTime: formatTime(action.payload) };
+      case 'SET_END_TIME':
+        return { ...state, endTime: formatTime(action.payload) };
+      default:
+        return state;
+    }
   }
+
+const [timeState, timeDispatch] = useReducer(timeReducer, { startTime:'', endTime:'' });
+
 
   const convertToTimeFormat = (input: string) => {
     const cleanInput = String(input).replace(/\D/g, '').replace(/^0+/, '');
@@ -286,9 +301,9 @@ const SubmitTime = ({ client }: { client: string }) => {
                   placeholder="Enter valid time"
                   className="block w-full mb-5 text-white"
                   type="text"
-                  id="start_time"
+                  id="startTime"
                   onChange={(e) => setStartTime(e.target.value)}
-                  onBlur={handleStartBlur}
+                  onBlur={(e) => timeDispatch({ type: 'SET_START_TIME', payload: startTime })}
                   value={startTime ? startTime : getCurrentTimeFormatted()}
                 />
               </div>
@@ -296,14 +311,14 @@ const SubmitTime = ({ client }: { client: string }) => {
                 <Input
                   isRequired
                   variant="bordered"
-                  label="Start Time"
+                  label="End Time"
                   labelPlacement="outside"
                   placeholder="Enter valid time"
                   className="block w-full mb-5 text-white"
                   type="text"
                   id="end_time"
                   onChange={(e) => setEndTime(e.target.value)}
-                  onBlur={(e: any) => setEndTime(formatTime(e.target.value))}
+                  onBlur={(e) => timeDispatch({ type: 'SET_END_TIME', payload: endTime })}
                   value={endTime ? endTime : getCurrentTimeFormatted()}
                 />
               </div>
