@@ -367,7 +367,10 @@ const SubmitTime = ({ client }: { client: string }) => {
                   label="Duration"
                   labelPlacement="outside"
                   placeholder="00:00"
-                  className="block w-full mb-5 text-xl font-bold text-white"
+                  className="block w-full mb-5 text-xl font-bold text-white !opacity-100"
+                  classNames={{
+                    input: 'text-lg font-bold text-white',
+                  }}
                   type="text"
                   value={calculateElapsedTime(startTime, endTime)}
                 />
