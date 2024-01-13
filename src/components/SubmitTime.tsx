@@ -16,7 +16,8 @@ const SubmitTime = ({ client }: { client: string }) => {
   const [endTime, setEndTime] = useState<string>("");
   const [timerRunning, setTimerRunning] = useState(false);
   const [timerSeconds, setTimerSeconds] = useState(0);
-  const [timeTracked, setTimeTracked] = useState('0:00:00');
+  const [timeTracked, setTimeTracked] = useState<string>('0:00:00');
+  const [timeElapsed, setTimeElapsed] = useState<string>('0:00:00');
   const [timeMode, setTimeMode] = useState("entry");
 
 
@@ -45,46 +46,55 @@ const SubmitTime = ({ client }: { client: string }) => {
 
   /* Convert Time Input to UTC
   ========================================================= */
-  const formatTime = (time:string) => {
+  const formatTime = (time: string) => {
     const regexPattern = /^(\d{1,2})(?::(\d{2}))?\s*(am|pm|AM|PM)?$/;
-    const militaryTimePattern = /^([01]?\d|2[0-3]):([0-5]\d)$/;
+    const militaryTimePattern = /^([01]\d|2[0-3]):?([0-5]\d)$/;
+    const conciseTimePattern = /^(\d{1,2})(\d{2})(am|pm|AM|PM)?$/;
     let match = time.match(regexPattern);
     let formattedTime;
-    
+
     if (match) {
-        let hours = parseInt(match[1], 10);
-        const minutes = match[2] ? match[2] : '00';
-        const ampm = match[3] ? match[3].toUpperCase() : (hours < 12 ? 'AM' : 'PM');
-        if (hours === 12) {
-            hours = ampm === 'AM' ? 0 : 12;
-        } else if (ampm === 'PM') {
-            hours += 12;
-        }
-        formattedTime = `${hours % 12 || 12}:${minutes} ${ampm}`;
+      let hours = parseInt(match[1], 10);
+      const minutes = match[2] ? match[2] : '00';
+      const ampm = match[3] ? match[3].toUpperCase() : (hours < 12 ? 'AM' : 'PM');
+      if (hours === 12) {
+        hours = ampm === 'AM' ? 0 : 12;
+      } else if (ampm === 'PM') {
+        hours += 12;
+      }
+      formattedTime = `${hours % 12 || 12}:${minutes} ${ampm}`;
     } else {
-        match = time.match(militaryTimePattern);
+      match = time.match(militaryTimePattern);
+      if (match) {
+        let hours = parseInt(match[1], 10);
+        const minutes = match[2];
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        formattedTime = `${hours % 12 || 12}:${minutes} ${ampm}`;
+      } else {
+        match = time.match(conciseTimePattern);
         if (match) {
-            let hours = parseInt(match[1], 10);
-            const minutes = match[2];
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            formattedTime = `${hours % 12 || 12}:${minutes} ${ampm}`;
+          let hours = parseInt(match[1], 10);
+          let minutes = match[2];
+          let ampm = match[3] ? match[3].toUpperCase() : 'AM';
+          formattedTime = `${hours % 12 || 12}:${minutes} ${ampm}`;
         }
+      }
     }
     return formattedTime;
-};
+  };
 
-const timeToUTC = (time:string) => {
+
+  const timeToUTC = (time: string) => {
     const currentDate = moment().format('YYYY-MM-DD');
     const formattedTime = formatTime(time);
     const localTime = moment.tz(`${currentDate} ${formattedTime}`, 'YYYY-MM-DD h:mm A', userTimeZone);
     return localTime;
-};
+  };
 
-const formatTimeInput = (time:string) => {
+  const formatTimeInput = (time: string) => {
     const formattedTime = formatTime(time);
-    console.log(formattedTime);
     return formattedTime;
-};
+  };
 
 
   /* Handle Time Inputs
@@ -105,20 +115,43 @@ const formatTimeInput = (time:string) => {
   const handleManualInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.id === 'startTime') {
       timeDispatch({ type: 'SET_START_TIME', payload: e.target.value });
-      const formattedTime = formatTimeInput(startTime) || '';
+      const formattedTime = formatTimeInput(startTime) || '0:00:00';
       setStartTime(formattedTime);
     } else if (e.target.id === 'endTime') {
       timeDispatch({ type: 'SET_END_TIME', payload: e.target.value });
-      const formattedTime = formatTimeInput(endTime) || '';
+      const formattedTime = formatTimeInput(endTime) || '0:00:00';
       setEndTime(formattedTime);
     }
+    setTimeElapsed(calculateElapsedTime(startTime, endTime));
   }
-  
+
+  console.log(timeElapsed);
+
   /* Convert UTC to Local Time
   ========================================================= */
   const convertUTCToLocalTime = (utcTime: string) => {
     return moment.utc(utcTime).tz(userTimeZone).format('h:mm A');
   };
+
+  /* Time Difference
+  ========================================================= */
+
+  const calculateElapsedTime = (startTime:string, endTime:string) => {
+    const format = 'h:mm A'; // 12-hour format with AM/PM
+    const startMoment = moment(startTime, format);
+    const endMoment = moment(endTime, format);
+
+    // Check if endTime is the next day (if startTime is later than endTime)
+    if (endMoment.isBefore(startMoment)) {
+        endMoment.add(1, 'day');
+    }
+
+    const duration = moment.duration(endMoment.diff(startMoment));
+    const hours = Math.floor(duration.asHours());
+    const minutes = duration.minutes();
+
+    return `${hours}:${String(minutes).padStart(2, '0')}`;
+};
 
 
   /* Timer Controls
@@ -248,8 +281,6 @@ const formatTimeInput = (time:string) => {
     }
   };
 
-
-
   return (
     <div className="time-submit-form">
       <form onSubmit={handleSubmit}>
@@ -312,7 +343,6 @@ const formatTimeInput = (time:string) => {
                   onBlur={handleManualInput}
                   value={startTime}
                 />
-                {convertUTCToLocalTime(timeState.startTime)}
 
               </div>
               <div className="flex-auto">
@@ -329,7 +359,18 @@ const formatTimeInput = (time:string) => {
                   onBlur={handleManualInput}
                   value={endTime ? endTime : getCurrentTimeFormatted()}
                 />
-                {convertUTCToLocalTime(timeState.endTime)}
+              </div>
+              <div className="flex-[0_1_100px]">
+                <Input
+                  isDisabled
+                  variant="underlined"
+                  label="Duration"
+                  labelPlacement="outside"
+                  placeholder="00:00"
+                  className="block w-full mb-5 text-xl font-bold text-white"
+                  type="text"
+                  value={calculateElapsedTime(startTime, endTime)}
+                />
               </div>
             </div>
             :
@@ -372,37 +413,8 @@ const formatTimeInput = (time:string) => {
 
       </form>
     </div>
+    
   )
 }
 
 export default SubmitTime
-
-
-
-// const calculateElapsedTime = (startTime: string, endTime: string) => {
-//   const convertToMinutes = (timeStr: string) => {
-//     const [time, modifier] = timeStr.split(/(am|pm|AM|PM)/);
-//     let [hours, minutes] = time.split(':').map(Number);
-
-//     // Convert hours in PM to 24-hour format
-//     if ((modifier?.toLowerCase() === 'pm') && hours < 12) hours += 12;
-//     // Convert 12AM to 0 hours
-//     if ((modifier?.toLowerCase() === 'am') && hours === 12) hours = 0;
-
-//     return hours * 60 + minutes;
-//   };
-
-//   const startMinutes = convertToMinutes(startTime);
-//   const endMinutes = convertToMinutes(endTime);
-
-//   let elapsedMinutes = endMinutes - startMinutes;
-
-//   // Handle overnight time spans
-//   if (elapsedMinutes < 0) elapsedMinutes += 24 * 60;
-
-//   // Format the elapsed time
-//   const elapsedHours = Math.floor(elapsedMinutes / 60);
-//   const remainingMinutes = elapsedMinutes % 60;
-
-//   return `${elapsedHours}:${String(remainingMinutes).padStart(2, '0')}`;
-// };
