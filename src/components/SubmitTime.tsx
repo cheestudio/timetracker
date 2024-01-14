@@ -9,19 +9,6 @@ import toast from 'react-hot-toast';
 
 const SubmitTime = ({ client }: { client: string }) => {
 
-
-  function getCurrentTimeFormatted() {
-    const now = new Date();
-    let hours = now.getHours();
-    const minutes = now.getMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    const minutesStr = minutes < 10 ? '0' + minutes : minutes;
-    return hours + ':' + minutesStr + ' ' + ampm;
-  }
-
-
   const timeInputRef = useRef('');
   const [date, setDate] = useState('');
   const [task, setTask] = useState('');
@@ -36,9 +23,6 @@ const SubmitTime = ({ client }: { client: string }) => {
 
   /* Time Conversions
   ========================================================= */
-
-  const startTimeUTC = moment(new Date()).tz('America/Los_Angeles').format('ha z');
-  const endTimeUTC = moment(endTime).tz('UTC').format('ha z');
   const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   function timeToSeconds(time: string) {
@@ -127,13 +111,6 @@ const SubmitTime = ({ client }: { client: string }) => {
     setTimeElapsed(calculateElapsedTime(timeState.startTime, timeState.endTime));
   }
 
-
-  /* Convert UTC to Local Time
-  ========================================================= */
-  const convertUTCToLocalTime = (utcTime: string) => {
-    return moment.utc(utcTime).tz(userTimeZone).format('h:mm A');
-  };
-
   /* Time Difference
   ========================================================= */
 
@@ -165,14 +142,24 @@ const SubmitTime = ({ client }: { client: string }) => {
 
   /* Timer Controls
   ========================================================= */
+  
   const toggleTimer = () => {
-    setTimerRunning(!timerRunning);
+    if(!timerRunning) {
+      setTimerRunning(true);
+      setStartTime(moment().format('h:mm A'));
+    }
+    else {
+      setTimerRunning(false);
+      setEndTime(moment().format('h:mm A'));
+    }
   }
 
   const restartTimer = () => {
     setTimerRunning(false);
     setTimerSeconds(0);
     setTimeTracked('0:00:00');
+    setStartTime('0:00:00');
+    setEndTime('0:00:00');
   }
 
   useEffect(() => {
@@ -200,10 +187,8 @@ const SubmitTime = ({ client }: { client: string }) => {
 
 
   /* Timer Input
-  
   ========================================================= */
-
-
+  
   const timerInputFormat = (input: string) => {
     const cleanInput = String(input).replace(/\D/g, '').replace(/^0+/, '');
     let
@@ -417,8 +402,6 @@ const SubmitTime = ({ client }: { client: string }) => {
                     <ArrowPathIcon className="w-[30px]" />
                   </Button>
                 </div>
-                <div>Start Time: {startTime}</div>
-                <div>End Time: {endTime}</div>
               </div>
             </div>
           }
