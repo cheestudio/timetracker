@@ -9,6 +9,19 @@ import toast from 'react-hot-toast';
 
 const SubmitTime = ({ client }: { client: string }) => {
 
+
+  function getCurrentTimeFormatted() {
+    const now = new Date();
+    let hours = now.getHours();
+    const minutes = now.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+    return hours + ':' + minutesStr + ' ' + ampm;
+  }
+
+
   const timeInputRef = useRef('');
   const [date, setDate] = useState('');
   const [task, setTask] = useState('');
@@ -31,17 +44,6 @@ const SubmitTime = ({ client }: { client: string }) => {
   function timeToSeconds(time: string) {
     const [hours, minutes] = time.split(':').map(Number);
     return (hours * 3600) + (minutes * 60);
-  }
-
-  function getCurrentTimeFormatted() {
-    const now = new Date();
-    let hours = now.getHours();
-    const minutes = now.getMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    const minutesStr = minutes < 10 ? '0' + minutes : minutes;
-    return hours + ':' + minutesStr + ' ' + ampm;
   }
 
   /* Convert Time Input to UTC
@@ -110,7 +112,7 @@ const SubmitTime = ({ client }: { client: string }) => {
     }
   }
 
-  const [timeState, timeDispatch] = useReducer(timeEntryReducer, { startTime: '', endTime: '' });
+  const [timeState, timeDispatch] = useReducer(timeEntryReducer, { startTime: '0:00:00', endTime: '0:00:00' });
 
   const handleManualInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.id === 'startTime') {
@@ -122,10 +124,9 @@ const SubmitTime = ({ client }: { client: string }) => {
       const formattedTime = formatTimeInput(endTime) || '0:00:00';
       setEndTime(formattedTime);
     }
-    setTimeElapsed(calculateElapsedTime(startTime, endTime));
+    setTimeElapsed(calculateElapsedTime(timeState.startTime, timeState.endTime));
   }
 
-  console.log(timeElapsed);
 
   /* Convert UTC to Local Time
   ========================================================= */
@@ -136,22 +137,30 @@ const SubmitTime = ({ client }: { client: string }) => {
   /* Time Difference
   ========================================================= */
 
-  const calculateElapsedTime = (startTime:string, endTime:string) => {
-    const format = 'h:mm A'; // 12-hour format with AM/PM
+  const calculateElapsedTime = (startTime: string | undefined, endTime: string | undefined) => {
+
+    if (startTime === '0:00:00' || endTime === '0:00:00') {
+      return '0:00';
+    }
+
+    const format = 'h:mm A';
     const startMoment = moment(startTime, format);
     const endMoment = moment(endTime, format);
 
-    // Check if endTime is the next day (if startTime is later than endTime)
     if (endMoment.isBefore(startMoment)) {
-        endMoment.add(1, 'day');
+      endMoment.add(1, 'day');
     }
 
     const duration = moment.duration(endMoment.diff(startMoment));
     const hours = Math.floor(duration.asHours());
     const minutes = duration.minutes();
 
+    if (Number.isNaN(hours) || Number.isNaN(minutes)) {
+      return '0:00';
+    }
+
     return `${hours}:${String(minutes).padStart(2, '0')}`;
-};
+  };
 
 
   /* Timer Controls
@@ -340,7 +349,7 @@ const SubmitTime = ({ client }: { client: string }) => {
                   type="text"
                   id="startTime"
                   onChange={(e) => setStartTime(e.target.value)}
-                  onBlur={handleManualInput}
+                  onBlur={(e: any) => handleManualInput(e)}
                   value={startTime}
                 />
 
@@ -356,8 +365,8 @@ const SubmitTime = ({ client }: { client: string }) => {
                   type="text"
                   id="endTime"
                   onChange={(e) => setEndTime(e.target.value)}
-                  onBlur={handleManualInput}
-                  value={endTime ? endTime : getCurrentTimeFormatted()}
+                  onBlur={(e: any) => handleManualInput(e)}
+                  value={endTime}
                 />
               </div>
               <div className="flex-[0_1_100px]">
@@ -367,13 +376,15 @@ const SubmitTime = ({ client }: { client: string }) => {
                   label="Duration"
                   labelPlacement="outside"
                   placeholder="00:00"
-                  className="block w-full mb-5 text-xl font-bold text-white !opacity-100"
+                  className=""
                   classNames={{
+                    base: 'block w-full mb-5 text-xl font-bold text-white !opacity-100',
                     input: 'text-lg font-bold text-white',
                   }}
                   type="text"
                   value={calculateElapsedTime(startTime, endTime)}
                 />
+
               </div>
             </div>
             :
@@ -406,6 +417,8 @@ const SubmitTime = ({ client }: { client: string }) => {
                     <ArrowPathIcon className="w-[30px]" />
                   </Button>
                 </div>
+                <div>Start Time: {startTime}</div>
+                <div>End Time: {endTime}</div>
               </div>
             </div>
           }
@@ -416,7 +429,7 @@ const SubmitTime = ({ client }: { client: string }) => {
 
       </form>
     </div>
-    
+
   )
 }
 
