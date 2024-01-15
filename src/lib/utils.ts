@@ -24,9 +24,9 @@ export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, 
 ========================================================= */
 
 
-export const convertTime = (time: string) => {
-  const hours = Math.floor(parseInt(time, 10) / 60);
-  const minutes = parseInt(time, 10) % 60;
+export const convertTime = (seconds: number) => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
   return `${hours}h ${minutes}m`;
 }
 
