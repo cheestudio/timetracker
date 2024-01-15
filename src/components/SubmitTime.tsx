@@ -61,7 +61,8 @@ const SubmitTime = ({ client }: { client: string }) => {
         if (match) {
           let hours = parseInt(match[1], 10);
           let minutes = match[2];
-          let ampm = match[3] ? match[3].toUpperCase() : 'AM';
+          // let ampm = match[3] ? match[3].toUpperCase() : 'AM';
+          let ampm = match[3] ? match[3].toUpperCase() : (hours < 12 ? 'AM' : 'PM');
           formattedTime = `${hours % 12 || 12}:${minutes} ${ampm}`;
         }
       }
@@ -105,7 +106,13 @@ const SubmitTime = ({ client }: { client: string }) => {
       setStartTime(formattedTime);
     } else if (e.target.id === 'endTime') {
       timeDispatch({ type: 'SET_END_TIME', payload: e.target.value });
-      const formattedTime = formatTimeInput(endTime) || '0:00:00';
+      let formattedTime = formatTimeInput(endTime) || '0:00:00';
+      if (!e.target.value.toLowerCase().includes('am') && !e.target.value.toLowerCase().includes('pm')) {
+        if (startTime.includes('AM') || startTime.includes('PM')) {
+          const amPm = startTime.slice(-2);
+          formattedTime = `${formattedTime.split(' ')[0]} ${amPm}`;
+        }
+      }
       setEndTime(formattedTime);
     }
     setTimeElapsed(calculateElapsedTime(timeState.startTime, timeState.endTime));
