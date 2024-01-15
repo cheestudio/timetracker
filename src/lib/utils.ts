@@ -9,10 +9,10 @@ export const supabase = createClient(supabaseUrl, supabaseKey as string || '');
 ========================================================= */
 export async function signInWithGoogle() {
   const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-          redirectTo: "https://chee-time-tracker.vercel.app"
-      }
+    provider: 'google',
+    options: {
+      redirectTo: "https://chee-time-tracker.vercel.app"
+    }
   })
 }
 
@@ -55,7 +55,7 @@ export const getThisWeekRange = () => {
   const start = new Date(today);
   start.setDate(today.getDate() - dayOfWeek);
   start.setHours(0, 0, 0, 0);
-  
+
   const end = new Date(start);
   end.setDate(start.getDate() + 6);
   end.setHours(23, 59, 59, 999);
@@ -69,3 +69,15 @@ export const getThisMonthRange = () => {
   console.log('month', firstDay, lastDay);
   return [firstDay, lastDay];
 };
+
+export const listClients = async () => {
+  const response = await fetch('/api/clients', {
+    method: 'POST',
+    headers: {
+      "Content-Type": "application/json",
+    },
+    cache: 'no-store'
+  });
+  const data = await response.json();
+  return data;
+}

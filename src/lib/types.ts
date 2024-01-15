@@ -10,8 +10,10 @@ export interface TimeEntryProps {
 }
 
 export interface TableRowControlsProps {
+  selectedClient: number;
   viewableRows: number;
   selectedDateRange: string;
+  handleClient: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   handleViewableRows: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   handleDateRange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   sortDescriptor: SortDescriptor;

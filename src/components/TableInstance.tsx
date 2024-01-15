@@ -32,9 +32,14 @@ const TableInstance = ({ client }: { client: string }) => {
   ========================================================= */
   const [timeEntries, setTimeEntries] = useState([] as any);
   const [selectedDateRange, setSelectedDateRange] = useState("all");
+  const [selectedClient, setSelectedClient] = useState(0);
 
   const handleDateRange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedDateRange(e.target.value);
+  };
+
+  const handleClient = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedClient(parseInt(e.target.value));
   };
 
   useEffect(() => {
@@ -184,6 +189,8 @@ const TableInstance = ({ client }: { client: string }) => {
 
       <TableRowControls
         viewableRows={viewableRows}
+        handleClient={handleClient}
+        selectedClient={parseInt(client)}
         selectedDateRange={selectedDateRange}
         handleViewableRows={handleViewableRows}
         handleDateRange={handleDateRange}
