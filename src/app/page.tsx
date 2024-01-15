@@ -8,24 +8,19 @@ import { Button, Divider, Input, Link } from '@nextui-org/react';
 import { useRouter } from 'next/navigation'
 import ListClients from '@/components/ListClients';
 import toast from 'react-hot-toast';
+import { listClients } from '@/lib/utils';
+
 export default function Home() {
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [clients, setClients] = useState([] as any);
   const router = useRouter();
 
-  const listClients = async () => {
-    const response = await fetch('/api/clients',{
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/json",
-      },
-      cache: 'no-store'
-    });
-    const data = await response.json();
-    setClients(data);
+  const showClients = async () => {
+    const clients = await listClients();
+    setClients(clients);
   }
-
+  
   async function checkUser() {
     const { data, error } = await supabase.auth.getSession();
     setLoggedIn(data.session !== null);
@@ -33,7 +28,7 @@ export default function Home() {
 
   useEffect(() => {
     checkUser();
-    listClients();
+    showClients();
   }, [loggedIn]);
 
   const createClient = async (e: any) => {
