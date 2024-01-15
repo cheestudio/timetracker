@@ -115,7 +115,7 @@ const SubmitTime = ({ client }: { client: string }) => {
       }
       setEndTime(formattedTime);
     }
-    setTimeElapsed(calculateElapsedTime(timeState.startTime, timeState.endTime));
+    // setTimeElapsed(calculateElapsedTime(timeState.startTime, timeState.endTime));
   }
 
   /* Time Difference
@@ -149,9 +149,9 @@ const SubmitTime = ({ client }: { client: string }) => {
 
   /* Timer Controls
   ========================================================= */
-  
+
   const toggleTimer = () => {
-    if(!timerRunning) {
+    if (!timerRunning) {
       setTimerRunning(true);
       setStartTime(moment().format('h:mm A'));
     }
@@ -195,7 +195,7 @@ const SubmitTime = ({ client }: { client: string }) => {
 
   /* Timer Input
   ========================================================= */
-  
+
   const timerInputFormat = (input: string) => {
     const cleanInput = String(input).replace(/\D/g, '').replace(/^0+/, '');
     let
@@ -258,6 +258,14 @@ const SubmitTime = ({ client }: { client: string }) => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    let totalTime;
+    if (timerSeconds > 0) {
+      totalTime = timerSeconds;
+    }
+    else {
+      const timeRange = calculateElapsedTime(startTime, endTime);
+      totalTime = timeToSeconds(timeRange);
+    }
     const { data: user, error: userError } = await supabase.auth.getSession()
     const { data, error } = await supabase
       .from('TimeEntries')
@@ -265,11 +273,13 @@ const SubmitTime = ({ client }: { client: string }) => {
         {
           date,
           task,
-          time_tracked: parse(timeTracked, 'm'),
+          time_tracked: totalTime,
           entry_id: uuidv4(),
           client_id: client,
           owner: user?.session?.user.user_metadata.name.split(' ')[0],
-          user_id: user.session?.user.id
+          user_id: user.session?.user.id,
+          start_time: startTime,
+          end_time: endTime,
         }
       ]);
     if (error) {
