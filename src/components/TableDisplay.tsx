@@ -21,7 +21,7 @@ const TableDisplay = ({ items, sortDescriptor, onSort, handleSelectedKeys }: { i
           <TableRow key={row.entry_id}>
             <TableCell>{formatDate(row.date)}</TableCell>
             <TableCell>{row.task}</TableCell>
-            <TableCell>{convertTime(row.time_tracked)}</TableCell>
+            <TableCell>{convertTime(parseInt(row.time_tracked))}</TableCell>
             <TableCell>{row.owner}</TableCell>
           </TableRow>
         ))}
