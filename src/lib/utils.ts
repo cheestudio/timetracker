@@ -81,3 +81,8 @@ export const listClients = async () => {
   const data = await response.json();
   return data;
 }
+
+//utc to local
+export const UTCtoLocal = (utc:string) => {
+  return new Date(utc).toLocaleTimeString();
+}

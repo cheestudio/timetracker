@@ -1,6 +1,6 @@
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, SortDescriptor } from "@nextui-org/react";
 import { TimeEntryProps } from "@/lib/types";
-import { formatDate, convertTime } from "@/lib/utils";
+import { formatDate, convertTime, UTCtoLocal } from "@/lib/utils";
 
 const TableDisplay = ({ items, sortDescriptor, onSort, handleSelectedKeys }: { items: any, sortDescriptor: SortDescriptor, onSort: any, handleSelectedKeys: any }) => {
   return (
@@ -11,17 +11,25 @@ const TableDisplay = ({ items, sortDescriptor, onSort, handleSelectedKeys }: { i
       onSortChange={onSort}
     >
       <TableHeader>
-        <TableColumn key="date" allowsSorting>Date</TableColumn>
         <TableColumn key="task" allowsSorting>Task</TableColumn>
+        <TableColumn key="date" allowsSorting>Date</TableColumn>
+        <TableColumn key="duration" allowsSorting>Duration</TableColumn>
         <TableColumn key="time_tracked" allowsSorting>Time</TableColumn>
         <TableColumn key="owner" allowsSorting>Owner</TableColumn>
       </TableHeader>
       <TableBody>
         {items.map((row: TimeEntryProps) => (
           <TableRow key={row.entry_id}>
-            <TableCell>{formatDate(row.date)}</TableCell>
             <TableCell>{row.task}</TableCell>
-            <TableCell>{convertTime(parseInt(row.time_tracked))}</TableCell>
+            <TableCell>{formatDate(row.date)}</TableCell>
+            <TableCell>
+              <div className="text-lg">{convertTime(parseInt(row.time_tracked))}</div>
+            </TableCell>
+            <TableCell>
+               <div className="text-sm">
+               <span className="start-time">{UTCtoLocal(row.start_time)}</span>-<span className="end-time">{UTCtoLocal(row.end_time)}</span>
+               </div>
+            </TableCell>
             <TableCell>{row.owner}</TableCell>
           </TableRow>
         ))}
