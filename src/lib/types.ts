@@ -7,6 +7,8 @@ export interface TimeEntryProps {
   time_tracked: string;
   entry_id: string;
   owner: string;
+  start_time: string;
+  end_time: string;
 }
 
 export interface TableRowControlsProps {
