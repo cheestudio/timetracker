@@ -19,7 +19,7 @@ const TableInstance = ({ client }: { client: string }) => {
 
   const calculateTotalHours = (entries: TimeEntryProps[]) => {
     let totalHours = 0;
-    if(entries.length === 0) {
+    if (entries.length === 0) {
       return;
     }
     entries.forEach((entry) => {
@@ -31,8 +31,9 @@ const TableInstance = ({ client }: { client: string }) => {
   /* Time Entries
   ========================================================= */
   const [timeEntries, setTimeEntries] = useState([] as any);
-  const [selectedDateRange, setSelectedDateRange] = useState("all");
-  const [selectedClient, setSelectedClient] = useState(0);
+  const [selectedDateRange, setSelectedDateRange] = useState<string>("all");
+  const [selectedClient, setSelectedClient] = useState<number>(0);
+  const [selectedUser, setSelectedUser] = useState<string>("");
 
   const handleDateRange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedDateRange(e.target.value);
@@ -42,6 +43,10 @@ const TableInstance = ({ client }: { client: string }) => {
     setSelectedClient(parseInt(e.target.value));
   };
 
+  const handleUser = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedUser(e.target.value);
+  };
+
   useEffect(() => {
     const fetchTimeEntries = async () => {
       let query = supabase
@@ -49,6 +54,11 @@ const TableInstance = ({ client }: { client: string }) => {
         .select('*')
         .eq('client_id', client)
         .order('date', { ascending: true });
+
+      if (selectedUser !== '') {
+        query = query
+          .textSearch('owner', selectedUser);
+      }
 
       if (selectedDateRange !== 'all') {
         let range;
@@ -65,6 +75,7 @@ const TableInstance = ({ client }: { client: string }) => {
             .lte('date', range[1].toISOString());
         }
       }
+
       const { data, error } = await query;
       if (error) {
         console.error('Error fetching data: ', error);
@@ -79,14 +90,14 @@ const TableInstance = ({ client }: { client: string }) => {
     const handleNewEntry = () => {
       fetchTimeEntries();
     };
-    
+
     window.addEventListener('timeEntryAdded', handleNewEntry);
 
     return () => {
       window.removeEventListener('timeEntryAdded', handleNewEntry);
     };
 
-  }, [client, selectedDateRange]);
+  }, [client, selectedUser, selectedDateRange]);
 
   /* Selected Rows
   ========================================================= */
@@ -190,6 +201,8 @@ const TableInstance = ({ client }: { client: string }) => {
       <TableRowControls
         viewableRows={viewableRows}
         handleClient={handleClient}
+        handleUser={handleUser}
+        selectedUser={selectedUser}
         selectedClient={parseInt(client)}
         selectedDateRange={selectedDateRange}
         handleViewableRows={handleViewableRows}
@@ -219,7 +232,7 @@ const TableInstance = ({ client }: { client: string }) => {
             <strong>
               {selectedKeys && selectedKeys.length > 0 ? 'Selected: ' : 'Total: '}
             </strong>
-            {convertTime(calculatedTime.toString())}
+            {convertTime(calculatedTime).toString()}
           </h2>
         </div>
 

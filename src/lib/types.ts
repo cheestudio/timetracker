@@ -13,8 +13,10 @@ export interface TimeEntryProps {
 
 export interface TableRowControlsProps {
   selectedClient: number;
+  selectedUser: string;
   viewableRows: number;
   selectedDateRange: string;
+  handleUser: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   handleClient: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   handleViewableRows: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   handleDateRange: (e: React.ChangeEvent<HTMLSelectElement>) => void;

@@ -15,22 +15,6 @@ const TimeSheet = () => {
     setCurrentClient(params.get('client') || '1');
   }, [params, setCurrentClient]);
 
-  /*  Current Client Tables
-  ========================================================= */
-
-  useEffect(() => {
-    (async () => {
-      const { count, error } = await supabase
-        .from('TableInstances')
-        .select('*', { count: 'exact' })
-        .eq('client_id', currentClient);
-
-        if (error) {
-          console.error('Error fetching data: ', error);
-          return [];
-        }
-    })();
-  }, [currentClient, setCurrentClient]);
 
   return (
     <>
