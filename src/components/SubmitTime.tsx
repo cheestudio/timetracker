@@ -314,9 +314,8 @@ return (
           onChange={handleTimeMode}
           classNames={{
             base: cn(
-              "inline-flex flex-row-reverse w-4xl max-w-md bg-content1 hover:bg-content2 items-center",
-              "justify-between cursor-pointer rounded-lg gap-4 p-3 border-2 border-transparent",
-              "data-[selected=true]:border-primary",
+              "inline-flex flex-row-reverse w-4xl max-w-md items-center",
+              "justify-between cursor-pointer rounded-lg gap-4 p-3 border-1 border-content1 hover:border-primary bg-content1",
             ),
             wrapper: "bg-primary"
           }}

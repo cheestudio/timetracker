@@ -4,7 +4,7 @@ import { listClients } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { useTimesheet } from "@/lib/TimesheetContext";
 
-const TableRowControls = ({ viewableRows, selectedDateRange, handleViewableRows, handleDateRange }: TableRowControlsProps) => {
+const TableRowControls = ({ viewableRows, selectedDateRange, handleUser, selectedUser, handleViewableRows, handleDateRange }: TableRowControlsProps) => {
 
   const { currentClient, setCurrentClient } = useTimesheet();
   const [clients, setClients] = useState([]);
@@ -13,8 +13,6 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleViewableRows,
     setCurrentClient(e.target.value);
   }
 
-  console.log('currentClient', currentClient);
-  
   const getClients = async () => {
     const clients = await listClients();
     setClients(clients);
@@ -50,6 +48,28 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleViewableRows,
           }
         </Select>
       </div>
+
+      <div className="flex-[0_0_200px]">
+      <Select
+          value={selectedUser}
+          onChange={handleUser}
+          variant="bordered"
+          label="Owner"
+          labelPlacement="outside"
+          placeholder="Select"
+          disallowEmptySelection={true}
+          popoverProps={{
+            classNames: {
+              content: "bg-[#27272A]",
+            },
+          }}
+        >
+          <SelectItem key="">All</SelectItem>
+          <SelectItem key="Lars">Lars</SelectItem>
+          <SelectItem key="Matt">Matt</SelectItem>
+        </Select>
+      </div>
+
       <div className="flex-[0_0_200px]">
         <Select
           value={viewableRows}
