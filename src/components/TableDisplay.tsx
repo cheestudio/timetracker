@@ -23,12 +23,17 @@ const TableDisplay = ({ items, sortDescriptor, onSort, handleSelectedKeys }: { i
             <TableCell>{row.task}</TableCell>
             <TableCell>{formatDate(row.date)}</TableCell>
             <TableCell>
-              <div className="text-lg">{convertTime(parseInt(row.time_tracked))}</div>
+              <div>{convertTime(parseInt(row.time_tracked))}</div>
             </TableCell>
             <TableCell>
-               <div className="text-sm">
-               <span className="start-time">{UTCtoLocal(row.start_time)}</span>-<span className="end-time">{UTCtoLocal(row.end_time)}</span>
-               </div>
+              <div className="text-sm">
+                {row.start_time && row.end_time &&
+                  <div>
+                    <span className="start-time">
+                      {UTCtoLocal(row.start_time)}</span> - <span className="end-time">{UTCtoLocal(row.end_time)}</span>
+                  </div>
+                }
+              </div>
             </TableCell>
             <TableCell>{row.owner}</TableCell>
           </TableRow>

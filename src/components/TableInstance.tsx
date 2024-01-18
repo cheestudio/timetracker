@@ -52,8 +52,12 @@ const TableInstance = ({ client }: { client: string }) => {
       let query = supabase
         .from('TimeEntries')
         .select('*')
-        .eq('client_id', client)
         .order('date', { ascending: true });
+
+      if (parseInt(client) !== 0) {
+        query = query
+          .eq('client_id', client);
+      }
 
       if (selectedUser !== '') {
         query = query
