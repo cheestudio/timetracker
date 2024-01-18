@@ -84,5 +84,5 @@ export const listClients = async () => {
 
 //utc to local
 export const UTCtoLocal = (utc:string) => {
-  return new Date(utc).toLocaleTimeString();
+  return new Date(utc).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
 }

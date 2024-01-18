@@ -24,16 +24,17 @@ const Header = () => {
         .select('*')
         .eq('id', currentClient)
         ;
-        if (isMounted) {
-          if (error) {
-            console.error('Error fetching data: ', error);
-          } else if (data) {
-            setTitle(data[0].client_name);
-          }
+      if (isMounted) {
+        if (error) {
+          console.error('Error fetching data: ', error);
+        } else if (data) {
+          const clientName = data.length > 0 ? data[0]?.client_name : 'All';
+          setTitle(clientName);
         }
+      }
     })();
   }, [currentClient]);
-  
+
   return (
     <div className="flex items-center justify-center mb-10">
       <Link href="/">

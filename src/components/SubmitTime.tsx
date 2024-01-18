@@ -12,8 +12,8 @@ const SubmitTime = ({ client }: { client: string }) => {
   const timeInputRef = useRef('');
   const [date, setDate] = useState('');
   const [task, setTask] = useState('');
-  const [startTime, setStartTime] = useState<string>("");
-  const [endTime, setEndTime] = useState<string>("");
+  const [startTime, setStartTime] = useState<string>("0:00");
+  const [endTime, setEndTime] = useState<string>("0:00");
   const [timerRunning, setTimerRunning] = useState(false);
   const [timerSeconds, setTimerSeconds] = useState(0);
   const [timeTracked, setTimeTracked] = useState<string>('0:00:00');
@@ -97,7 +97,7 @@ const SubmitTime = ({ client }: { client: string }) => {
     }
   }
 
-  const [timeState, timeDispatch] = useReducer(timeEntryReducer, { startTime: '0:00:00', endTime: '0:00:00' });
+  const [timeState, timeDispatch] = useReducer(timeEntryReducer, { startTime: '', endTime: '' });
 
   const handleManualInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.id === 'startTime') {
@@ -115,7 +115,6 @@ const SubmitTime = ({ client }: { client: string }) => {
       }
       setEndTime(formattedTime);
     }
-    // setTimeElapsed(calculateElapsedTime(timeState.startTime, timeState.endTime));
   }
 
   /* Time Difference
@@ -165,8 +164,8 @@ const SubmitTime = ({ client }: { client: string }) => {
     setTimerRunning(false);
     setTimerSeconds(0);
     setTimeTracked('0:00:00');
-    setStartTime('0:00:00');
-    setEndTime('0:00:00');
+    setStartTime('0:00');
+    setEndTime('0:00');
   }
 
   useEffect(() => {
@@ -259,12 +258,22 @@ const SubmitTime = ({ client }: { client: string }) => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     let totalTime;
+    let startTimeValue;
+    let endTimeValue;
     if (timerSeconds > 0) {
       totalTime = timerSeconds;
     }
     else {
       const timeRange = calculateElapsedTime(startTime, endTime);
       totalTime = timeToSeconds(timeRange);
+    }
+    if (startTime != '0:00' && endTime != '0:00') {
+      startTimeValue = timeToUTC(startTime);
+      endTimeValue = timeToUTC(endTime);
+    }
+    else {
+      startTimeValue = null;
+      endTimeValue = null;
     }
     const { data: user, error: userError } = await supabase.auth.getSession()
     const { data, error } = await supabase
@@ -278,8 +287,8 @@ const SubmitTime = ({ client }: { client: string }) => {
           client_id: client,
           owner: user?.session?.user.user_metadata.name.split(' ')[0],
           user_id: user.session?.user.id,
-          start_time: timeToUTC(startTime),
-          end_time: timeToUTC(endTime),
+          start_time: startTimeValue,
+          end_time: endTimeValue,
         }
       ]);
     if (error) {
@@ -301,28 +310,30 @@ const SubmitTime = ({ client }: { client: string }) => {
     }
   }
 
-return (
-  <div className="time-submit-form">
-    <form onSubmit={handleSubmit}>
+  console.log(startTime);
 
-      <div className="flex justify-center w-full mb-10">
-        <Switch
-          color="primary"
-          defaultSelected
-          startContent={<CalendarDaysIcon />}
-          endContent={<ClockIcon />}
-          onChange={handleTimeMode}
-          classNames={{
-            base: cn(
-              "inline-flex flex-row-reverse w-4xl max-w-md items-center",
-              "justify-between cursor-pointer rounded-lg gap-4 p-3 border-1 border-content1 hover:border-primary bg-content1",
-            ),
-            wrapper: "bg-primary"
-          }}
-        >
-          {switchSelected ? 'Entry' : 'Timer'}
-        </Switch>
-        {/* <RadioGroup
+  return (
+    <div className="time-submit-form">
+      <form onSubmit={handleSubmit}>
+
+        <div className="flex justify-center w-full mb-10">
+          <Switch
+            color="primary"
+            defaultSelected
+            startContent={<CalendarDaysIcon />}
+            endContent={<ClockIcon />}
+            onChange={handleTimeMode}
+            classNames={{
+              base: cn(
+                "inline-flex flex-row-reverse w-4xl max-w-md items-center",
+                "justify-between cursor-pointer rounded-lg gap-4 p-3 border-1 border-content1 hover:border-primary bg-content1",
+              ),
+              wrapper: "bg-primary"
+            }}
+          >
+            {switchSelected ? 'Entry' : 'Timer'}
+          </Switch>
+          {/* <RadioGroup
             label=""
             className="my-5"
             orientation="horizontal"
@@ -332,130 +343,130 @@ return (
             <Radio value="entry">Entry</Radio>
             <Radio value="timer">Timer</Radio>
           </RadioGroup> */}
-      </div>
-
-      <div className="flex items-center justify-between gap-x-5 gap-y-3">
-        <div className="flex-auto">
-          <Input
-            isRequired
-            variant="bordered"
-            label="Task"
-            labelPlacement="outside"
-            placeholder="What did you work on?"
-            className="block w-full mb-5 text-white"
-            type="text"
-            id="task"
-            value={task}
-            onChange={(e) => setTask(e.target.value)}
-          />
         </div>
-        <div className="flex-[0_1_100px]">
-          <Input
-            isRequired
-            variant="bordered"
-            label="Date"
-            labelPlacement="outside"
-            placeholder="Date"
-            className="block w-full mb-5 text-white"
-            type="date"
-            id="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
-        </div>
-        {timeMode === 'entry' ?
-          <div className="flex items-center justify-between gap-x-2 gap-y-3">
-            <div className="flex-auto">
-              <Input
-                isRequired
-                variant="bordered"
-                label="Start Time"
-                labelPlacement="outside"
-                placeholder="Enter valid time"
-                className="block w-full mb-5 text-white"
-                type="text"
-                id="startTime"
-                onChange={(e) => setStartTime(e.target.value)}
-                onBlur={(e: any) => handleManualInput(e)}
-                value={startTime}
-              />
 
-            </div>
-            <div className="flex-auto">
-              <Input
-                isRequired
-                variant="bordered"
-                label="End Time"
-                labelPlacement="outside"
-                placeholder="Enter valid time"
-                className="block w-full mb-5 text-white"
-                type="text"
-                id="endTime"
-                onChange={(e) => setEndTime(e.target.value)}
-                onBlur={(e: any) => handleManualInput(e)}
-                value={endTime}
-              />
-            </div>
-            <div className="flex-[0_1_100px]">
-              <Input
-                isDisabled
-                variant="underlined"
-                label="Duration"
-                labelPlacement="outside"
-                placeholder="00:00"
-                className=""
-                classNames={{
-                  base: 'block w-full mb-5 text-xl font-bold text-white !opacity-100',
-                  input: 'text-lg font-bold text-white',
-                }}
-                type="text"
-                value={calculateElapsedTime(startTime, endTime)}
-              />
-
-            </div>
+        <div className="flex items-center justify-between gap-x-5 gap-y-3">
+          <div className="flex-auto">
+            <Input
+              isRequired
+              variant="bordered"
+              label="Task"
+              labelPlacement="outside"
+              placeholder="What did you work on?"
+              className="block w-full mb-5 text-white"
+              type="text"
+              id="task"
+              value={task}
+              onChange={(e) => setTask(e.target.value)}
+            />
           </div>
-          :
-          <div className="flex-[0_1_250px]">
-            <div className="">
-              <div id="timer-toggle" className="flex items-center justify-center gap-5">
-                <div className="timer-results min-w-[65px]">
-                  {/* <div>{timeTracked ? timeTracked : '00:00:00'}</div> */}
+          <div className="flex-[0_1_100px]">
+            <Input
+              isRequired
+              variant="bordered"
+              label="Date"
+              labelPlacement="outside"
+              placeholder="Date"
+              className="block w-full mb-5 text-white"
+              type="date"
+              id="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+            />
+          </div>
+          {timeMode === 'entry' ?
+            <div className="flex items-center justify-between gap-x-2 gap-y-3">
+              <div className="flex-auto">
+                <Input
+                  isRequired
+                  variant="bordered"
+                  label="Start Time"
+                  labelPlacement="outside"
+                  placeholder="Enter valid time"
+                  className="block w-full mb-5 text-white"
+                  type="text"
+                  id="startTime"
+                  onChange={(e) => setStartTime(e.target.value)}
+                  onBlur={(e: any) => handleManualInput(e)}
+                  value={startTime}
+                />
 
-                  <Input
-                    isRequired
-                    variant="underlined"
-                    label=""
-                    labelPlacement="outside"
-                    classNames={{
-                      input: 'text-lg font-bold text-white',
-                    }}
-                    type="text"
-                    id="end_time"
-                    onChange={(e) => handleTimerInput(e)}
-                    onFocus={handleTimerFocus}
-                    onBlur={handleTimerBlur}
-                    value={timeTracked}
-                  />
-                </div>
-                <Button className="" variant="light" isIconOnly onPress={() => toggleTimer()}>
-                  {timerRunning ? <PauseCircleIcon /> : <PlayCircleIcon />}
-                </Button>
-                <Button variant="light" isIconOnly onPress={() => restartTimer()}>
-                  <ArrowPathIcon className="w-[30px]" />
-                </Button>
+              </div>
+              <div className="flex-auto">
+                <Input
+                  isRequired
+                  variant="bordered"
+                  label="End Time"
+                  labelPlacement="outside"
+                  placeholder="Enter valid time"
+                  className="block w-full mb-5 text-white"
+                  type="text"
+                  id="endTime"
+                  onChange={(e) => setEndTime(e.target.value)}
+                  onBlur={(e: any) => handleManualInput(e)}
+                  value={endTime}
+                />
+              </div>
+              <div className="flex-[0_1_100px]">
+                <Input
+                  isDisabled
+                  variant="underlined"
+                  label="Duration"
+                  labelPlacement="outside"
+                  placeholder="00:00"
+                  className=""
+                  classNames={{
+                    base: 'block w-full mb-5 text-xl font-bold text-white !opacity-100',
+                    input: 'text-lg font-bold text-white',
+                  }}
+                  type="text"
+                  value={calculateElapsedTime(startTime, endTime)}
+                />
+
               </div>
             </div>
-          </div>
-        }
+            :
+            <div className="flex-[0_1_250px]">
+              <div className="">
+                <div id="timer-toggle" className="flex items-center justify-center gap-5">
+                  <div className="timer-results min-w-[65px]">
+                    {/* <div>{timeTracked ? timeTracked : '00:00:00'}</div> */}
 
-      </div>
+                    <Input
+                      isRequired
+                      variant="underlined"
+                      label=""
+                      labelPlacement="outside"
+                      classNames={{
+                        input: 'text-lg font-bold text-white',
+                      }}
+                      type="text"
+                      id="timer_time"
+                      onChange={(e) => handleTimerInput(e)}
+                      onFocus={handleTimerFocus}
+                      onBlur={handleTimerBlur}
+                      value={timeTracked}
+                    />
+                  </div>
+                  <Button className="" variant="light" isIconOnly onPress={() => toggleTimer()}>
+                    {timerRunning ? <PauseCircleIcon /> : <PlayCircleIcon />}
+                  </Button>
+                  <Button variant="light" isIconOnly onPress={() => restartTimer()}>
+                    <ArrowPathIcon className="w-[30px]" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          }
 
-      <Button className="w-full max-w-[200px] mt-2 mx-auto block" variant="flat" color="primary" type="submit">Add Time Entry</Button>
+        </div>
 
-    </form>
-  </div>
+        <Button className="w-full max-w-[200px] mt-2 mx-auto block" variant="flat" color="primary" type="submit">Add Time Entry</Button>
 
-)
+      </form>
+    </div>
+
+  )
 }
 
 export default SubmitTime
