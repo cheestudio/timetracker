@@ -1,4 +1,5 @@
 import { SortDescriptor } from "@nextui-org/react";
+import { DateRange } from "react-day-picker";
 
 export interface TimeEntryProps {
   key: string;
@@ -20,10 +21,13 @@ export interface TableRowControlsProps {
   handleClient: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   handleViewableRows: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   handleDateRange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  handleCustomDateRange: (e: DateRange | undefined) => void;
   sortDescriptor: SortDescriptor;
   setSortDescriptor: React.Dispatch<React.SetStateAction<SortDescriptor>>;
   setTimeEntries: React.Dispatch<React.SetStateAction<any[]>>;
   timeEntries: any[];
 }
+
+export type CustomDateRangeProps = Pick<TableRowControlsProps, 'handleCustomDateRange'>
 
 export type SortDirection = 'ascending' | 'descending' | undefined;

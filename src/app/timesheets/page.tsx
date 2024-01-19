@@ -15,7 +15,10 @@ const TimeSheet = () => {
     setCurrentClient(params.get('client') || '1');
   }, [params, setCurrentClient]);
 
-
+  useEffect(() => {
+    document.body.classList.add('dark');
+  }, []);
+  
   return (
     <>
       <div className="flex flex-col gap-10">

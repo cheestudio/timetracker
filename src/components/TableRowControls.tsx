@@ -1,11 +1,13 @@
+import React from "react";
+
 import { Input, Select, SelectItem } from "@nextui-org/react";
 import { TableRowControlsProps } from "@/lib/types";
 import { listClients } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { useTimesheet } from "@/lib/TimesheetContext";
-import {Calendar} from '@react-spectrum/calendar';
+import { DatePickerWithRange } from "./DatePicker";
 
-const TableRowControls = ({ viewableRows, selectedDateRange, handleUser, selectedUser, handleViewableRows, handleDateRange }: TableRowControlsProps) => {
+const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRange, handleUser, selectedUser, handleViewableRows, handleDateRange }: TableRowControlsProps) => {
 
   const { currentClient, setCurrentClient } = useTimesheet();
   const [clients, setClients] = useState([]);
@@ -26,7 +28,7 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleUser, selecte
   return (
     <>
       <div className="flex justify-end gap-5 table-row-controls">
-        <div className="flex-[0_0_300px] mr-auto ml-0">
+        <div className="flex-[1_1_auto] mr-auto ml-0">
           <Select
             value={currentClient}
             onChange={handleClient}
@@ -43,16 +45,17 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleUser, selecte
               },
             }}
           >
-            <SelectItem key={0}>All</SelectItem>
             {
-              clients.map((client: any) => (
+              [<SelectItem key={0}>All</SelectItem>,
+              ...clients.map((client: any) => (
                 <SelectItem key={client.id}>{client.client_name}</SelectItem>
               ))
+              ]
             }
           </Select>
         </div>
 
-        <div className="flex-[0_0_200px]">
+        <div className="flex-[1_1_auto]">
           <Select
             value={selectedUser}
             onChange={handleUser}
@@ -73,7 +76,7 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleUser, selecte
           </Select>
         </div>
 
-        <div className="flex-[0_0_200px]">
+        <div className="flex-[1_1_auto]">
           <Select
             value={viewableRows}
             onChange={handleViewableRows}
@@ -94,7 +97,7 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleUser, selecte
             <SelectItem key="100">100</SelectItem>
           </Select>
         </div>
-        <div className="flex-[0_0_200px]">
+        <div className="flex-[1_1_auto]">
           <Select
             value={selectedDateRange}
             onChange={handleDateRange}
@@ -112,8 +115,18 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleUser, selecte
             <SelectItem key="today">Today</SelectItem>
             <SelectItem key="this_week">This Week</SelectItem>
             <SelectItem key="this_month">This Month</SelectItem>
+            <SelectItem key="custom">Custom</SelectItem>
           </Select>
         </div>
+
+        {selectedDateRange === "custom" &&
+          <div className="flex-[1_1_auto]">
+            <DatePickerWithRange
+              handleCustomDateRange={handleCustomDateRange}
+            />
+          </div>
+        }
+
       </div>
     </>
   );

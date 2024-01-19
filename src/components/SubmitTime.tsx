@@ -310,8 +310,6 @@ const SubmitTime = ({ client }: { client: string }) => {
     }
   }
 
-  console.log(startTime);
-
   return (
     <div className="time-submit-form">
       <form onSubmit={handleSubmit}>
