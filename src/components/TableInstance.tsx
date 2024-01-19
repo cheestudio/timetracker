@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import PaginateTable from './PaginateTable';
 import TableDisplay from './TableDisplay';
 import TableRowControls from './TableRowControls';
+import {DateRange} from 'react-day-picker';
 
 const TableInstance = ({ client }: { client: string }) => {
 
@@ -32,12 +33,17 @@ const TableInstance = ({ client }: { client: string }) => {
   ========================================================= */
   const [timeEntries, setTimeEntries] = useState([] as any);
   const [selectedDateRange, setSelectedDateRange] = useState<string>("all");
+  const [customDateRange, setCustomDateRange] = useState<DateRange | undefined>(undefined);
   const [selectedClient, setSelectedClient] = useState<number>(0);
   const [selectedUser, setSelectedUser] = useState<string>("");
 
   const handleDateRange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedDateRange(e.target.value);
   };
+
+  const handleCustomDateRange = (dateRange: DateRange | undefined) => {
+    setCustomDateRange(dateRange || undefined);
+  }
 
   const handleClient = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedClient(parseInt(e.target.value));
@@ -46,6 +52,7 @@ const TableInstance = ({ client }: { client: string }) => {
   const handleUser = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedUser(e.target.value);
   };
+
 
   useEffect(() => {
     const fetchTimeEntries = async () => {
@@ -72,6 +79,14 @@ const TableInstance = ({ client }: { client: string }) => {
           range = getThisWeekRange();
         } else if (selectedDateRange === 'this_month') {
           range = getThisMonthRange();
+        }
+        else if (selectedDateRange === 'custom') {
+          const start = customDateRange?.from;
+          const end = customDateRange?.to;
+          if (!start || !end) {
+            return;
+          }
+          range = [start, end];
         }
         if (range) {
           query = query
@@ -101,7 +116,7 @@ const TableInstance = ({ client }: { client: string }) => {
       window.removeEventListener('timeEntryAdded', handleNewEntry);
     };
 
-  }, [client, selectedUser, selectedDateRange]);
+  }, [client, selectedUser, customDateRange, selectedDateRange]);
 
   /* Selected Rows
   ========================================================= */
@@ -209,6 +224,7 @@ const TableInstance = ({ client }: { client: string }) => {
         selectedUser={selectedUser}
         selectedClient={parseInt(client)}
         selectedDateRange={selectedDateRange}
+        handleCustomDateRange={handleCustomDateRange}
         handleViewableRows={handleViewableRows}
         handleDateRange={handleDateRange}
         sortDescriptor={sortDescriptor}

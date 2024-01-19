@@ -66,7 +66,6 @@ export const getThisMonthRange = () => {
   const date = new Date();
   const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
   const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59, 999);
-  console.log('month', firstDay, lastDay);
   return [firstDay, lastDay];
 };
 
@@ -85,4 +84,14 @@ export const listClients = async () => {
 //utc to local
 export const UTCtoLocal = (utc:string) => {
   return new Date(utc).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+}
+
+/* ShadCN
+========================================================= */
+
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
 }
