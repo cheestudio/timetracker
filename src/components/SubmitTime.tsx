@@ -6,6 +6,7 @@ import { PlayCircleIcon, PauseCircleIcon, ArrowPathIcon, ClockIcon, CalendarDays
 import moment from 'moment-timezone';
 import parse from 'parse-duration';
 import toast from 'react-hot-toast';
+import ClientDropdown from './ClientDropdown';
 
 const SubmitTime = ({ client }: { client: string }) => {
 
@@ -343,7 +344,12 @@ const SubmitTime = ({ client }: { client: string }) => {
           </RadioGroup> */}
         </div>
 
-        <div className="flex items-center justify-between gap-x-5 gap-y-3">
+        <div className="flex items-start justify-between gap-x-5 gap-y-3">
+          <div className="flex-[0_1_200px]">
+            <ClientDropdown 
+            isSubmit={true} 
+            />
+          </div>
           <div className="flex-auto">
             <Input
               isRequired
@@ -373,8 +379,8 @@ const SubmitTime = ({ client }: { client: string }) => {
             />
           </div>
           {timeMode === 'entry' ?
-            <div className="flex items-center justify-between gap-x-2 gap-y-3">
-              <div className="flex-auto">
+            <>
+              <div className="flex-[0_1_100px]">
                 <Input
                   isRequired
                   variant="bordered"
@@ -390,7 +396,7 @@ const SubmitTime = ({ client }: { client: string }) => {
                 />
 
               </div>
-              <div className="flex-auto">
+              <div className="flex-[0_1_100px]">
                 <Input
                   isRequired
                   variant="bordered"
@@ -422,14 +428,12 @@ const SubmitTime = ({ client }: { client: string }) => {
                 />
 
               </div>
-            </div>
+            </>
             :
             <div className="flex-[0_1_250px]">
               <div className="">
                 <div id="timer-toggle" className="flex items-center justify-center gap-5">
                   <div className="timer-results min-w-[65px]">
-                    {/* <div>{timeTracked ? timeTracked : '00:00:00'}</div> */}
-
                     <Input
                       isRequired
                       variant="underlined"

@@ -6,53 +6,16 @@ import { listClients } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { useTimesheet } from "@/lib/TimesheetContext";
 import { DatePickerWithRange } from "./DatePicker";
+import ClientDropdown from "./ClientDropdown";
 
 const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRange, handleUser, selectedUser, handleViewableRows, handleDateRange }: TableRowControlsProps) => {
 
-  const { currentClient, setCurrentClient } = useTimesheet();
-  const [clients, setClients] = useState([]);
-
-  const handleClient = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setCurrentClient(e.target.value);
-  }
-
-  const getClients = async () => {
-    const clients = await listClients();
-    setClients(clients);
-  };
-
-  useEffect(() => {
-    getClients();
-  }, []);
 
   return (
     <>
       <div className="flex justify-end gap-5 table-row-controls">
         <div className="flex-[1_1_auto] mr-auto ml-0">
-          <Select
-            value={currentClient}
-            onChange={handleClient}
-            selectedKeys={currentClient}
-            onOpenChange={(e) => console.log(e)}
-            variant="bordered"
-            label="Client"
-            labelPlacement="outside"
-            placeholder="Select"
-            disallowEmptySelection={false}
-            popoverProps={{
-              classNames: {
-                content: "bg-[#27272A]",
-              },
-            }}
-          >
-            {
-              [<SelectItem key={0}>All</SelectItem>,
-              ...clients.map((client: any) => (
-                <SelectItem key={client.id}>{client.client_name}</SelectItem>
-              ))
-              ]
-            }
-          </Select>
+          <ClientDropdown />
         </div>
 
         <div className="flex-[1_1_auto]">
