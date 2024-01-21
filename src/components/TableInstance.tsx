@@ -4,7 +4,7 @@ import { TableRowControlsProps } from '@/lib/types';
 import { useState, useEffect, useMemo } from "react";
 import { TimeEntryProps, SortDirection } from "@/lib/types";
 import { Button, SortDescriptor } from "@nextui-org/react";
-import { convertTime, getTodayRange, getThisWeekRange, getLastTwoWeeks, getThisMonthRange, debounceWithValue } from "@/lib/utils";
+import { convertTime, convertToDecimalHours, getTodayRange, getThisWeekRange, getLastTwoWeeks, getThisMonthRange, debounceWithValue } from "@/lib/utils";
 import SubmitTime from "./SubmitTime";
 import { supabase } from "@/lib/utils";
 import toast from 'react-hot-toast';
@@ -273,8 +273,9 @@ const TableInstance = ({ client }: { client: string }) => {
           <h2 className="text-2xl">
             <strong>
               {selectedKeys && selectedKeys.length > 0 ? 'Selected: ' : 'Total: '}
-            </strong>
-            {convertTime(calculatedTime).toString()}
+            </strong> <br/>
+            {convertTime(calculatedTime).toString()} <br/>
+            {convertToDecimalHours(calculatedTime).toString()}
           </h2>
         </div>
 
