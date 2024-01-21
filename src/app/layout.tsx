@@ -24,12 +24,11 @@ export default function RootLayout({
         <div className="flex items-center justify-center min-h-screen pt-12 pb-24 dark">
           <div className="w-full max-w-5xl inner">
             <Providers>
-            <Header />
               {children}
             </Providers>
             <Toaster
               toastOptions={{
-                position: 'bottom-right',
+                position: 'bottom-center',
                 duration: 1000,
                 style: {
                   background: '#18181B',

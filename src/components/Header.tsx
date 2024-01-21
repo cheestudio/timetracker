@@ -36,18 +36,13 @@ const Header = () => {
   }, [currentClient]);
 
   return (
-    <div className="flex items-center justify-center mb-10">
+    <div className="flex items-center justify-center pt-10 mb-10">
       <Link href="/">
         <Image src={logo} alt="logo" width={50} height={50} />
       </Link>
       {pathname === '/timesheets' &&
-        <div className="ml-auto">
-          <h3>{title}</h3>
-        </div>
-      }
-      {pathname === '/timesheets' &&
-        <div className="ml-auto">
-          <Button variant="flat" onPress={() => router.push("/")}>Back Home</Button>
+        <div className="ml-auto mr-0">
+          <h3><strong>Client:</strong> {title}</h3>
         </div>
       }
     </div>

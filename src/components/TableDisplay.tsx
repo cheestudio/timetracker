@@ -1,6 +1,7 @@
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, SortDescriptor } from "@nextui-org/react";
 import { TimeEntryProps } from "@/lib/types";
 import { formatDate, convertTime, UTCtoLocal } from "@/lib/utils";
+import { CheckCircleIcon } from "@heroicons/react/24/outline";
 
 const TableDisplay = ({ items, sortDescriptor, onSort, handleSelectedKeys }: { items: any, sortDescriptor: SortDescriptor, onSort: any, handleSelectedKeys: any }) => {
   return (
@@ -16,6 +17,7 @@ const TableDisplay = ({ items, sortDescriptor, onSort, handleSelectedKeys }: { i
         <TableColumn key="duration" allowsSorting>Duration</TableColumn>
         <TableColumn key="time_tracked" allowsSorting>Time</TableColumn>
         <TableColumn key="owner" allowsSorting>Owner</TableColumn>
+        <TableColumn key="billable" allowsSorting>Billable</TableColumn>
       </TableHeader>
       <TableBody>
         {items.map((row: TimeEntryProps) => (
@@ -36,6 +38,7 @@ const TableDisplay = ({ items, sortDescriptor, onSort, handleSelectedKeys }: { i
               </div>
             </TableCell>
             <TableCell>{row.owner}</TableCell>
+            <TableCell>{ row.billable && <CheckCircleIcon className="w-5 h-5 text-primary" /> }</TableCell>
           </TableRow>
         ))}
       </TableBody>
