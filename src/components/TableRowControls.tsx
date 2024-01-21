@@ -18,7 +18,7 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRan
     if (showSearch && searchInputRef.current) {
       searchInputRef.current.focus();
     }
-  }, [showSearch])
+  }, [showSearch]);
 
   return (
     <>

@@ -103,11 +103,11 @@ const SubmitTime = ({ client }: { client: string }) => {
   const handleManualInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.id === 'startTime') {
       timeDispatch({ type: 'SET_START_TIME', payload: e.target.value });
-      const formattedTime = formatTimeInput(startTime) || '0:00:00';
+      const formattedTime = formatTimeInput(startTime) || '0:00';
       setStartTime(formattedTime);
     } else if (e.target.id === 'endTime') {
       timeDispatch({ type: 'SET_END_TIME', payload: e.target.value });
-      let formattedTime = formatTimeInput(endTime) || '0:00:00';
+      let formattedTime = formatTimeInput(endTime) || '0:00';
       if (!e.target.value.toLowerCase().includes('am') && !e.target.value.toLowerCase().includes('pm')) {
         if (startTime.includes('AM') || startTime.includes('PM')) {
           const amPm = startTime.slice(-2);
@@ -312,39 +312,26 @@ const SubmitTime = ({ client }: { client: string }) => {
   }
 
   return (
-    <div className="time-submit-form">
+    <div className="mt-10 time-submit-form">
       <form onSubmit={handleSubmit}>
-
-        <div className="flex justify-center w-full mb-10">
-          <Switch
-            color="primary"
-            defaultSelected
-            startContent={<CalendarDaysIcon />}
-            endContent={<ClockIcon />}
-            onChange={handleTimeMode}
-            classNames={{
-              base: cn(
-                "inline-flex flex-row-reverse w-4xl max-w-md items-center",
-                "justify-between cursor-pointer rounded-lg gap-4 p-3 border-1 border-content1 hover:border-primary bg-content1",
-              ),
-              wrapper: "bg-primary"
-            }}
-          >
-            {switchSelected ? 'Entry' : 'Timer'}
-          </Switch>
-          {/* <RadioGroup
-            label=""
-            className="my-5"
-            orientation="horizontal"
-            value={timeMode}
-            onValueChange={setTimeMode}
-          >
-            <Radio value="entry">Entry</Radio>
-            <Radio value="timer">Timer</Radio>
-          </RadioGroup> */}
-        </div>
-
         <div className="flex items-start justify-between gap-x-5 gap-y-3">
+          <div className="flex-[0_1_75px] self-center">
+            <Switch
+              color="primary"
+              defaultSelected
+              startContent={<CalendarDaysIcon />}
+              endContent={<ClockIcon />}
+              onChange={handleTimeMode}
+              classNames={{
+                base: cn(
+                  "inline-flex flex-row-reverse w-full items-center",
+                  "justify-between cursor-pointer rounded-lg gap-4 p-2 border-1 border-content1 hover:border-primary bg-content1",
+                ),
+                wrapper: "bg-secondary"
+              }}
+            >
+            </Switch>
+          </div>
           <div className="flex-[0_1_200px]">
             <ClientDropdown
               isSubmit={true}
@@ -411,7 +398,7 @@ const SubmitTime = ({ client }: { client: string }) => {
                   value={endTime}
                 />
               </div>
-              <div className="flex-[0_1_100px]">
+              <div className="flex-[0_1_80px]">
                 <Input
                   isDisabled
                   variant="underlined"
@@ -449,7 +436,7 @@ const SubmitTime = ({ client }: { client: string }) => {
                     value={timeTracked}
                   />
                 </div>
-                <Button className="" variant="light" isIconOnly onPress={() => toggleTimer()}>
+                <Button variant="light" isIconOnly onPress={() => toggleTimer()}>
                   {timerRunning ? <PauseCircleIcon /> : <PlayCircleIcon />}
                 </Button>
                 <Button variant="light" isIconOnly onPress={() => restartTimer()}>
