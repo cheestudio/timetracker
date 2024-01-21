@@ -346,8 +346,8 @@ const SubmitTime = ({ client }: { client: string }) => {
 
         <div className="flex items-start justify-between gap-x-5 gap-y-3">
           <div className="flex-[0_1_200px]">
-            <ClientDropdown 
-            isSubmit={true} 
+            <ClientDropdown
+              isSubmit={true}
             />
           </div>
           <div className="flex-auto">
@@ -430,33 +430,31 @@ const SubmitTime = ({ client }: { client: string }) => {
               </div>
             </>
             :
-            <div className="flex-[0_1_250px]">
-              <div className="">
-                <div id="timer-toggle" className="flex items-center justify-center gap-5">
-                  <div className="timer-results min-w-[65px]">
-                    <Input
-                      isRequired
-                      variant="underlined"
-                      label=""
-                      labelPlacement="outside"
-                      classNames={{
-                        input: 'text-lg font-bold text-white',
-                      }}
-                      type="text"
-                      id="timer_time"
-                      onChange={(e) => handleTimerInput(e)}
-                      onFocus={handleTimerFocus}
-                      onBlur={handleTimerBlur}
-                      value={timeTracked}
-                    />
-                  </div>
-                  <Button className="" variant="light" isIconOnly onPress={() => toggleTimer()}>
-                    {timerRunning ? <PauseCircleIcon /> : <PlayCircleIcon />}
-                  </Button>
-                  <Button variant="light" isIconOnly onPress={() => restartTimer()}>
-                    <ArrowPathIcon className="w-[30px]" />
-                  </Button>
+            <div className="flex-[0_1_250px] self-center">
+              <div id="timer-toggle" className="flex items-center justify-center gap-5">
+                <div className="timer-results min-w-[65px]">
+                  <Input
+                    isRequired
+                    variant="underlined"
+                    label=""
+                    labelPlacement="outside"
+                    classNames={{
+                      input: 'text-lg font-bold text-white',
+                    }}
+                    type="text"
+                    id="timer_time"
+                    onChange={(e) => handleTimerInput(e)}
+                    onFocus={handleTimerFocus}
+                    onBlur={handleTimerBlur}
+                    value={timeTracked}
+                  />
                 </div>
+                <Button className="" variant="light" isIconOnly onPress={() => toggleTimer()}>
+                  {timerRunning ? <PauseCircleIcon /> : <PlayCircleIcon />}
+                </Button>
+                <Button variant="light" isIconOnly onPress={() => restartTimer()}>
+                  <ArrowPathIcon className="w-[30px]" />
+                </Button>
               </div>
             </div>
           }

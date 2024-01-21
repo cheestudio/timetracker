@@ -1,15 +1,24 @@
-import React from "react";
+import React, { useRef } from "react";
 
-import { Input, Select, SelectItem } from "@nextui-org/react";
+import { Button, Input, Select, SelectItem } from "@nextui-org/react";
 import { TableRowControlsProps } from "@/lib/types";
 import { listClients } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { useTimesheet } from "@/lib/TimesheetContext";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { DatePickerWithRange } from "./DatePicker";
 import ClientDropdown from "./ClientDropdown";
 
-const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRange, handleUser, selectedUser, handleViewableRows, handleDateRange }: TableRowControlsProps) => {
+const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRange, handleUser, selectedUser, handleViewableRows, handleDateRange, handleSearch, loading }: TableRowControlsProps) => {
 
+  const [showSearch, setShowSearch] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+useEffect(() => {
+  if(showSearch && searchInputRef.current) {
+    searchInputRef.current.focus();
+    console.log(searchInputRef.current);
+  }
+}, [showSearch])
 
   return (
     <>
@@ -17,7 +26,6 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRan
         <div className="flex-[1_1_auto] mr-auto ml-0">
           <ClientDropdown />
         </div>
-
         <div className="flex-[1_1_auto]">
           <Select
             value={selectedUser}
@@ -38,7 +46,6 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRan
             <SelectItem key="Matt">Matt</SelectItem>
           </Select>
         </div>
-
         <div className="flex-[1_1_auto]">
           <Select
             value={viewableRows}
@@ -81,6 +88,11 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRan
             <SelectItem key="custom">Custom</SelectItem>
           </Select>
         </div>
+        <div className="flex-[0_1_50px] self-end">
+          <Button isLoading={loading} variant="light" isIconOnly onPress={() => setShowSearch(!showSearch)}>
+            <MagnifyingGlassIcon className="w-7 h-7" />
+          </Button>
+        </div>
 
         {selectedDateRange === "custom" &&
           <div className="flex-[1_1_auto]">
@@ -91,6 +103,25 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRan
         }
 
       </div>
+      {showSearch &&
+        <div className="flex justify-end gap-5 table-row-controls">
+          <div className="flex-[1_1_auto]">
+            <Input
+              isRequired
+              variant="bordered"
+              label="Search"
+              labelPlacement="outside"
+              classNames={{
+                input: 'text-lg font-bold text-white',
+              }}
+              type="text"
+              id="timer_time"
+              onChange={handleSearch}
+              ref={searchInputRef}
+            />
+          </div>
+        </div>
+      }
     </>
   );
 };

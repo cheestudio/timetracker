@@ -30,7 +30,6 @@ function ClientDropdown({ isSubmit  }: { isSubmit?: boolean }) {
       value={currentClient}
       onChange={handleClient}
       selectedKeys={currentClient}
-      onOpenChange={(e) => console.log(e)}
       variant="bordered"
       label="Client"
       labelPlacement="outside"
