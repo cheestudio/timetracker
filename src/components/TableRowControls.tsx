@@ -13,12 +13,12 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRan
 
   const [showSearch, setShowSearch] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
-useEffect(() => {
-  if(showSearch && searchInputRef.current) {
-    searchInputRef.current.focus();
-    console.log(searchInputRef.current);
-  }
-}, [showSearch])
+  
+  useEffect(() => {
+    if (showSearch && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [showSearch])
 
   return (
     <>
@@ -60,9 +60,9 @@ useEffect(() => {
               },
             }}
           >
-            <SelectItem key="-1">All</SelectItem>
-            <SelectItem key="1">25</SelectItem>
-            <SelectItem key="5">50</SelectItem>
+            <SelectItem key="all">All</SelectItem>
+            <SelectItem key="25">25</SelectItem>
+            <SelectItem key="50">50</SelectItem>
             <SelectItem key="75">75</SelectItem>
             <SelectItem key="100">100</SelectItem>
           </Select>
