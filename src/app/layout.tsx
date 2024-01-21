@@ -29,13 +29,14 @@ export default function RootLayout({
             </Providers>
             <Toaster
               toastOptions={{
-                duration: 3000,
+                position: 'bottom-right',
+                duration: 1000,
                 style: {
                   background: '#18181B',
                   color: '#fff',
                 },
                 iconTheme: {
-                  primary: '#2D69F0',
+                  primary: '#2496b9',
                   secondary: '#fff',
                 },
               }}

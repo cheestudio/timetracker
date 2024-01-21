@@ -38,5 +38,15 @@ module.exports = {
     },
   },
   darkMode: "class",
-  plugins: [require("tailwindcss-animate"), nextui()],
+  plugins: [require("tailwindcss-animate"), nextui({
+    themes: {
+      dark: {
+        colors: {
+          primary: '#2496b9',
+          secondary: '#ea6c84',
+        },
+      },
+    },
+    addCommonColors: true
+  })],
 }
