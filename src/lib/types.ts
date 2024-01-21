@@ -8,6 +8,7 @@ export interface TimeEntryProps {
   time_tracked: string;
   entry_id: string;
   owner: string;
+  billable: boolean;
   start_time: string;
   end_time: string;
 }

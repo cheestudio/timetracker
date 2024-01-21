@@ -1,8 +1,8 @@
 import { supabase } from '@/lib/utils';
-import { Button, Input, Switch, cn, RadioGroup, Radio, Select, SelectItem } from '@nextui-org/react';
+import { Button, Input, Switch, cn, RadioGroup, Radio, Select, SelectItem, Tooltip, Checkbox } from '@nextui-org/react';
 import { useEffect, useState, useRef, useReducer } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { PlayCircleIcon, PauseCircleIcon, ArrowPathIcon, ClockIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
+import { PlayCircleIcon, PauseCircleIcon, ArrowPathIcon, ClockIcon, CalendarDaysIcon, ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import moment from 'moment-timezone';
 import parse from 'parse-duration';
 import toast from 'react-hot-toast';
@@ -21,6 +21,8 @@ const SubmitTime = ({ client }: { client: string }) => {
   const [timeElapsed, setTimeElapsed] = useState<string>('0:00:00');
   const [timeMode, setTimeMode] = useState("entry");
   const [switchSelected, setSwitchSelected] = useState(true);
+  const [toggleBar, setToggleBar] = useState(false);
+  const [billable, setBillable] = useState(true);
 
   /* Time Conversions
   ========================================================= */
@@ -238,6 +240,10 @@ const SubmitTime = ({ client }: { client: string }) => {
     }
   }
 
+  const handleInputFocus = (e: any) => {
+    e.target.select();
+  };
+
   const handleTimerFocus = (e: any) => {
     e.target.select();
     timeInputRef.current = e.target.value;
@@ -286,6 +292,7 @@ const SubmitTime = ({ client }: { client: string }) => {
           time_tracked: totalTime,
           entry_id: uuidv4(),
           client_id: client,
+          billable: billable,
           owner: user?.session?.user.user_metadata.name.split(' ')[0],
           user_id: user.session?.user.id,
           start_time: startTimeValue,
@@ -312,9 +319,10 @@ const SubmitTime = ({ client }: { client: string }) => {
   }
 
   return (
-    <div className="mt-10 time-submit-form">
+    <div className={`fixed top-0 left-0 w-full py-5 px-5 bg-black/50 backdrop-blur-md ${timerRunning ? 'border-secondary' : 'border-[#333]'} border-b-1 time-submit-form z-[9999] transition-transform ${toggleBar ? 'translate-y-[-100%]' : 'translate-y-0'}`}>
       <form onSubmit={handleSubmit}>
         <div className="flex items-start justify-between gap-x-5 gap-y-3">
+          
           <div className="flex-[0_1_75px] self-center">
             <Switch
               color="primary"
@@ -332,6 +340,15 @@ const SubmitTime = ({ client }: { client: string }) => {
             >
             </Switch>
           </div>
+          <div className="flex-[0_1_100px] self-center">
+            <Checkbox
+              radius="none"
+              defaultSelected
+              onChange={(e) => setBillable(e.target.checked)}
+            >
+              Billable
+            </Checkbox>
+          </div>
           <div className="flex-[0_1_200px]">
             <ClientDropdown
               isSubmit={true}
@@ -339,7 +356,7 @@ const SubmitTime = ({ client }: { client: string }) => {
           </div>
           <div className="flex-auto">
             <Input
-            radius="sm"
+              radius="sm"
               isRequired
               variant="bordered"
               label="Task"
@@ -354,7 +371,7 @@ const SubmitTime = ({ client }: { client: string }) => {
           </div>
           <div className="flex-[0_1_100px]">
             <Input
-            radius="sm"
+              radius="sm"
               isRequired
               variant="bordered"
               label="Date"
@@ -367,11 +384,12 @@ const SubmitTime = ({ client }: { client: string }) => {
               onChange={(e) => setDate(e.target.value)}
             />
           </div>
+          
           {timeMode === 'entry' ?
             <>
               <div className="flex-[0_1_100px]">
                 <Input
-                radius="sm"
+                  radius="sm"
                   isRequired
                   variant="bordered"
                   label="Start Time"
@@ -380,6 +398,7 @@ const SubmitTime = ({ client }: { client: string }) => {
                   className="block w-full mb-5 text-white"
                   type="text"
                   id="startTime"
+                  onFocus={handleInputFocus}
                   onChange={(e) => setStartTime(e.target.value)}
                   onBlur={(e: any) => handleManualInput(e)}
                   value={startTime}
@@ -388,7 +407,7 @@ const SubmitTime = ({ client }: { client: string }) => {
               </div>
               <div className="flex-[0_1_100px]">
                 <Input
-                radius="sm"
+                  radius="sm"
                   isRequired
                   variant="bordered"
                   label="End Time"
@@ -397,6 +416,7 @@ const SubmitTime = ({ client }: { client: string }) => {
                   className="block w-full mb-5 text-white"
                   type="text"
                   id="endTime"
+                  onFocus={handleInputFocus}
                   onChange={(e) => setEndTime(e.target.value)}
                   onBlur={(e: any) => handleManualInput(e)}
                   value={endTime}
@@ -404,7 +424,7 @@ const SubmitTime = ({ client }: { client: string }) => {
               </div>
               <div className="flex-[0_1_80px]">
                 <Input
-                radius="sm"
+                  radius="sm"
                   isDisabled
                   variant="underlined"
                   label="Duration"
@@ -426,7 +446,7 @@ const SubmitTime = ({ client }: { client: string }) => {
               <div id="timer-toggle" className="flex items-center justify-center gap-5">
                 <div className="timer-results min-w-[65px]">
                   <Input
-                  radius="sm"
+                    radius="sm"
                     isRequired
                     variant="underlined"
                     label=""
@@ -437,7 +457,7 @@ const SubmitTime = ({ client }: { client: string }) => {
                     type="text"
                     id="timer_time"
                     onChange={(e) => handleTimerInput(e)}
-                    onFocus={handleTimerFocus}
+                    onFocus={handleInputFocus}
                     onBlur={handleTimerBlur}
                     value={timeTracked}
                   />
@@ -454,9 +474,18 @@ const SubmitTime = ({ client }: { client: string }) => {
 
         </div>
 
-        <Button className="w-full max-w-[200px] mt-2 mx-auto block" variant="flat" color="primary" type="submit">Add Time Entry</Button>
+        <Button className="w-full max-w-[200px] mx-auto block bg-[#081D25]" variant="flat" color="primary" type="submit">Add Time Entry</Button>
 
       </form>
+      {!timerRunning &&
+        <Button
+          className={`absolute bottom-0 right-5 min-w-[10px] ${toggleBar ? 'translate-y-[150%]' : 'translate-y-[-10px]'}`}
+          isIconOnly
+          onPress={() => setToggleBar(!toggleBar)}
+        >
+          {toggleBar ? <ChevronDownIcon className="w-[20px]" /> : <ChevronUpIcon className="w-[20px]" />}
+        </Button>
+      }
     </div>
 
   )

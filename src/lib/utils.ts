@@ -44,7 +44,6 @@ export const getTodayRange = () => {
   today.setHours(0, 0, 0, 0);
   const end = new Date(today);
   end.setHours(23, 59, 59, 999);
-  console.log('today', today, end);
   return [today, end];
 };
 
@@ -68,6 +67,17 @@ export const getThisMonthRange = () => {
   const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59, 999);
   return [firstDay, lastDay];
 };
+
+export const getLastTwoWeeks = () => {
+  const today = new Date();
+  const end = new Date(today);
+  end.setHours(23, 59, 59, 999);
+  const start = new Date(today);
+  start.setDate(today.getDate() - 13);
+  start.setHours(0, 0, 0, 0);
+  return [start, end];
+};
+
 
 export const listClients = async () => {
   const response = await fetch('/api/clients', {

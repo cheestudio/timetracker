@@ -4,7 +4,7 @@ import { TableRowControlsProps } from '@/lib/types';
 import { useState, useEffect, useMemo } from "react";
 import { TimeEntryProps, SortDirection } from "@/lib/types";
 import { Button, SortDescriptor } from "@nextui-org/react";
-import { convertTime, getTodayRange, getThisWeekRange, getThisMonthRange, debounceWithValue } from "@/lib/utils";
+import { convertTime, getTodayRange, getThisWeekRange, getLastTwoWeeks, getThisMonthRange, debounceWithValue } from "@/lib/utils";
 import SubmitTime from "./SubmitTime";
 import { supabase } from "@/lib/utils";
 import toast from 'react-hot-toast';
@@ -34,7 +34,7 @@ const TableInstance = ({ client }: { client: string }) => {
   ========================================================= */
   const [timeEntries, setTimeEntries] = useState([] as any);
   const [loading, setLoading] = useState<boolean>(false);
-  const [selectedDateRange, setSelectedDateRange] = useState<string>("all");
+  const [selectedDateRange, setSelectedDateRange] = useState<string>("today");
   const [customDateRange, setCustomDateRange] = useState<DateRange | undefined>(undefined);
   const [selectedClient, setSelectedClient] = useState<number>(0);
   const [selectedUser, setSelectedUser] = useState<string>("");
@@ -82,16 +82,21 @@ const TableInstance = ({ client }: { client: string }) => {
         query = query
           .ilike('task', `%${searchQuery}%`);
       }
-
+      
       if (selectedDateRange !== 'all') {
         let range;
         if (selectedDateRange === 'today') {
           range = getTodayRange();
-        } else if (selectedDateRange === 'this_week') {
+        } 
+        else if (selectedDateRange === 'this_week') {
           range = getThisWeekRange();
-        } else if (selectedDateRange === 'this_month') {
-          range = getThisMonthRange();
+        } 
+        else if (selectedDateRange === 'two_weeks') {
+          range = getLastTwoWeeks();
         }
+        else if (selectedDateRange === 'this_month') {
+          range = getThisMonthRange();
+        } 
         else if (selectedDateRange === 'custom') {
           const start = customDateRange?.from;
           const end = customDateRange?.to;
@@ -230,6 +235,8 @@ const TableInstance = ({ client }: { client: string }) => {
   return (
     <div className="flex flex-col gap-4 table-instance">
 
+      <SubmitTime client={client} />
+
       <TableRowControls
         viewableRows={viewableRows}
         handleClient={handleClient}
@@ -272,8 +279,6 @@ const TableInstance = ({ client }: { client: string }) => {
         </div>
 
       </div>
-
-      <SubmitTime client={client} />
 
       {viewableRows != -1 &&
         <PaginateTable page={page} pages={pages} setPage={setPage} paginationKey={paginationKey} />

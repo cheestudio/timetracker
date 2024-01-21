@@ -36,11 +36,6 @@ function ClientDropdown({ isSubmit }: { isSubmit?: boolean }) {
       labelPlacement="outside"
       placeholder="Select"
       disallowEmptySelection={false}
-      popoverProps={{
-        classNames: {
-          content: "bg-[#27272A]",
-        },
-      }}
     >
       {
         [

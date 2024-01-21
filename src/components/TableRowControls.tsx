@@ -22,7 +22,7 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRan
 
   return (
     <>
-      <div className="flex justify-end gap-5 table-row-controls">
+      <div className="flex justify-end gap-5 pt-24 table-row-controls">
         <div className="flex-[1_1_auto] mr-auto ml-0">
           <ClientDropdown />
         </div>
@@ -36,15 +36,11 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRan
             labelPlacement="outside"
             placeholder="Select"
             disallowEmptySelection={true}
-            popoverProps={{
-              classNames: {
-                content: "bg-[#27272A]",
-              },
-            }}
           >
             <SelectItem key="">All</SelectItem>
             <SelectItem key="Lars">Lars</SelectItem>
             <SelectItem key="Matt">Matt</SelectItem>
+            <SelectItem key="Jenica">Jenica</SelectItem>
           </Select>
         </div>
         <div className="flex-[1_1_auto]">
@@ -56,11 +52,6 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRan
             label="Viewable Rows"
             labelPlacement="outside"
             placeholder="Select"
-            popoverProps={{
-              classNames: {
-                content: "bg-[#27272A]",
-              },
-            }}
           >
             <SelectItem key="all">All</SelectItem>
             <SelectItem key="25">25</SelectItem>
@@ -72,21 +63,18 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRan
         <div className="flex-[1_1_auto]">
           <Select
             radius="sm"
-            value={selectedDateRange}
+            defaultSelectedKeys={new Set(["today"])}
             onChange={handleDateRange}
+            disallowEmptySelection={true}
             variant="bordered"
             label="Date Range"
             labelPlacement="outside"
             placeholder="Select"
-            popoverProps={{
-              classNames: {
-                content: "bg-[#27272A]",
-              },
-            }}
           >
             <SelectItem key="all">All</SelectItem>
             <SelectItem key="today">Today</SelectItem>
             <SelectItem key="this_week">This Week</SelectItem>
+            <SelectItem key="two_weeks">Last Two Weeks</SelectItem>
             <SelectItem key="this_month">This Month</SelectItem>
             <SelectItem key="custom">Custom</SelectItem>
           </Select>
