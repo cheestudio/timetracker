@@ -71,7 +71,7 @@ export default function Home() {
           <div className="max-w-md mx-auto">
             <h3 className="mb-5 font-semibold">Create a New Client:</h3>
             <form onSubmit={createClient}>
-              <Input isRequired className="mb-5" variant="bordered" label="Client Name" />
+              <Input radius="sm" isRequired className="mb-5" variant="bordered" label="Client Name" />
               <Button color="secondary" variant="flat" type="submit">Add Client</Button>
             </form>
           </div>
