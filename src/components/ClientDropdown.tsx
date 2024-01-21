@@ -4,7 +4,7 @@ import { listClients } from "@/lib/utils";
 import { Select, SelectItem } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 
-function ClientDropdown({ isSubmit  }: { isSubmit?: boolean }) {
+function ClientDropdown({ isSubmit }: { isSubmit?: boolean }) {
 
   const { currentClient, setCurrentClient } = useTimesheet();
   const [clients, setClients] = useState([]);
@@ -27,6 +27,7 @@ function ClientDropdown({ isSubmit  }: { isSubmit?: boolean }) {
   return (
 
     <Select
+      radius="sm"
       value={currentClient}
       onChange={handleClient}
       selectedKeys={currentClient}

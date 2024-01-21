@@ -39,6 +39,13 @@ module.exports = {
   },
   darkMode: "class",
   plugins: [require("tailwindcss-animate"), nextui({
+    layout: {
+      radius: {
+        small: "4px", // rounded-small
+        medium: "100px", // rounded-medium
+        large: "10px", // rounded-large
+      }
+    },
     themes: {
       dark: {
         colors: {

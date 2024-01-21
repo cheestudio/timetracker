@@ -325,7 +325,7 @@ const SubmitTime = ({ client }: { client: string }) => {
               classNames={{
                 base: cn(
                   "inline-flex flex-row-reverse w-full items-center",
-                  "justify-between cursor-pointer rounded-lg gap-4 p-2 border-1 border-content1 hover:border-primary bg-content1",
+                  "justify-between cursor-pointer rounded-sm gap-4 p-2 border-1 border-content1 hover:border-primary bg-content1",
                 ),
                 wrapper: "bg-secondary"
               }}
@@ -339,6 +339,7 @@ const SubmitTime = ({ client }: { client: string }) => {
           </div>
           <div className="flex-auto">
             <Input
+            radius="sm"
               isRequired
               variant="bordered"
               label="Task"
@@ -353,6 +354,7 @@ const SubmitTime = ({ client }: { client: string }) => {
           </div>
           <div className="flex-[0_1_100px]">
             <Input
+            radius="sm"
               isRequired
               variant="bordered"
               label="Date"
@@ -369,6 +371,7 @@ const SubmitTime = ({ client }: { client: string }) => {
             <>
               <div className="flex-[0_1_100px]">
                 <Input
+                radius="sm"
                   isRequired
                   variant="bordered"
                   label="Start Time"
@@ -385,6 +388,7 @@ const SubmitTime = ({ client }: { client: string }) => {
               </div>
               <div className="flex-[0_1_100px]">
                 <Input
+                radius="sm"
                   isRequired
                   variant="bordered"
                   label="End Time"
@@ -400,6 +404,7 @@ const SubmitTime = ({ client }: { client: string }) => {
               </div>
               <div className="flex-[0_1_80px]">
                 <Input
+                radius="sm"
                   isDisabled
                   variant="underlined"
                   label="Duration"
@@ -421,6 +426,7 @@ const SubmitTime = ({ client }: { client: string }) => {
               <div id="timer-toggle" className="flex items-center justify-center gap-5">
                 <div className="timer-results min-w-[65px]">
                   <Input
+                  radius="sm"
                     isRequired
                     variant="underlined"
                     label=""

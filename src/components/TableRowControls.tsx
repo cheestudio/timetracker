@@ -13,7 +13,7 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRan
 
   const [showSearch, setShowSearch] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
-  
+
   useEffect(() => {
     if (showSearch && searchInputRef.current) {
       searchInputRef.current.focus();
@@ -28,6 +28,7 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRan
         </div>
         <div className="flex-[1_1_auto]">
           <Select
+            radius="sm"
             value={selectedUser}
             onChange={handleUser}
             variant="bordered"
@@ -48,6 +49,7 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRan
         </div>
         <div className="flex-[1_1_auto]">
           <Select
+            radius="sm"
             value={viewableRows}
             onChange={handleViewableRows}
             variant="bordered"
@@ -69,6 +71,7 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRan
         </div>
         <div className="flex-[1_1_auto]">
           <Select
+            radius="sm"
             value={selectedDateRange}
             onChange={handleDateRange}
             variant="bordered"
@@ -88,11 +91,6 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRan
             <SelectItem key="custom">Custom</SelectItem>
           </Select>
         </div>
-        <div className="flex-[0_1_50px] self-end">
-          <Button isLoading={loading} variant="light" isIconOnly onPress={() => setShowSearch(!showSearch)}>
-            <MagnifyingGlassIcon className="w-7 h-7" />
-          </Button>
-        </div>
 
         {selectedDateRange === "custom" &&
           <div className="flex-[1_1_auto]">
@@ -101,6 +99,12 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRan
             />
           </div>
         }
+
+        <div className="flex-[0_1_50px] self-end">
+          <Button isLoading={loading} variant="light" isIconOnly onPress={() => setShowSearch(!showSearch)}>
+            <MagnifyingGlassIcon className="w-7 h-7" />
+          </Button>
+        </div>
 
       </div>
       {showSearch &&
