@@ -30,6 +30,12 @@ export const convertTime = (seconds: number) => {
   return `${hours}h ${minutes}m`;
 }
 
+export const convertToDecimalHours = (seconds: number) => {
+  const hours = seconds / 3600;
+  return `${hours.toFixed(2)} hours`;
+};
+
+
 export const formatDate = (dateString: string) => {
   const [year, month, day] = dateString.split('-').map(part => parseInt(part, 10));
   const date = new Date(year, month - 1, day);
