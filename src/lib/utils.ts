@@ -95,3 +95,12 @@ import { twMerge } from "tailwind-merge"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
+
+
+export function debounceWithValue<T extends (...args: any[]) => any>(func: T, waitFor: number) {
+  let timeout: NodeJS.Timeout;
+  return (...args: Parameters<T>) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), waitFor);
+  };
+}

@@ -1,16 +1,17 @@
 "use client";
 
+import { TableRowControlsProps } from '@/lib/types';
 import { useState, useEffect, useMemo } from "react";
 import { TimeEntryProps, SortDirection } from "@/lib/types";
 import { Button, SortDescriptor } from "@nextui-org/react";
-import { convertTime, getTodayRange, getThisWeekRange, getThisMonthRange } from "@/lib/utils";
+import { convertTime, getTodayRange, getThisWeekRange, getThisMonthRange, debounceWithValue } from "@/lib/utils";
 import SubmitTime from "./SubmitTime";
 import { supabase } from "@/lib/utils";
 import toast from 'react-hot-toast';
 import PaginateTable from './PaginateTable';
 import TableDisplay from './TableDisplay';
 import TableRowControls from './TableRowControls';
-import {DateRange} from 'react-day-picker';
+import { DateRange } from 'react-day-picker';
 
 const TableInstance = ({ client }: { client: string }) => {
 
@@ -32,27 +33,33 @@ const TableInstance = ({ client }: { client: string }) => {
   /* Time Entries
   ========================================================= */
   const [timeEntries, setTimeEntries] = useState([] as any);
+  const [loading, setLoading] = useState<boolean>(false);
   const [selectedDateRange, setSelectedDateRange] = useState<string>("all");
   const [customDateRange, setCustomDateRange] = useState<DateRange | undefined>(undefined);
   const [selectedClient, setSelectedClient] = useState<number>(0);
   const [selectedUser, setSelectedUser] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const handleDateRange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleDateRange: TableRowControlsProps['handleDateRange'] = (e) => {
     setSelectedDateRange(e.target.value);
   };
 
-  const handleCustomDateRange = (dateRange: DateRange | undefined) => {
+  const handleCustomDateRange: TableRowControlsProps['handleCustomDateRange'] = (dateRange) => {
     setCustomDateRange(dateRange || undefined);
   }
 
-  const handleClient = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleClient: TableRowControlsProps['handleClient'] = (e) => {
     setSelectedClient(parseInt(e.target.value));
   };
 
-  const handleUser = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleUser: TableRowControlsProps['handleUser'] = (e) => {
     setSelectedUser(e.target.value);
   };
 
+  const handleSearch: TableRowControlsProps['handleSearch'] = (e) => {
+    debounceWithValue(() => setSearchQuery(e.target.value), 1000)();
+    setLoading(true);
+  }
 
   useEffect(() => {
     const fetchTimeEntries = async () => {
@@ -69,6 +76,11 @@ const TableInstance = ({ client }: { client: string }) => {
       if (selectedUser !== '') {
         query = query
           .textSearch('owner', selectedUser);
+      }
+
+      if (searchQuery !== '') {
+        query = query
+          .ilike('task', `%${searchQuery}%`);
       }
 
       if (selectedDateRange !== 'all') {
@@ -103,6 +115,7 @@ const TableInstance = ({ client }: { client: string }) => {
       if (data) {
         setTimeEntries(data);
         calculateTotalHours(data);
+        setLoading(false);
       }
     };
     fetchTimeEntries();
@@ -116,7 +129,7 @@ const TableInstance = ({ client }: { client: string }) => {
       window.removeEventListener('timeEntryAdded', handleNewEntry);
     };
 
-  }, [client, selectedUser, customDateRange, selectedDateRange]);
+  }, [client, selectedUser, customDateRange, selectedDateRange, searchQuery]);
 
   /* Selected Rows
   ========================================================= */
@@ -215,7 +228,7 @@ const TableInstance = ({ client }: { client: string }) => {
   }
 
   return (
-    <div className="flex flex-col gap-8 table-instance">
+    <div className="flex flex-col gap-4 table-instance">
 
       <TableRowControls
         viewableRows={viewableRows}
@@ -227,10 +240,12 @@ const TableInstance = ({ client }: { client: string }) => {
         handleCustomDateRange={handleCustomDateRange}
         handleViewableRows={handleViewableRows}
         handleDateRange={handleDateRange}
+        handleSearch={handleSearch}
         sortDescriptor={sortDescriptor}
         setSortDescriptor={setSortDescriptor}
         setTimeEntries={setTimeEntries}
         timeEntries={timeEntries}
+        loading={loading}
       />
 
       <TableDisplay handleSelectedKeys={handleSelectedKeys} items={items} sortDescriptor={sortDescriptor} onSort={sort} />

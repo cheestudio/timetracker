@@ -13,6 +13,7 @@ export interface TimeEntryProps {
 }
 
 export interface TableRowControlsProps {
+  loading: boolean;
   selectedClient: number;
   selectedUser: string;
   viewableRows: number;
@@ -22,6 +23,7 @@ export interface TableRowControlsProps {
   handleViewableRows: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   handleDateRange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   handleCustomDateRange: (e: DateRange | undefined) => void;
+  handleSearch: (e: React.ChangeEvent<HTMLInputElement>) => void;
   sortDescriptor: SortDescriptor;
   setSortDescriptor: React.Dispatch<React.SetStateAction<SortDescriptor>>;
   setTimeEntries: React.Dispatch<React.SetStateAction<any[]>>;
