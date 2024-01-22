@@ -67,6 +67,24 @@ export const getThisWeekRange = () => {
   return [start, end];
 };
 
+export const getWeekRange = (lastWeek = false) => {
+  const today = new Date();
+  const dayOfWeek = today.getDay();
+  const offset = lastWeek ? -7 : 0;
+
+  const start = new Date(today);
+  start.setDate(today.getDate() - dayOfWeek + offset);
+  start.setHours(0, 0, 0, 0);
+
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6);
+  end.setHours(23, 59, 59, 999);
+
+  return [start, end];
+};
+
+
+
 export const getThisMonthRange = () => {
   const date = new Date();
   const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);

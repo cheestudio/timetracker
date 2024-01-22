@@ -74,20 +74,18 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRan
             <SelectItem key="all">All</SelectItem>
             <SelectItem key="today">Today</SelectItem>
             <SelectItem key="this_week">This Week</SelectItem>
-            <SelectItem key="two_weeks">Last Two Weeks</SelectItem>
+            <SelectItem key="last_week">Last Week</SelectItem>
             <SelectItem key="this_month">This Month</SelectItem>
             <SelectItem key="custom">Custom</SelectItem>
           </Select>
         </div>
 
-        {selectedDateRange === "custom" &&
           <div className="flex-[1_1_auto]">
             <DatePickerWithRange
               handleCustomDateRange={handleCustomDateRange}
             />
           </div>
-        }
-
+        
         <div className="flex-[0_1_50px] self-end">
           <Button isLoading={loading} variant="light" isIconOnly onPress={() => setShowSearch(!showSearch)}>
             <MagnifyingGlassIcon className="w-7 h-7" />
