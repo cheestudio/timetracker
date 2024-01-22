@@ -4,7 +4,7 @@ import { TableRowControlsProps } from '@/lib/types';
 import { useState, useEffect, useMemo } from "react";
 import { TimeEntryProps, SortDirection } from "@/lib/types";
 import { Button, SortDescriptor } from "@nextui-org/react";
-import { convertTime, convertToDecimalHours, getTodayRange, getThisWeekRange, getLastTwoWeeks, getThisMonthRange, debounceWithValue } from "@/lib/utils";
+import { convertTime, convertToDecimalHours, getTodayRange, getWeekRange, getLastTwoWeeks, getThisMonthRange, debounceWithValue } from "@/lib/utils";
 import SubmitTime from "./SubmitTime";
 import { supabase } from "@/lib/utils";
 import toast from 'react-hot-toast';
@@ -89,7 +89,10 @@ const TableInstance = ({ client }: { client: string }) => {
           range = getTodayRange();
         } 
         else if (selectedDateRange === 'this_week') {
-          range = getThisWeekRange();
+          range = getWeekRange();
+        } 
+        else if (selectedDateRange === 'last_week') {
+          range = getWeekRange(true);
         } 
         else if (selectedDateRange === 'two_weeks') {
           range = getLastTwoWeeks();
@@ -273,9 +276,8 @@ const TableInstance = ({ client }: { client: string }) => {
           <h2 className="text-2xl">
             <strong>
               {selectedKeys && selectedKeys.length > 0 ? 'Selected: ' : 'Total: '}
-            </strong> <br/>
-            {convertTime(calculatedTime).toString()} <br/>
-            {convertToDecimalHours(calculatedTime).toString()}
+            </strong> 
+            {convertTime(calculatedTime).toString()} <span className="mx-2">|</span> {convertToDecimalHours(calculatedTime).toString()}
           </h2>
         </div>
 
