@@ -10,8 +10,14 @@ import ClientDropdown from './ClientDropdown';
 
 const SubmitTime = ({ client }: { client: string }) => {
 
+  const today = new Date();
+  
+  function formatDate(date:Date) {
+    return date.toISOString().split('T')[0];
+  }
+
   const timeInputRef = useRef('');
-  const [date, setDate] = useState('');
+  const [date, setDate] = useState(formatDate(today));
   const [task, setTask] = useState('');
   const [startTime, setStartTime] = useState<string>("0:00");
   const [endTime, setEndTime] = useState<string>("0:00");
@@ -23,6 +29,8 @@ const SubmitTime = ({ client }: { client: string }) => {
   const [switchSelected, setSwitchSelected] = useState(true);
   const [toggleBar, setToggleBar] = useState(false);
   const [billable, setBillable] = useState(true);
+
+  
 
   /* Time Conversions
   ========================================================= */
