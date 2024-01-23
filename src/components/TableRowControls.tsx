@@ -76,7 +76,7 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRan
             <SelectItem key="this_week">This Week</SelectItem>
             <SelectItem key="last_week">Last Week</SelectItem>
             <SelectItem key="this_month">This Month</SelectItem>
-            <SelectItem key="custom">Date Range</SelectItem>
+            <SelectItem key="custom">Custom</SelectItem>
           </Select>
         </div>
 
