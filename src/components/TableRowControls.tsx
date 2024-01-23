@@ -63,7 +63,7 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRan
         <div className="flex-[1_1_auto]">
           <Select
             radius="sm"
-            defaultSelectedKeys={new Set(["today"])}
+            defaultSelectedKeys={new Set(["this_week"])}
             onChange={handleDateRange}
             disallowEmptySelection={true}
             variant="bordered"
