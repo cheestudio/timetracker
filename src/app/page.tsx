@@ -24,12 +24,10 @@ export default function Home() {
   async function checkUser() {
     const { data, error } = await supabase.auth.getSession();
     setLoggedIn(data.session !== null);
-    router.push(`/timesheets/?client=0`);
   }
 
   useEffect(() => {
     checkUser();
-    // showClients();
   }, [loggedIn]);
 
   // const createClient = async (e: any) => {
