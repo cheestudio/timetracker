@@ -28,6 +28,9 @@ export default function Home() {
 
   useEffect(() => {
     checkUser();
+    if (loggedIn) {
+      router.push('/timesheets/?client=0');
+    }
   }, [loggedIn]);
 
   // const createClient = async (e: any) => {
