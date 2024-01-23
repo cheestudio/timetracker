@@ -1,37 +1,27 @@
 "use client";
 export const dynamic = 'force-dynamic';
-import { useEffect, useState } from 'react';
-import { unstable_noStore as noStore } from 'next/cache';
-import { supabase } from '@/lib/utils';
+import { useEffect } from 'react';
 import { signInWithGoogle } from '@/lib/utils';
-import { Button, Divider, Input, Link } from '@nextui-org/react';
+import { Button } from '@nextui-org/react';
 import { useRouter } from 'next/navigation'
-import ListClients from '@/components/ListClients';
-import toast from 'react-hot-toast';
-import { listClients } from '@/lib/utils';
+import { useUser } from '@/lib/UserContext';
+import Image from 'next/image';
+import logo from '@/app/assets/logo.svg';
 
 export default function Home() {
 
-  // const [clients, setClients] = useState([] as any);
-  const [loggedIn, setLoggedIn] = useState(false);
+  const {user, loggedIn} = useUser();
   const router = useRouter();
 
+  if (loggedIn) {
+    router.push('/timesheets/?client=0');
+  }
+  
+  // const [clients, setClients] = useState([] as any);
   // const showClients = async () => {
   //   const clients = await listClients();
   //   setClients(clients);
   // }
-
-  async function checkUser() {
-    const { data, error } = await supabase.auth.getSession();
-    setLoggedIn(data.session !== null);
-  }
-
-  useEffect(() => {
-    checkUser();
-    if (loggedIn) {
-      router.push('/timesheets/?client=0');
-    }
-  }, [loggedIn]);
 
   // const createClient = async (e: any) => {
   //   e.preventDefault();
@@ -64,6 +54,7 @@ export default function Home() {
       {!loggedIn &&
         <>
           <div className="mb-5">
+          <Image className="mx-auto my-5" src={logo} alt="logo" width={50} height={50} />
             <Button color="primary" onPress={() => signInWithGoogle()}>
               Sign In
             </Button>
