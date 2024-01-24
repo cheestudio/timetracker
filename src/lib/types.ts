@@ -32,6 +32,16 @@ export interface TableRowControlsProps {
   timeEntries: any[];
 }
 
+export interface UserContextType {
+  loggedIn: boolean;
+  user: any;
+}
+
+export interface TimesheetContextType {
+  currentClient: string;
+  setCurrentClient: (client: string) => void;
+}
+
 export type CustomDateRangeProps = Pick<TableRowControlsProps, 'handleCustomDateRange'>
 
 export type SortDirection = 'ascending' | 'descending' | undefined;
