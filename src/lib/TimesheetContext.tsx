@@ -1,10 +1,6 @@
 import { useState, createContext, useContext } from "react";
 import { useSearchParams } from 'next/navigation';
-
-interface TimesheetContextType {
-  currentClient: string;
-  setCurrentClient: (client: string) => void;
-}
+import { TimesheetContextType } from "./types";
 
 export const TimesheetContext = createContext<TimesheetContextType>({} as TimesheetContextType);
 

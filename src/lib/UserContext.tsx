@@ -1,11 +1,7 @@
 import { useState, createContext, useContext, useEffect } from "react";
 import { supabase } from "./utils";
 import { useRouter } from "next/navigation";
-
-interface UserContextType {
-  loggedIn: boolean;
-  user: any;
-}
+import { UserContextType } from "./types";
 
 export const UserContext = createContext<UserContextType>({} as UserContextType);
 
@@ -34,7 +30,7 @@ export const UserProvider = ({children}: {children: React.ReactNode}) => {
   useEffect(() => {
     checkUser();
     if (!loggedIn) {
-      router.push('/');
+      // router.push('/');
     }
   }, [loggedIn]);
 

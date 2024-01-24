@@ -10,32 +10,28 @@ import ClientDropdown from './ClientDropdown';
 
 const SubmitTime = ({ client }: { client: string }) => {
 
-  const today = new Date();
+  /* User Timezone
+  ========================================================= */
+  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const today = moment().tz(userTimeZone).format('YYYY-MM-DD');
   
-  function formatDate(date:Date) {
-    return date.toISOString().split('T')[0];
-  }
-
+  /* State
+  ========================================================= */
   const timeInputRef = useRef('');
-  const [date, setDate] = useState(formatDate(today));
+  const [date, setDate] = useState(today);
   const [task, setTask] = useState('');
   const [startTime, setStartTime] = useState<string>("0:00");
   const [endTime, setEndTime] = useState<string>("0:00");
   const [timerRunning, setTimerRunning] = useState(false);
   const [timerSeconds, setTimerSeconds] = useState(0);
   const [timeTracked, setTimeTracked] = useState<string>('0:00:00');
-  const [timeElapsed, setTimeElapsed] = useState<string>('0:00:00');
   const [timeMode, setTimeMode] = useState("entry");
   const [switchSelected, setSwitchSelected] = useState(true);
   const [toggleBar, setToggleBar] = useState(false);
   const [billable, setBillable] = useState(true);
 
-  
-
-  /* Time Conversions
+  /* Time to Seconds
   ========================================================= */
-  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
   function timeToSeconds(time: string) {
     const [hours, minutes] = time.split(':').map(Number);
     return (hours * 3600) + (minutes * 60);
@@ -81,7 +77,6 @@ const SubmitTime = ({ client }: { client: string }) => {
     return formattedTime;
   };
 
-
   const timeToUTC = (time: string) => {
     const currentDate = moment().format('YYYY-MM-DD');
     const formattedTime = formatTime(time);
@@ -93,7 +88,6 @@ const SubmitTime = ({ client }: { client: string }) => {
     const formattedTime = formatTime(time);
     return formattedTime;
   };
-
 
   /* Handle Time Inputs
   ========================================================= */
