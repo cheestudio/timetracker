@@ -196,6 +196,9 @@ const SubmitTime = ({ client }: { client: string }) => {
     }
   }, [timerRunning, timerSeconds]);
 
+  console.log('timerSeconds', timerSeconds);
+  console.log('timeTracked', timeTracked);
+
 
   /* Timer Input
   ========================================================= */
@@ -263,9 +266,8 @@ const SubmitTime = ({ client }: { client: string }) => {
 
   /* Supabase
   ========================================================= */
-console.log('date',date);
+  
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    console.log('date2',date);
     event.preventDefault();
     let totalTime;
     let startTimeValue;
@@ -285,6 +287,7 @@ console.log('date',date);
       startTimeValue = null;
       endTimeValue = null;
     }
+    console.log(totalTime);
     const { data: user, error: userError } = await supabase.auth.getSession()
     const { data, error } = await supabase
       .from('TimeEntries')
