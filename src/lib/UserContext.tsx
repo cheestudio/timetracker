@@ -34,7 +34,7 @@ export const UserProvider = ({children}: {children: React.ReactNode}) => {
   useEffect(() => {
     checkUser();
     if (!loggedIn) {
-      // router.push('/');
+      router.push('/');
     }
   }, [loggedIn]);
 
