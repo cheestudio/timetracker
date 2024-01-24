@@ -4,12 +4,15 @@ import './globals.css';
 import { Providers } from '../lib/Providers';
 import Header from '@/components/Header';
 import { Toaster } from 'react-hot-toast';
+import Favicon from '/public/favicon.ico';
+
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Chee Time Tracker',
   description: '',
+  icons: [{ rel: 'icon', url: Favicon.src }],
 }
 
 export default function RootLayout({

@@ -351,7 +351,6 @@ const SubmitTime = ({ client }: { client: string }) => {
           <div className="flex-[0_1_100px] self-center">
             <Checkbox
               radius="none"
-              defaultSelected
               onChange={(e) => setBillable(e.target.checked)}
             >
               Billable
@@ -390,6 +389,7 @@ const SubmitTime = ({ client }: { client: string }) => {
               id="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
+              tabIndex={-1}
             />
           </div>
           
