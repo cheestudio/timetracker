@@ -263,8 +263,9 @@ const SubmitTime = ({ client }: { client: string }) => {
 
   /* Supabase
   ========================================================= */
-
+console.log('date',date);
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    console.log('date2',date);
     event.preventDefault();
     let totalTime;
     let startTimeValue;
