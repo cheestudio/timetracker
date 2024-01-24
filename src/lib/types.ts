@@ -5,6 +5,7 @@ export interface TimeEntryProps {
   key: string;
   date: string;
   task: string;
+  duration: string;
   time_tracked: string;
   entry_id: string;
   owner: string;

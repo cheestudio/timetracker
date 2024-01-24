@@ -14,8 +14,8 @@ const TableDisplay = ({ items, sortDescriptor, onSort, handleSelectedKeys }: { i
       <TableHeader>
         <TableColumn key="task" allowsSorting>Task</TableColumn>
         <TableColumn key="date" allowsSorting>Date</TableColumn>
-        <TableColumn key="duration" allowsSorting>Duration</TableColumn>
-        <TableColumn key="time_tracked" allowsSorting>Time</TableColumn>
+        <TableColumn key="time_tracked" allowsSorting>Duration</TableColumn>
+        <TableColumn key="start_time" allowsSorting>Time</TableColumn>
         <TableColumn key="owner" allowsSorting>Owner</TableColumn>
         <TableColumn key="billable" allowsSorting>Billable</TableColumn>
       </TableHeader>
