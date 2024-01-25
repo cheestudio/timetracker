@@ -280,13 +280,12 @@ const SubmitTime = ({ client }: { client: string }) => {
       startTimeValue = null;
       endTimeValue = null;
     }
-    console.log(totalTime);
     const { data: user, error: userError } = await supabase.auth.getSession()
     const { data, error } = await supabase
       .from('TimeEntries')
       .insert([
         {
-          date,
+          date: moment(date).tz(userTimeZone).utc().format(),
           task,
           time_tracked: totalTime,
           entry_id: uuidv4(),

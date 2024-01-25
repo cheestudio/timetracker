@@ -4,7 +4,7 @@ import { TableRowControlsProps } from '@/lib/types';
 import { useState, useEffect, useMemo } from "react";
 import { TimeEntryProps, SortDirection } from "@/lib/types";
 import { Button, SortDescriptor } from "@nextui-org/react";
-import { convertTime, convertToDecimalHours, getTodayRange, getWeekRange, getLastTwoWeeks, getThisMonthRange, debounceWithValue } from "@/lib/utils";
+import { convertTime, convertToDecimalHours, getTodayRange, getWeekRange, getLastTwoWeeks, getThisMonthRange, getYesterdayRange, debounceWithValue } from "@/lib/utils";
 import SubmitTime from "./SubmitTime";
 import { supabase } from "@/lib/utils";
 import toast from 'react-hot-toast';
@@ -34,10 +34,10 @@ const TableInstance = ({ client }: { client: string }) => {
   ========================================================= */
   const [timeEntries, setTimeEntries] = useState([] as any);
   const [loading, setLoading] = useState<boolean>(false);
-  const [selectedDateRange, setSelectedDateRange] = useState<string>("today");
+  const [selectedDateRange, setSelectedDateRange] = useState<string>("this_week");
   const [customDateRange, setCustomDateRange] = useState<DateRange | undefined>(undefined);
   const [selectedClient, setSelectedClient] = useState<number>(0);
-  const [selectedUser, setSelectedUser] = useState<string>("");
+  const [selectedUser, setSelectedUser] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const handleDateRange: TableRowControlsProps['handleDateRange'] = (e) => {
@@ -73,7 +73,7 @@ const TableInstance = ({ client }: { client: string }) => {
           .eq('client_id', client);
       }
 
-      if (selectedUser !== '') {
+      if (selectedUser !== 'all') {
         query = query
           .textSearch('owner', selectedUser);
       }
@@ -87,6 +87,9 @@ const TableInstance = ({ client }: { client: string }) => {
         let range;
         if (selectedDateRange === 'today') {
           range = getTodayRange();
+        } 
+        else if (selectedDateRange === 'yesterday') {
+          range = getYesterdayRange();
         } 
         else if (selectedDateRange === 'this_week') {
           range = getWeekRange();
@@ -109,6 +112,7 @@ const TableInstance = ({ client }: { client: string }) => {
           range = [start, end];
         }
         if (range) {
+          console.log(range);
           query = query
             .gte('date', range[0].toISOString())
             .lte('date', range[1].toISOString());
