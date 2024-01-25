@@ -14,7 +14,7 @@ const SubmitTime = ({ client }: { client: string }) => {
   ========================================================= */
   const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const today = moment().tz(userTimeZone).format('YYYY-MM-DD');
-  
+
   /* State
   ========================================================= */
   const timeInputRef = useRef('');
@@ -172,34 +172,27 @@ const SubmitTime = ({ client }: { client: string }) => {
     setStartTime('0:00');
     setEndTime('0:00');
   }
-
+  
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    const formatAutoTime = () => {
-      const hours = Math.floor(timerSeconds / 3600);
-      const minutes = Math.floor((timerSeconds % 3600) / 60);
-      const seconds = timerSeconds % 60;
-      setTimeTracked(`${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`);
-    };
+    let interval: NodeJS.Timeout | undefined = undefined;
     if (timerRunning) {
-      setTimerRunning(true);
+      const start = performance.now(); 
       interval = setInterval(() => {
-        setTimerSeconds((prev) => prev + 1);
+        const now = performance.now();
+        const elapsedTime = now - start; 
+        const hours = Math.floor(elapsedTime / 3600000);
+        const minutes = Math.floor((elapsedTime % 3600000) / 60000);
+        const seconds = Math.floor((elapsedTime % 60000) / 1000);
+        setTimeTracked(`${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`);
+        setTimerSeconds(Math.floor(elapsedTime / 1000)); 
       }, 1000);
-      formatAutoTime();
-    }
-    else {
-      setTimerRunning(false);
-    }
-    return () => {
+    } else {
       clearInterval(interval);
     }
-  }, [timerRunning, timerSeconds]);
+    return () => clearInterval(interval);
+  }, [timerRunning]);
 
-  console.log('timerSeconds', timerSeconds);
-  console.log('timeTracked', timeTracked);
-
-
+  
   /* Timer Input
   ========================================================= */
 
@@ -266,7 +259,7 @@ const SubmitTime = ({ client }: { client: string }) => {
 
   /* Supabase
   ========================================================= */
-  
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     let totalTime;
@@ -328,7 +321,7 @@ const SubmitTime = ({ client }: { client: string }) => {
     <div className={`fixed top-0 left-0 w-full py-5 px-5 bg-black/50 backdrop-blur-md ${timerRunning ? 'border-secondary' : 'border-[#333]'} border-b-1 time-submit-form z-[9999] transition-transform ${toggleBar ? 'translate-y-[-100%]' : 'translate-y-0'}`}>
       <form onSubmit={handleSubmit}>
         <div className="flex items-start justify-between gap-x-5 gap-y-3">
-          
+
           <div className="flex-[0_1_75px] self-center">
             <Switch
               color="primary"
@@ -390,7 +383,7 @@ const SubmitTime = ({ client }: { client: string }) => {
               tabIndex={-1}
             />
           </div>
-          
+
           {timeMode === 'entry' ?
             <>
               <div className="flex-[0_1_100px]">
