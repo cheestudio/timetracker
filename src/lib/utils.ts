@@ -57,10 +57,9 @@ export const getTodayRange = () => {
 
 export const getYesterdayRange = () => {
   const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const start = moment().tz(userTimeZone).subtract(1, 'days').startOf('day');
-  const end = moment(start).endOf('day');
-  console.log(start.toDate(), end.toDate());
-  return [start.toDate(), end.toDate()];
+  const start = moment.tz(userTimeZone).subtract(1, 'days').startOf('day').toDate();
+  const end = moment.tz(userTimeZone).subtract(1, 'days').endOf('day').toDate();
+  return [start, end];
 };
 
 export const getWeekRange = (lastWeek = false) => {
@@ -75,7 +74,7 @@ export const getWeekRange = (lastWeek = false) => {
   const end = new Date(start);
   end.setDate(start.getDate() + 6);
   end.setHours(23, 59, 59, 999);
-  console.log(start, end);
+  
   return [start, end];
 };
 

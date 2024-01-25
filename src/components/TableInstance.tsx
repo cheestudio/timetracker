@@ -12,6 +12,7 @@ import PaginateTable from './PaginateTable';
 import TableDisplay from './TableDisplay';
 import TableRowControls from './TableRowControls';
 import { DateRange } from 'react-day-picker';
+import moment from 'moment-timezone';
 
 const TableInstance = ({ client }: { client: string }) => {
 
@@ -112,10 +113,12 @@ const TableInstance = ({ client }: { client: string }) => {
           range = [start, end];
         }
         if (range) {
-          console.log(range);
+          const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+          const momentRangeStart = moment(range[0]);
+          const momentRangeEnd = moment(range[1]);
           query = query
-            .gte('date', range[0].toISOString())
-            .lte('date', range[1].toISOString());
+            .gte('date', momentRangeStart.tz(userTimeZone).format('MM/DD/YYYY'))
+            .lte('date', momentRangeEnd.tz(userTimeZone).format('MM/DD/YYYY'));
         }
       }
 
