@@ -2,6 +2,7 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, SortDe
 import { TimeEntryProps } from "@/lib/types";
 import { formatDate, convertTime, UTCtoLocal } from "@/lib/utils";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
+import moment from 'moment';
 
 const TableDisplay = ({ items, sortDescriptor, onSort, handleSelectedKeys }: { items: any, sortDescriptor: SortDescriptor, onSort: any, handleSelectedKeys: any }) => {
   return (
@@ -23,7 +24,7 @@ const TableDisplay = ({ items, sortDescriptor, onSort, handleSelectedKeys }: { i
         {items.map((row: TimeEntryProps) => (
           <TableRow key={row.entry_id}>
             <TableCell>{row.task}</TableCell>
-            <TableCell>{formatDate(row.date)}</TableCell>
+            <TableCell>{moment(row.date).tz('UTC').format('M/DD/YYYY')}</TableCell>
             <TableCell>
               <div>{convertTime(parseInt(row.time_tracked))}</div>
             </TableCell>

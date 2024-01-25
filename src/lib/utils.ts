@@ -1,3 +1,5 @@
+import moment from 'moment-timezone';
+
 /* Supabase
 ========================================================= */
 import { createClient } from '@supabase/supabase-js'
@@ -53,18 +55,12 @@ export const getTodayRange = () => {
   return [today, end];
 };
 
-export const getThisWeekRange = () => {
-  const today = new Date();
-  const dayOfWeek = today.getDay();
-
-  const start = new Date(today);
-  start.setDate(today.getDate() - dayOfWeek);
-  start.setHours(0, 0, 0, 0);
-
-  const end = new Date(start);
-  end.setDate(start.getDate() + 6);
-  end.setHours(23, 59, 59, 999);
-  return [start, end];
+export const getYesterdayRange = () => {
+  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const start = moment().tz(userTimeZone).subtract(1, 'days').startOf('day');
+  const end = moment(start).endOf('day');
+  console.log(start.toDate(), end.toDate());
+  return [start.toDate(), end.toDate()];
 };
 
 export const getWeekRange = (lastWeek = false) => {
@@ -79,7 +75,7 @@ export const getWeekRange = (lastWeek = false) => {
   const end = new Date(start);
   end.setDate(start.getDate() + 6);
   end.setHours(23, 59, 59, 999);
-
+  console.log(start, end);
   return [start, end];
 };
 

@@ -9,8 +9,8 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { DatePickerWithRange } from "./DatePicker";
 import ClientDropdown from "./ClientDropdown";
 
-const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRange, handleUser, selectedUser, handleViewableRows, handleDateRange, handleSearch, loading }: TableRowControlsProps) => {
-
+const TableRowControls = ({ timeEntries, viewableRows, selectedDateRange, handleCustomDateRange, handleUser, selectedUser, handleViewableRows, handleDateRange, handleSearch, loading }: TableRowControlsProps) => {
+  
   const [showSearch, setShowSearch] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -37,10 +37,9 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRan
             placeholder="Select"
             disallowEmptySelection={true}
           >
-            <SelectItem key="">All</SelectItem>
+            <SelectItem key="all">All</SelectItem>
             <SelectItem key="Lars">Lars</SelectItem>
             <SelectItem key="Matt">Matt</SelectItem>
-            <SelectItem key="Jenica">Jenica</SelectItem>
           </Select>
         </div>
         <div className="flex-[1_1_auto]">
@@ -52,8 +51,9 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRan
             label="Viewable Rows"
             labelPlacement="outside"
             placeholder="Select"
+            disallowEmptySelection={true}
           >
-            <SelectItem key="all">All</SelectItem>
+            <SelectItem key="500">All</SelectItem>
             <SelectItem key="25">25</SelectItem>
             <SelectItem key="50">50</SelectItem>
             <SelectItem key="75">75</SelectItem>
@@ -72,6 +72,7 @@ const TableRowControls = ({ viewableRows, selectedDateRange, handleCustomDateRan
             placeholder="Select"
           >
             <SelectItem key="all">All</SelectItem>
+            <SelectItem key="yesterday">Yesterday</SelectItem>
             <SelectItem key="today">Today</SelectItem>
             <SelectItem key="this_week">This Week</SelectItem>
             <SelectItem key="last_week">Last Week</SelectItem>
