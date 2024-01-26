@@ -13,15 +13,16 @@ export const useUser = () => {
   return context;
 };
 
-export const UserProvider = ({children}: {children: React.ReactNode}) => {
+export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState({} as any);
   const router = useRouter();
+  const isLocalhost = window.location.hostname.includes("localhost");
 
   async function checkUser() {
     const { data, error } = await supabase.auth.getSession();
-    if(data.session) {
+    if (data.session) {
       setUser(data.session.user);
       setLoggedIn(true);
     }
@@ -29,13 +30,13 @@ export const UserProvider = ({children}: {children: React.ReactNode}) => {
 
   useEffect(() => {
     checkUser();
-    if (!loggedIn) {
+    if (!loggedIn && !isLocalhost) {
       router.push('/');
     }
     console.log('loggedIn', loggedIn);
-  }, [loggedIn, router]);
+  }, [loggedIn, router, isLocalhost]);
 
-  
+
   const value = {
     user,
     loggedIn
