@@ -22,7 +22,7 @@ const TableRowControls = ({ timeEntries, viewableRows, selectedDateRange, handle
 
   return (
     <>
-      <div className="flex justify-end gap-5 pt-24 table-row-controls">
+      <div className="flex justify-end gap-5 table-row-controls">
         <div className="flex-[1_1_auto] mr-auto ml-0">
           <ClientSelector />
         </div>
