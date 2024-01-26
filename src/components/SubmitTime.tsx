@@ -1,93 +1,29 @@
 import { supabase } from '@/lib/utils';
-import { Button, Input, Switch, cn, RadioGroup, Radio, Select, SelectItem, Tooltip, Checkbox } from '@nextui-org/react';
+import { Button, Input, Switch, cn, Checkbox } from '@nextui-org/react';
 import { useEffect, useState, useRef, useReducer } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { PlayCircleIcon, PauseCircleIcon, ArrowPathIcon, ClockIcon, CalendarDaysIcon, ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
+import { timeToSeconds, timeToUTC, formatTimeInput, calculateElapsedTime, timerInputFormat, userTimeZone, today} from '@/lib/utils';
 import moment from 'moment-timezone';
-import parse from 'parse-duration';
 import toast from 'react-hot-toast';
-import ClientDropdown from './ClientDropdown';
+import ClientSubmit from './ClientSubmit';
 
-const SubmitTime = ({ client }: { client: string }) => {
-
-  /* User Timezone
-  ========================================================= */
-  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const today = moment().tz(userTimeZone).format('YYYY-MM-DD');
+const SubmitTime = () => {
 
   /* State
   ========================================================= */
-  const timeInputRef = useRef('');
-  const [date, setDate] = useState(today);
-  const [task, setTask] = useState('');
+  const timeInputRef = useRef<string>('');
+  const [client, setClient] = useState<string>('');
+  const [date, setDate] = useState<string>(today);
+  const [task, setTask] = useState<string>('');
   const [startTime, setStartTime] = useState<string>("0:00");
   const [endTime, setEndTime] = useState<string>("0:00");
-  const [timerRunning, setTimerRunning] = useState(false);
-  const [timerSeconds, setTimerSeconds] = useState(0);
+  const [timerRunning, setTimerRunning] = useState<boolean>(false);
+  const [timerSeconds, setTimerSeconds] = useState<number>(0);
   const [timeTracked, setTimeTracked] = useState<string>('0:00:00');
-  const [timeMode, setTimeMode] = useState("entry");
-  const [switchSelected, setSwitchSelected] = useState(true);
-  const [toggleBar, setToggleBar] = useState(false);
-  const [billable, setBillable] = useState(true);
-
-  /* Time to Seconds
-  ========================================================= */
-  function timeToSeconds(time: string) {
-    const [hours, minutes] = time.split(':').map(Number);
-    return (hours * 3600) + (minutes * 60);
-  }
-
-  /* Convert Time Input to UTC
-  ========================================================= */
-  const formatTime = (time: string) => {
-    const regexPattern = /^(\d{1,2})(?::(\d{2}))?\s*(am|pm|AM|PM)?$/;
-    const militaryTimePattern = /^([01]\d|2[0-3]):?([0-5]\d)$/;
-    const conciseTimePattern = /^(\d{1,2})(\d{2})(am|pm|AM|PM)?$/;
-    let match = time.match(regexPattern);
-    let formattedTime;
-
-    if (match) {
-      let hours = parseInt(match[1], 10);
-      const minutes = match[2] ? match[2] : '00';
-      const ampm = match[3] ? match[3].toUpperCase() : (hours < 12 ? 'AM' : 'PM');
-      if (hours === 12) {
-        hours = ampm === 'AM' ? 0 : 12;
-      } else if (ampm === 'PM') {
-        hours += 12;
-      }
-      formattedTime = `${hours % 12 || 12}:${minutes} ${ampm}`;
-    } else {
-      match = time.match(militaryTimePattern);
-      if (match) {
-        let hours = parseInt(match[1], 10);
-        const minutes = match[2];
-        const ampm = hours >= 12 ? 'PM' : 'AM';
-        formattedTime = `${hours % 12 || 12}:${minutes} ${ampm}`;
-      } else {
-        match = time.match(conciseTimePattern);
-        if (match) {
-          let hours = parseInt(match[1], 10);
-          let minutes = match[2];
-          // let ampm = match[3] ? match[3].toUpperCase() : 'AM';
-          let ampm = match[3] ? match[3].toUpperCase() : (hours < 12 ? 'AM' : 'PM');
-          formattedTime = `${hours % 12 || 12}:${minutes} ${ampm}`;
-        }
-      }
-    }
-    return formattedTime;
-  };
-
-  const timeToUTC = (time: string) => {
-    const currentDate = moment().format('YYYY-MM-DD');
-    const formattedTime = formatTime(time);
-    const localTime = moment.tz(`${currentDate} ${formattedTime}`, 'YYYY-MM-DD h:mm A', userTimeZone);
-    return localTime;
-  };
-
-  const formatTimeInput = (time: string) => {
-    const formattedTime = formatTime(time);
-    return formattedTime;
-  };
+  const [timeMode, setTimeMode] = useState<string>("entry");
+  const [toggleBar, setToggleBar] = useState<boolean>(false);
+  const [billable, setBillable] = useState<boolean>(true);
 
   /* Handle Time Inputs
   ========================================================= */
@@ -121,35 +57,6 @@ const SubmitTime = ({ client }: { client: string }) => {
       setEndTime(formattedTime);
     }
   }
-
-  /* Time Difference
-  ========================================================= */
-
-  const calculateElapsedTime = (startTime: string | undefined, endTime: string | undefined) => {
-
-    if (startTime === '0:00:00' || endTime === '0:00:00') {
-      return '0:00';
-    }
-
-    const format = 'h:mm A';
-    const startMoment = moment(startTime, format);
-    const endMoment = moment(endTime, format);
-
-    if (endMoment.isBefore(startMoment)) {
-      endMoment.add(1, 'day');
-    }
-
-    const duration = moment.duration(endMoment.diff(startMoment));
-    const hours = Math.floor(duration.asHours());
-    const minutes = duration.minutes();
-
-    if (Number.isNaN(hours) || Number.isNaN(minutes)) {
-      return '0:00';
-    }
-
-    return `${hours}:${String(minutes).padStart(2, '0')}`;
-  };
-
 
   /* Timer Controls
   ========================================================= */
@@ -191,42 +98,7 @@ const SubmitTime = ({ client }: { client: string }) => {
     }
     return () => clearInterval(interval);
   }, [timerRunning]);
-
   
-  /* Timer Input
-  ========================================================= */
-
-  const timerInputFormat = (input: string) => {
-    const cleanInput = String(input).replace(/\D/g, '').replace(/^0+/, '');
-    let
-      hours: string | number = '0',
-      minutes: string | number = '0',
-      seconds: string | number = '00';
-
-    if (cleanInput.length === 1 || cleanInput.length === 2) {
-      minutes = cleanInput.padStart(2, '0');
-
-      const totalMinutes = parseInt(cleanInput, 10);
-
-      if (totalMinutes >= 0 && totalMinutes <= 99) {
-        hours = Math.floor(totalMinutes / 60);
-        minutes = totalMinutes % 60;
-        minutes = minutes.toString().padStart(2, '0');
-      }
-
-    } else if (cleanInput.length === 3) {
-      hours = cleanInput.substring(0, 1);
-      minutes = cleanInput.substring(1, 3);
-    } else if (cleanInput.length === 4) {
-      hours = cleanInput.substring(0, 2);
-      minutes = cleanInput.substring(2, 4);
-    } else {
-      hours = cleanInput.substring(0, cleanInput.length - 4);
-      minutes = cleanInput.substring(cleanInput.length - 4, cleanInput.length - 2);
-      seconds = cleanInput.substring(cleanInput.length - 2);
-    }
-    return `${hours}:${minutes}:${seconds}`;
-  };
 
   const handleTimerInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!timerRunning) {
@@ -236,17 +108,12 @@ const SubmitTime = ({ client }: { client: string }) => {
       const totalSeconds = hours * 3600 + minutes * 60 + seconds;
       setTimerSeconds(totalSeconds);
     }
-  }
+  }  
 
   const handleInputFocus = (e: any) => {
     e.target.select();
   };
-
-  const handleTimerFocus = (e: any) => {
-    e.target.select();
-    timeInputRef.current = e.target.value;
-  };
-
+  
   const handleTimerBlur = (e: any) => {
     const currentValue = e.target.value;
     if (currentValue === timeInputRef.current) {
@@ -255,7 +122,6 @@ const SubmitTime = ({ client }: { client: string }) => {
     const formattedTime = timerInputFormat(currentValue);
     setTimeTracked(formattedTime);
   };
-
 
   /* Supabase
   ========================================================= */
@@ -289,7 +155,7 @@ const SubmitTime = ({ client }: { client: string }) => {
           task,
           time_tracked: totalTime,
           entry_id: uuidv4(),
-          client_id: client,
+          client_id: parseInt(client),
           billable: billable,
           owner: user?.session?.user.user_metadata.name.split(' ')[0],
           user_id: user.session?.user.id,
@@ -306,16 +172,11 @@ const SubmitTime = ({ client }: { client: string }) => {
       setTimeTracked('');
     }
   };
-
-  const handleTimeMode = () => {
-    setSwitchSelected(!switchSelected);
-    if (switchSelected) {
-      setTimeMode('timer');
-    } else {
-      setTimeMode('entry');
-    }
+  
+  const handleClient = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setClient(e.target.value);
   }
-
+  
   return (
     <div className={`fixed top-0 left-0 w-full py-5 px-5 bg-black/50 backdrop-blur-md ${timerRunning ? 'border-secondary' : 'border-[#333]'} border-b-1 time-submit-form z-[9999] transition-transform ${toggleBar ? 'translate-y-[-100%]' : 'translate-y-0'}`}>
       <form onSubmit={handleSubmit}>
@@ -327,7 +188,7 @@ const SubmitTime = ({ client }: { client: string }) => {
               defaultSelected
               startContent={<CalendarDaysIcon />}
               endContent={<ClockIcon />}
-              onChange={handleTimeMode}
+              onChange={()=>setTimeMode(timeMode === 'timer' ? 'entry' : 'timer' )}
               classNames={{
                 base: cn(
                   "inline-flex flex-row-reverse w-full items-center",
@@ -347,9 +208,7 @@ const SubmitTime = ({ client }: { client: string }) => {
             </Checkbox>
           </div>
           <div className="flex-[0_1_200px]">
-            <ClientDropdown
-              isSubmit={true}
-            />
+            <ClientSubmit client={client} handleClient={handleClient}/>
           </div>
           <div className="flex-auto">
             <Input

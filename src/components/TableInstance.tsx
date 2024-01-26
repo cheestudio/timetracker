@@ -83,27 +83,27 @@ const TableInstance = ({ client }: { client: string }) => {
         query = query
           .ilike('task', `%${searchQuery}%`);
       }
-      
+
       if (selectedDateRange !== 'all') {
         let range;
         if (selectedDateRange === 'today') {
           range = getTodayRange();
-        } 
+        }
         else if (selectedDateRange === 'yesterday') {
           range = getYesterdayRange();
-        } 
+        }
         else if (selectedDateRange === 'this_week') {
           range = getWeekRange();
-        } 
+        }
         else if (selectedDateRange === 'last_week') {
           range = getWeekRange(true);
-        } 
+        }
         else if (selectedDateRange === 'two_weeks') {
           range = getLastTwoWeeks();
         }
         else if (selectedDateRange === 'this_month') {
           range = getThisMonthRange();
-        } 
+        }
         else if (selectedDateRange === 'custom') {
           const start = customDateRange?.from;
           const end = customDateRange?.to;
@@ -245,7 +245,7 @@ const TableInstance = ({ client }: { client: string }) => {
   return (
     <div className="flex flex-col gap-4 table-instance">
 
-      <SubmitTime client={client} />
+      <SubmitTime/>
 
       <TableRowControls
         viewableRows={viewableRows}
@@ -279,14 +279,16 @@ const TableInstance = ({ client }: { client: string }) => {
           </div>
         }
 
-        <div className="ml-auto">
-          <h2 className="text-2xl">
-            <strong>
-              {selectedKeys && selectedKeys.length > 0 ? 'Selected: ' : 'Total: '}
-            </strong> 
-            {convertTime(calculatedTime).toString()} <span className="mx-2">|</span> {convertToDecimalHours(calculatedTime).toString()}
-          </h2>
-        </div>
+        {!!timeEntries.length &&
+          <div className="ml-auto">
+            <h2 className="text-2xl">
+              <strong>
+                {timeEntries.length > 0 ? 'Selected: ' : 'Total: '}
+              </strong>
+              {convertTime(calculatedTime).toString()} <span className="mx-2">|</span> {convertToDecimalHours(calculatedTime).toString()}
+            </h2>
+          </div>
+        }
 
       </div>
 

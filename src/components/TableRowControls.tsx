@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useTimesheet } from "@/lib/TimesheetContext";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { DatePickerWithRange } from "./DatePicker";
-import ClientDropdown from "./ClientDropdown";
+import ClientSelector from "./ClientSelector";
 
 const TableRowControls = ({ timeEntries, viewableRows, selectedDateRange, handleCustomDateRange, handleUser, selectedUser, handleViewableRows, handleDateRange, handleSearch, loading }: TableRowControlsProps) => {
   
@@ -24,7 +24,7 @@ const TableRowControls = ({ timeEntries, viewableRows, selectedDateRange, handle
     <>
       <div className="flex justify-end gap-5 pt-24 table-row-controls">
         <div className="flex-[1_1_auto] mr-auto ml-0">
-          <ClientDropdown />
+          <ClientSelector />
         </div>
         <div className="flex-[1_1_auto]">
           <Select
