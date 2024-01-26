@@ -4,7 +4,7 @@ import { listClients } from "@/lib/utils";
 import { Select, SelectItem } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 
-function ClientDropdown({ isSubmit }: { isSubmit?: boolean }) {
+function ClientSelector({ isSubmit }: { isSubmit?: boolean }) {
 
   const { currentClient, setCurrentClient } = useTimesheet();
   const [clients, setClients] = useState([]);
@@ -39,8 +39,7 @@ function ClientDropdown({ isSubmit }: { isSubmit?: boolean }) {
     >
       {
         [
-          // @ts-ignore
-          !isSubmit && <SelectItem key={0}>All</SelectItem>,
+          <SelectItem key={0}>All</SelectItem>,
           ...clients.map((client: any) => (
             <SelectItem key={client.id}>{client.client_name}</SelectItem>
           ))
@@ -50,4 +49,4 @@ function ClientDropdown({ isSubmit }: { isSubmit?: boolean }) {
   );
 }
 
-export default ClientDropdown;
+export default ClientSelector;

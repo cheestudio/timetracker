@@ -1,8 +1,8 @@
 import moment from 'moment-timezone';
+import { createClient } from '@supabase/supabase-js';
 
 /* Supabase
 ========================================================= */
-import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = 'https://uqbrkqqnbhbfjbrkagiv.supabase.co'
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY
 export const supabase = createClient(supabaseUrl, supabaseKey as string || '');
@@ -21,10 +21,13 @@ export async function signInWithGoogle() {
 // promise delay function
 export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+  /* User Timezone
+  ========================================================= */
+  export const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  export const today = moment().tz(userTimeZone).format('YYYY-MM-DD');
 
 /*  Time Functions
 ========================================================= */
-
 
 export const convertTime = (seconds: number) => {
   const hours = Math.floor(seconds / 3600);
@@ -78,8 +81,6 @@ export const getWeekRange = (lastWeek = false) => {
   return [start, end];
 };
 
-
-
 export const getThisMonthRange = () => {
   const date = new Date();
   const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -97,7 +98,8 @@ export const getLastTwoWeeks = () => {
   return [start, end];
 };
 
-
+/* Client Fetch
+========================================================= */
 export const listClients = async () => {
   const response = await fetch('/api/clients', {
     method: 'POST',
@@ -110,10 +112,133 @@ export const listClients = async () => {
   return data;
 }
 
-//utc to local
+/* UTC string to Local
+========================================================= */
 export const UTCtoLocal = (utc:string) => {
   return new Date(utc).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
 }
+
+/* Convert Time Input to UTC
+  ========================================================= */
+  export const formatTime = (time: string) => {
+    const regexPattern = /^(\d{1,2})(?::(\d{2}))?\s*(am|pm|AM|PM)?$/;
+    const militaryTimePattern = /^([01]\d|2[0-3]):?([0-5]\d)$/;
+    const conciseTimePattern = /^(\d{1,2})(\d{2})(am|pm|AM|PM)?$/;
+    let match = time.match(regexPattern);
+    let formattedTime;
+
+    if (match) {
+      let hours = parseInt(match[1], 10);
+      const minutes = match[2] ? match[2] : '00';
+      const ampm = match[3] ? match[3].toUpperCase() : (hours < 12 ? 'AM' : 'PM');
+      if (hours === 12) {
+        hours = ampm === 'AM' ? 0 : 12;
+      } else if (ampm === 'PM') {
+        hours += 12;
+      }
+      formattedTime = `${hours % 12 || 12}:${minutes} ${ampm}`;
+    } else {
+      match = time.match(militaryTimePattern);
+      if (match) {
+        let hours = parseInt(match[1], 10);
+        const minutes = match[2];
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        formattedTime = `${hours % 12 || 12}:${minutes} ${ampm}`;
+      } else {
+        match = time.match(conciseTimePattern);
+        if (match) {
+          let hours = parseInt(match[1], 10);
+          let minutes = match[2];
+          // let ampm = match[3] ? match[3].toUpperCase() : 'AM';
+          let ampm = match[3] ? match[3].toUpperCase() : (hours < 12 ? 'AM' : 'PM');
+          formattedTime = `${hours % 12 || 12}:${minutes} ${ampm}`;
+        }
+      }
+    }
+    return formattedTime;
+  };
+  
+  /* Time to Seconds
+  ========================================================= */
+  export const timeToSeconds = (time: string) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    return (hours * 3600) + (minutes * 60);
+  }
+
+  export const timeToUTC = (time: string) => {
+    const currentDate = moment().format('YYYY-MM-DD');
+    const formattedTime = formatTime(time);
+    const localTime = moment.tz(`${currentDate} ${formattedTime}`, 'YYYY-MM-DD h:mm A', userTimeZone);
+    return localTime;
+  };
+
+  export const formatTimeInput = (time: string) => {
+    const formattedTime = formatTime(time);
+    return formattedTime;
+  };
+
+  /* Time Difference
+  ========================================================= */
+  export const calculateElapsedTime = (startTime: string | undefined, endTime: string | undefined) => {
+
+    if (startTime === '0:00:00' || endTime === '0:00:00') {
+      return '0:00';
+    }
+
+    const format = 'h:mm A';
+    const startMoment = moment(startTime, format);
+    const endMoment = moment(endTime, format);
+
+    if (endMoment.isBefore(startMoment)) {
+      endMoment.add(1, 'day');
+    }
+
+    const duration = moment.duration(endMoment.diff(startMoment));
+    const hours = Math.floor(duration.asHours());
+    const minutes = duration.minutes();
+
+    if (Number.isNaN(hours) || Number.isNaN(minutes)) {
+      return '0:00';
+    }
+
+    return `${hours}:${String(minutes).padStart(2, '0')}`;
+  };
+
+  
+  /* Timer Input
+  ========================================================= */
+
+  export const timerInputFormat = (input: string) => {
+    const cleanInput = String(input).replace(/\D/g, '').replace(/^0+/, '');
+    let
+      hours: string | number = '0',
+      minutes: string | number = '0',
+      seconds: string | number = '00';
+
+    if (cleanInput.length === 1 || cleanInput.length === 2) {
+      minutes = cleanInput.padStart(2, '0');
+
+      const totalMinutes = parseInt(cleanInput, 10);
+
+      if (totalMinutes >= 0 && totalMinutes <= 99) {
+        hours = Math.floor(totalMinutes / 60);
+        minutes = totalMinutes % 60;
+        minutes = minutes.toString().padStart(2, '0');
+      }
+
+    } else if (cleanInput.length === 3) {
+      hours = cleanInput.substring(0, 1);
+      minutes = cleanInput.substring(1, 3);
+    } else if (cleanInput.length === 4) {
+      hours = cleanInput.substring(0, 2);
+      minutes = cleanInput.substring(2, 4);
+    } else {
+      hours = cleanInput.substring(0, cleanInput.length - 4);
+      minutes = cleanInput.substring(cleanInput.length - 4, cleanInput.length - 2);
+      seconds = cleanInput.substring(cleanInput.length - 2);
+    }
+    return `${hours}:${minutes}:${seconds}`;
+  };
 
 /* ShadCN
 ========================================================= */
