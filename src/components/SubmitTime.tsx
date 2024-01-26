@@ -23,7 +23,9 @@ const SubmitTime = () => {
   const [timeTracked, setTimeTracked] = useState<string>('0:00:00');
   const [timeMode, setTimeMode] = useState<string>("entry");
   const [toggleBar, setToggleBar] = useState<boolean>(false);
-  const [billable, setBillable] = useState<boolean>(true);
+  const [billable, setBillable] = useState<boolean>(false);
+
+  console.log('billable', billable);
 
   /* Handle Time Inputs
   ========================================================= */
