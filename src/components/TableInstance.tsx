@@ -253,7 +253,7 @@ const TableInstance = ({ client }: { client: string }) => {
   }
 
   return (
-    <div className="flex flex-col gap-4 table-instance">
+    <div className="flex flex-col gap-4 table-instance pt-[180px]">
 
       <SubmitTime />
 

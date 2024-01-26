@@ -4,7 +4,6 @@ import { formatDate, convertTime, UTCtoLocal } from "@/lib/utils";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 
 const TableDisplay = ({ items, sortDescriptor, onSort, handleSelectedKeys }: { items: any, sortDescriptor: SortDescriptor, onSort: any, handleSelectedKeys: any }) => {
-  console.log(items);
   return (
     <Table
       selectionMode="multiple"
