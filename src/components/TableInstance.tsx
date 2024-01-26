@@ -66,7 +66,12 @@ const TableInstance = ({ client }: { client: string }) => {
     const fetchTimeEntries = async () => {
       let query = supabase
         .from('TimeEntries')
-        .select('*')
+        .select(`
+          *,
+          Clients (
+            client_name
+          )
+    `)
         .order('date', { ascending: true });
 
       if (parseInt(client) !== 0) {
@@ -128,7 +133,11 @@ const TableInstance = ({ client }: { client: string }) => {
         return [];
       }
       if (data) {
-        setTimeEntries(data);
+        const entries = data.map(entry => ({
+          ...entry,
+          client_name: entry.Clients.client_name
+        }));
+        setTimeEntries(entries);
         calculateTotalHours(data);
         setLoading(false);
       }
@@ -205,6 +214,7 @@ const TableInstance = ({ client }: { client: string }) => {
     const sortedEntries = [...timeEntries].sort((a, b) => {
       let valueA = a[colSort.column];
       let valueB = b[colSort.column];
+
       if (colSort.column === 'date') {
         valueA = new Date(valueA);
         valueB = new Date(valueB);
@@ -245,7 +255,7 @@ const TableInstance = ({ client }: { client: string }) => {
   return (
     <div className="flex flex-col gap-4 table-instance">
 
-      <SubmitTime/>
+      <SubmitTime />
 
       <TableRowControls
         viewableRows={viewableRows}

@@ -4,6 +4,7 @@ import { formatDate, convertTime, UTCtoLocal } from "@/lib/utils";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 
 const TableDisplay = ({ items, sortDescriptor, onSort, handleSelectedKeys }: { items: any, sortDescriptor: SortDescriptor, onSort: any, handleSelectedKeys: any }) => {
+  console.log(items);
   return (
     <Table
       selectionMode="multiple"
@@ -12,12 +13,13 @@ const TableDisplay = ({ items, sortDescriptor, onSort, handleSelectedKeys }: { i
       onSortChange={onSort}
     >
       <TableHeader>
-        <TableColumn key="task" allowsSorting>Task</TableColumn>
+        <TableColumn key="task" allowsSorting width="25%">Task</TableColumn>
         <TableColumn key="date" allowsSorting>Date</TableColumn>
         <TableColumn key="time_tracked" allowsSorting>Duration</TableColumn>
         <TableColumn key="start_time" allowsSorting>Time</TableColumn>
         <TableColumn key="owner" allowsSorting>Owner</TableColumn>
         <TableColumn key="billable" allowsSorting>Billable</TableColumn>
+        <TableColumn key="client_name" allowsSorting width="10%">Client</TableColumn>
       </TableHeader>
       <TableBody>
         {items.map((row: TimeEntryProps) => (
@@ -39,6 +41,7 @@ const TableDisplay = ({ items, sortDescriptor, onSort, handleSelectedKeys }: { i
             </TableCell>
             <TableCell>{row.owner}</TableCell>
             <TableCell>{ row.billable && <CheckCircleIcon className="w-5 h-5 text-primary" /> }</TableCell>
+            <TableCell>{row.client_name}</TableCell>
           </TableRow>
         ))}
       </TableBody>

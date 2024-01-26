@@ -12,6 +12,7 @@ export interface TimeEntryProps {
   billable: boolean;
   start_time: string;
   end_time: string;
+  client_name: any;
 }
 
 export interface TableRowControlsProps {
