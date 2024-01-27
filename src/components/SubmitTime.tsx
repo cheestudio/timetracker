@@ -25,8 +25,6 @@ const SubmitTime = () => {
   const [toggleBar, setToggleBar] = useState<boolean>(false);
   const [billable, setBillable] = useState<boolean>(false);
 
-  console.log('billable', billable);
-
   /* Handle Time Inputs
   ========================================================= */
   const timeEntryReducer = (state: any, action: any) => {

@@ -293,7 +293,7 @@ const TableInstance = ({ client }: { client: string }) => {
           <div className="ml-auto">
             <h2 className="text-2xl">
               <strong>
-                {timeEntries.length > 0 ? 'Selected: ' : 'Total: '}
+                {selectedKeys.length > 0 ? 'Selected: ' : 'Total: '}
               </strong>
               {convertTime(calculatedTime).toString()} <span className="mx-2">|</span> {convertToDecimalHours(calculatedTime).toString()}
             </h2>
