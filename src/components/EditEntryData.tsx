@@ -34,23 +34,30 @@ const EditEntryData = ({ entryData }: { entryData: TimeEntryProps }) => {
     const { name, checked } = e.target;
     setFormData({ ...formData, [name]: checked });
   };
-
-  const displayDuration = () => {
-    const elapsedTime = calculateElapsedTime(startTime, endTime);
-    const seconds = timeToSeconds(elapsedTime);
-    return convertTime(seconds);
-  }
+  
+  const elapsedTime = calculateElapsedTime(startTime, endTime);
+  const seconds = timeToSeconds(elapsedTime);
 
   const updateEntry = async () => {
-    const { data, error } = await supabase
-      .from('TimeEntries')
-      .update({ ...formData })
-      .eq('entry_id', entryData.entry_id);
-
-    if (error) {
-      console.error('Error updating entry:', error);
-      return;
+    const updatedEntryData = {
+      task: formData.task,
+      date: formData.date,
+      time_tracked: seconds,
+      client_id: parseInt(formData.client_id),
+      billable: formData.billable,
+      start_time: timeToUTC(startTime),
+      end_time: timeToUTC(endTime),
     }
+    console.log(updatedEntryData);
+    // const { data, error } = await supabase
+    //   .from('TimeEntries')
+    //   .update({ ...formData })
+    //   .eq('entry_id', entryData.entry_id);
+
+    // if (error) {
+    //   console.error('Error updating entry:', error);
+    //   return;
+    // }
     // Handle success (e.g., show a success message)
   };
 
@@ -99,7 +106,7 @@ const EditEntryData = ({ entryData }: { entryData: TimeEntryProps }) => {
           variant="underlined"
           name="time_tracked"
           isDisabled
-          value={displayDuration()}
+          value={convertTime(seconds)}
         />
         <Checkbox
           isSelected={formData.billable}

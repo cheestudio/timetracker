@@ -128,9 +128,6 @@ const SubmitTime = () => {
     setEndTime(newEndTime);
   };
 
-  console.log(startTime, endTime);
-  
-
   /* Supabase
   ========================================================= */
 
