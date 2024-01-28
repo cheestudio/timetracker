@@ -19,8 +19,9 @@ const EditEntry = ({ entryData }: { entryData: any }) => {
       onOpenChange={onOpenChange}
       classNames={
         {
+          base: "max-w-7xl border border-gray-300/20",
+          backdrop: "bg-black/70 backdrop-opacity-20",
           body: "pt-10",
-          base: "max-w-7xl",
         }
       }
       >
@@ -28,7 +29,7 @@ const EditEntry = ({ entryData }: { entryData: any }) => {
           {(onClose) => (
             <>
               <ModalBody>
-                <EditEntryData entryData={entryData} />
+                <EditEntryData closeToggle={onClose} entryData={entryData} />
               </ModalBody>
             </>
           )}

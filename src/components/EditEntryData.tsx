@@ -3,8 +3,9 @@ import { supabase, timeToSeconds, timeToUTC, formatTimeInput, calculateElapsedTi
 import { TimeEntryProps } from "@/lib/types";
 import { Button, Input, Checkbox, Select, SelectItem, Table, TableHeader, TableBody, TableRow, TableCell, TableColumn, cn } from "@nextui-org/react";
 import ClientSubmit from './ClientSubmit';
+import toast from 'react-hot-toast';
 
-const EditEntryData = ({ entryData }: { entryData: TimeEntryProps }) => {
+const EditEntryData = ({ entryData, closeToggle }: { entryData: TimeEntryProps, closeToggle: () => void }) => {
   const [formData, setFormData] = useState({ ...entryData });
 
   // const entryValues = {
@@ -48,17 +49,18 @@ const EditEntryData = ({ entryData }: { entryData: TimeEntryProps }) => {
       start_time: timeToUTC(startTime),
       end_time: timeToUTC(endTime),
     }
-    console.log(updatedEntryData);
-    // const { data, error } = await supabase
-    //   .from('TimeEntries')
-    //   .update({ ...formData })
-    //   .eq('entry_id', entryData.entry_id);
+    const { data, error } = await supabase
+      .from('TimeEntries')
+      .update(updatedEntryData)
+      .eq('entry_id', formData.entry_id);
 
-    // if (error) {
-    //   console.error('Error updating entry:', error);
-    //   return;
-    // }
-    // Handle success (e.g., show a success message)
+    if (error) {
+      console.error('Error updating entry:', error);
+      return;
+    }
+    window.dispatchEvent(new CustomEvent('timeEntryAdded'));
+    toast.success('Entry Updated!');
+    closeToggle();
   };
 
   return (
@@ -125,8 +127,8 @@ const EditEntryData = ({ entryData }: { entryData: TimeEntryProps }) => {
         </Checkbox>
         <ClientSubmit client={formData.client_id.toString()} handleClient={handleInputChange} />
       </div>
-      <div className="flex justify-end mb-10">
-        <Button onClick={updateEntry}>Update Entry</Button>
+      <div className="flex justify-end mt-3 mb-5">
+        <Button variant="flat" color="primary" onClick={updateEntry}>Update Entry</Button>
       </div>
     </>
   );

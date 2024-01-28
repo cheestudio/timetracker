@@ -145,6 +145,7 @@ const TableInstance = ({ client }: { client: string }) => {
     fetchTimeEntries();
     const handleNewEntry = () => {
       fetchTimeEntries();
+      console.log('fetched');
     };
 
     window.addEventListener('timeEntryAdded', handleNewEntry);
