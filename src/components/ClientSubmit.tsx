@@ -22,6 +22,7 @@ function ClientSubmit({client, handleClient}: any) {
     <Select
       radius="sm"
       value={client}
+      name="client_id"
       onChange={handleClient}
       defaultSelectedKeys={client}
       variant="bordered"
