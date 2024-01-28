@@ -23,7 +23,7 @@ function ClientSubmit({client, handleClient}: any) {
       radius="sm"
       value={client}
       onChange={handleClient}
-      selectedKeys={client}
+      defaultSelectedKeys={client}
       variant="bordered"
       label="Client"
       labelPlacement="outside"

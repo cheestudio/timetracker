@@ -251,7 +251,7 @@ const TableInstance = ({ client }: { client: string }) => {
     setPage(1);
     setPaginationKey((prevKey) => prevKey + 1);
   }
-
+  
   return (
     <div className="flex flex-col gap-4 table-instance pt-[180px]">
 
