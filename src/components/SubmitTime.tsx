@@ -121,7 +121,15 @@ const SubmitTime = () => {
     }
     const formattedTime = timerInputFormat(currentValue);
     setTimeTracked(formattedTime);
+    setStartTime(moment().format('h:mm A'));
+    const [hours, minutes, seconds] = formattedTime.split(':').map(Number);
+    const durationMs = (hours * 3600000) + (minutes * 60000) + (seconds * 1000);
+    const newEndTime = moment(startTime, 'h:mm A').add(durationMs, 'milliseconds').format('h:mm A');
+    setEndTime(newEndTime);
   };
+
+  console.log(startTime, endTime);
+  
 
   /* Supabase
   ========================================================= */

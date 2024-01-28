@@ -1,7 +1,8 @@
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, SortDescriptor } from "@nextui-org/react";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, SortDescriptor, Button } from "@nextui-org/react";
 import { TimeEntryProps } from "@/lib/types";
 import { formatDate, convertTime, UTCtoLocal } from "@/lib/utils";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
+import EditEntry from "./EditEntry";
 
 const TableDisplay = ({ items, sortDescriptor, onSort, handleSelectedKeys }: { items: any, sortDescriptor: SortDescriptor, onSort: any, handleSelectedKeys: any }) => {
   return (
@@ -19,6 +20,7 @@ const TableDisplay = ({ items, sortDescriptor, onSort, handleSelectedKeys }: { i
         <TableColumn key="owner" allowsSorting>Owner</TableColumn>
         <TableColumn key="billable" allowsSorting>Billable</TableColumn>
         <TableColumn key="client_name" allowsSorting width="10%">Client</TableColumn>
+        <TableColumn>&nbsp;</TableColumn>
       </TableHeader>
       <TableBody>
         {items.map((row: TimeEntryProps) => (
@@ -41,6 +43,9 @@ const TableDisplay = ({ items, sortDescriptor, onSort, handleSelectedKeys }: { i
             <TableCell>{row.owner}</TableCell>
             <TableCell>{ row.billable && <CheckCircleIcon className="w-5 h-5 text-primary" /> }</TableCell>
             <TableCell>{row.client_name}</TableCell>
+            <TableCell>
+              <EditEntry entryData={row} />
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

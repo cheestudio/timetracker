@@ -13,7 +13,7 @@ export async function signInWithGoogle() {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: "https://chee-time-tracker.vercel.app/timesheets?client=0"
+      redirectTo: window.location.origin
     }
   })
 }

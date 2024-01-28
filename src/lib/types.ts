@@ -13,6 +13,7 @@ export interface TimeEntryProps {
   start_time: string;
   end_time: string;
   client_name: any;
+  client_id: string;
 }
 
 export interface TableRowControlsProps {
