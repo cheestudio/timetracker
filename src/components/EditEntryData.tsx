@@ -1,30 +1,17 @@
 import React, { useState } from 'react';
-import { supabase, timeToSeconds, timeToUTC, formatTimeInput, calculateElapsedTime, timerInputFormat, userTimeZone, today, UTCtoLocal, convertTime } from '@/lib/utils';
+import { supabase, timeToSeconds, timeToUTC, calculateElapsedTime, UTCtoLocal, convertTime } from '@/lib/utils';
 import { TimeEntryProps } from "@/lib/types";
-import { Button, Input, Checkbox, Select, SelectItem, Table, TableHeader, TableBody, TableRow, TableCell, TableColumn, cn } from "@nextui-org/react";
+import { Button, Input, Checkbox, cn } from "@nextui-org/react";
 import ClientSubmit from './ClientSubmit';
 import toast from 'react-hot-toast';
 
 const EditEntryData = ({ entryData, closeToggle }: { entryData: TimeEntryProps, closeToggle: () => void }) => {
+
   const [formData, setFormData] = useState({ ...entryData });
-
-  // const entryValues = {
-  //   task: formData.task,
-  //   date: formData.date,
-  //   time_tracked: formData.time_tracked,
-  //   billable: formData.billable,
-  //   clientInfo: {
-  //     client_name: formData.client_name,
-  //     id: formData.client_id
-  //   },
-  //   start_time: formData.start_time,
-  //   end_time: formData.end_time,
-  //   owner: formData.owner
-  // }
-
-
   const [startTime, setStartTime] = useState(UTCtoLocal(entryData.start_time));
   const [endTime, setEndTime] = useState(UTCtoLocal(entryData.end_time));
+  const elapsedTime = calculateElapsedTime(startTime, endTime);
+  const seconds = timeToSeconds(elapsedTime);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -35,9 +22,6 @@ const EditEntryData = ({ entryData, closeToggle }: { entryData: TimeEntryProps, 
     const { name, checked } = e.target;
     setFormData({ ...formData, [name]: checked });
   };
-  
-  const elapsedTime = calculateElapsedTime(startTime, endTime);
-  const seconds = timeToSeconds(elapsedTime);
 
   const updateEntry = async () => {
     const updatedEntryData = {
@@ -117,9 +101,10 @@ const EditEntryData = ({ entryData, closeToggle }: { entryData: TimeEntryProps, 
           classNames={
             {
               base: cn(
-                "flex-col-reverse",
+                "flex-col-reverse p-1 justify-between",
               ),
-              label: "w-full",
+              label: "w-full text-[14px]",
+              wrapper: "mt-3 mb-auto"
             }
           }
         >
