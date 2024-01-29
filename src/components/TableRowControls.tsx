@@ -74,8 +74,8 @@ const TableRowControls = ({ timeEntries, viewableRows, selectedDateRange, handle
             <SelectItem key="all">All</SelectItem>
             <SelectItem key="yesterday">Yesterday</SelectItem>
             <SelectItem key="today">Today</SelectItem>
-            <SelectItem key="this_week">This Week</SelectItem>
             <SelectItem key="last_week">Last Week</SelectItem>
+            <SelectItem key="this_week">This Week</SelectItem>
             <SelectItem key="this_month">This Month</SelectItem>
             <SelectItem key="custom">Custom</SelectItem>
           </Select>
