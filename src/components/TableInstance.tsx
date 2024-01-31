@@ -135,7 +135,7 @@ const TableInstance = ({ client }: { client: string }) => {
       if (data) {
         const entries = data.map(entry => ({
           ...entry,
-          client_name: entry.Clients.client_name
+          client_name: entry.client_name
         }));
         setTimeEntries(entries);
         calculateTotalHours(data);
