@@ -1,18 +1,11 @@
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, SortDescriptor, Button } from "@nextui-org/react";
 import { TimeEntryProps } from "@/lib/types";
 import { formatDate, convertTime, UTCtoLocal } from "@/lib/utils";
-import { CheckCircleIcon, ClipboardCopyIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import EditEntry from "./EditEntry";
 import toast from 'react-hot-toast';
 
 const TableDisplay = ({ items, sortDescriptor, onSort, handleSelectedKeys }: { items: any, sortDescriptor: SortDescriptor, onSort: any, handleSelectedKeys: any }) => {
-
-
-  const CopyToClipboard = ({ text }) => {
-    console.log(text);
-    navigator.clipboard.writeText(text);
-    toast.success('Copied to clipboard!');
-  };
 
   return (
     <Table
