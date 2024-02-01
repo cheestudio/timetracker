@@ -41,13 +41,17 @@ const SubmitTime = () => {
   const [timeState, timeDispatch] = useReducer(timeEntryReducer, { startTime: '', endTime: '' });
 
   const handleManualInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+
     if (e.target.id === 'startTime') {
       timeDispatch({ type: 'SET_START_TIME', payload: e.target.value });
       const formattedTime = formatTimeInput(startTime) || '0:00';
       setStartTime(formattedTime);
-    } else if (e.target.id === 'endTime') {
+    } 
+
+    else if (e.target.id === 'endTime') {
       timeDispatch({ type: 'SET_END_TIME', payload: e.target.value });
       let formattedTime = formatTimeInput(endTime) || '0:00';
+      // Automatic AM/PM application
       if (!e.target.value.toLowerCase().includes('am') && !e.target.value.toLowerCase().includes('pm')) {
         if (startTime.includes('AM') || startTime.includes('PM')) {
           const amPm = startTime.slice(-2);
@@ -55,6 +59,7 @@ const SubmitTime = () => {
         }
       }
       setEndTime(formattedTime);
+
     }
   }
 
@@ -134,22 +139,12 @@ const SubmitTime = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     let totalTime;
-    let startTimeValue;
-    let endTimeValue;
     if (timerSeconds > 0) {
       totalTime = timerSeconds;
     }
     else {
       const timeRange = calculateElapsedTime(startTime, endTime);
       totalTime = timeToSeconds(timeRange);
-    }
-    if (startTime != '0:00' && endTime != '0:00') {
-      startTimeValue = timeToUTC(startTime);
-      endTimeValue = timeToUTC(endTime);
-    }
-    else {
-      startTimeValue = null;
-      endTimeValue = null;
     }
     const { data: user, error: userError } = await supabase.auth.getSession()
     const { data, error } = await supabase
@@ -164,8 +159,8 @@ const SubmitTime = () => {
           billable: billable,
           owner: user?.session?.user.user_metadata.name.split(' ')[0],
           user_id: user.session?.user.id,
-          start_time: startTimeValue,
-          end_time: endTimeValue,
+          start_time: timeState.startTime,
+          end_time: timeState.endTime,
         }
       ]);
     if (error) {
