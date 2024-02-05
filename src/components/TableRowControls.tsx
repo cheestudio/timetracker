@@ -1,24 +1,29 @@
 import React, { useRef } from "react";
 
-import { Button, Input, Select, SelectItem } from "@nextui-org/react";
+import { Button, Input, Select, SelectItem, Tooltip } from "@nextui-org/react";
 import { TableRowControlsProps } from "@/lib/types";
-import { listClients } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { useTimesheet } from "@/lib/TimesheetContext";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { ChartBarSquareIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { DatePickerWithRange } from "./DatePicker";
 import ClientSelector from "./ClientSelector";
+import useVisibility from "@/lib/useVisibility";
+import ToggleElement from "./ToggleElement";
 
-const TableRowControls = ({ timeEntries, viewableRows, selectedDateRange, handleCustomDateRange, handleUser, selectedUser, handleViewableRows, handleDateRange, handleSearch, loading }: TableRowControlsProps) => {
-  
-  const [showSearch, setShowSearch] = useState(false);
+const TableRowControls = ({ timeEntries, viewableRows, selectedDateRange, handleCustomDateRange, handleUser, selectedUser, handleViewableRows, handleDateRange, handleSearch, loading, barVisibility, toggleBarVisibility, resetSearch }: TableRowControlsProps) => {
+
+  const { isVisible, toggleVisibility } = useVisibility(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (showSearch && searchInputRef.current) {
+    if (isVisible && searchInputRef.current) {
       searchInputRef.current.focus();
     }
-  }, [showSearch]);
+    if (!isVisible) {
+      resetSearch();
+    }
+  }, [isVisible,resetSearch]);
+
+
 
   return (
     <>
@@ -47,13 +52,14 @@ const TableRowControls = ({ timeEntries, viewableRows, selectedDateRange, handle
             radius="sm"
             value={viewableRows}
             onChange={handleViewableRows}
+            defaultSelectedKeys={new Set(["1000"])}
             variant="bordered"
             label="Viewable Rows"
             labelPlacement="outside"
             placeholder="Select"
             disallowEmptySelection={true}
           >
-            <SelectItem key="500">All</SelectItem>
+            <SelectItem key="1000">All</SelectItem>
             <SelectItem key="25">25</SelectItem>
             <SelectItem key="50">50</SelectItem>
             <SelectItem key="75">75</SelectItem>
@@ -89,14 +95,22 @@ const TableRowControls = ({ timeEntries, viewableRows, selectedDateRange, handle
           </div>
         }
 
-        <div className="flex-[0_1_50px] self-end">
-          <Button isLoading={loading} variant="light" isIconOnly onPress={() => setShowSearch(!showSearch)}>
-            <MagnifyingGlassIcon className="w-7 h-7" />
+        <div className="flex-[0_1_40px] self-end text-center">
+          <Button isLoading={loading} variant="light" isIconOnly onPress={toggleVisibility}>
+            {isVisible ? <XMarkIcon className="w-7 h-7" /> : <MagnifyingGlassIcon className="w-7 h-7" />}
+
+          </Button>
+        </div>
+        <div className="flex-[0_1_40px] self-end text-center">
+          <Button isIconOnly variant="light" onPress={() => toggleBarVisibility()}>
+            <Tooltip content={barVisibility ? "Toggle Chart" : "Toggle Chart"}>
+              <ChartBarSquareIcon className="w-7 h-7" />
+            </Tooltip>
           </Button>
         </div>
 
       </div>
-      {showSearch &&
+      <ToggleElement isVisible={isVisible}>
         <div className="flex justify-end gap-5 table-row-controls">
           <div className="flex-[1_1_auto]">
             <Input
@@ -114,7 +128,8 @@ const TableRowControls = ({ timeEntries, viewableRows, selectedDateRange, handle
             />
           </div>
         </div>
-      }
+      </ToggleElement>
+
     </>
   );
 };

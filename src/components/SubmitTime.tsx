@@ -167,7 +167,7 @@ const SubmitTime = () => {
       console.log('Error:', error);
     } else {
       toast.success('Time entry added');
-      window.dispatchEvent(new CustomEvent('timeEntryAdded'));
+      window.dispatchEvent(new CustomEvent('timeEntriesModified'));
       setTask('');
       setTimeTracked('');
     }

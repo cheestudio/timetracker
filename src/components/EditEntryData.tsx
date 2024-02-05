@@ -42,7 +42,7 @@ const EditEntryData = ({ entryData, closeToggle }: { entryData: TimeEntryProps, 
       console.error('Error updating entry:', error);
       return;
     }
-    window.dispatchEvent(new CustomEvent('timeEntryAdded'));
+    window.dispatchEvent(new CustomEvent('timeEntriesModified'));
     toast.success('Entry Updated!');
     closeToggle();
   };

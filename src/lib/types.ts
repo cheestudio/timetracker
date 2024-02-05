@@ -32,6 +32,9 @@ export interface TableRowControlsProps {
   setSortDescriptor: React.Dispatch<React.SetStateAction<SortDescriptor>>;
   setTimeEntries: React.Dispatch<React.SetStateAction<any[]>>;
   timeEntries: any[];
+  barVisibility: boolean;
+  toggleBarVisibility: () => void;
+  resetSearch: () => void;
 }
 
 export interface UserContextType {
