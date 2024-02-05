@@ -3,18 +3,23 @@
 import { TableRowControlsProps } from '@/lib/types';
 import { useState, useEffect, useMemo } from "react";
 import { TimeEntryProps, SortDirection } from "@/lib/types";
+import { supabase } from "@/lib/utils";
 import { Button, SortDescriptor } from "@nextui-org/react";
 import { convertTime, convertToDecimalHours, getTodayRange, getWeekRange, getLastTwoWeeks, getThisMonthRange, getYesterdayRange, debounceWithValue } from "@/lib/utils";
+import { DateRange } from 'react-day-picker';
+import moment from 'moment-timezone';
 import SubmitTime from "./SubmitTime";
-import { supabase } from "@/lib/utils";
 import toast from 'react-hot-toast';
 import PaginateTable from './PaginateTable';
 import TableDisplay from './TableDisplay';
 import TableRowControls from './TableRowControls';
-import { DateRange } from 'react-day-picker';
-import moment from 'moment-timezone';
+import BarChart from "./BarChart";
+import ToggleElement from './ToggleElement';
+import useVisibility from '@/lib/useVisibility';
 
 const TableInstance = ({ client }: { client: string }) => {
+
+  const { isVisible:barVisibility, toggleVisibility:toggleBarVisibility } = useVisibility(false);
 
   /* Time Converison
   ========================================================= */
@@ -60,6 +65,11 @@ const TableInstance = ({ client }: { client: string }) => {
   const handleSearch: TableRowControlsProps['handleSearch'] = (e) => {
     debounceWithValue(() => setSearchQuery(e.target.value), 1000)();
     setLoading(true);
+  }
+
+  const resetSearch: TableRowControlsProps['resetSearch'] = () => {
+    setSearchQuery('');
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -145,13 +155,12 @@ const TableInstance = ({ client }: { client: string }) => {
     fetchTimeEntries();
     const handleNewEntry = () => {
       fetchTimeEntries();
-      console.log('fetched');
     };
 
-    window.addEventListener('timeEntryAdded', handleNewEntry);
+    window.addEventListener('timeEntriesModified', handleNewEntry);
 
     return () => {
-      window.removeEventListener('timeEntryAdded', handleNewEntry);
+      window.removeEventListener('timeEntriesModified', handleNewEntry);
     };
 
   }, [client, selectedUser, customDateRange, selectedDateRange, searchQuery]);
@@ -191,7 +200,7 @@ const TableInstance = ({ client }: { client: string }) => {
     if (error) {
       console.error('Error deleting data: ', error);
     }
-    window.dispatchEvent(new CustomEvent('timeEntryAdded'));
+    window.dispatchEvent(new CustomEvent('timeEntriesModified'));
     setSelectedKeys([]);
     toast.success('Removed');
   }
@@ -235,13 +244,12 @@ const TableInstance = ({ client }: { client: string }) => {
 
   /* Pagination
   ========================================================= */
-
-  const [viewableRows, setViewableRows] = useState(50);
+  const [viewableRows, setViewableRows] = useState(1000);
   const [page, setPage] = useState(1);
   const [paginationKey, setPaginationKey] = useState(0);
   const rowsPerPage = viewableRows;
   const pages = Math.ceil(timeEntries.length / rowsPerPage);
-  const items = useMemo(() => {
+  const items: TimeEntryProps[] = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
     return timeEntries.slice(start, end);
@@ -252,7 +260,7 @@ const TableInstance = ({ client }: { client: string }) => {
     setPage(1);
     setPaginationKey((prevKey) => prevKey + 1);
   }
-  
+
   return (
     <div className="flex flex-col gap-4 table-instance pt-[180px]">
 
@@ -269,12 +277,19 @@ const TableInstance = ({ client }: { client: string }) => {
         handleViewableRows={handleViewableRows}
         handleDateRange={handleDateRange}
         handleSearch={handleSearch}
+        resetSearch={resetSearch}
         sortDescriptor={sortDescriptor}
         setSortDescriptor={setSortDescriptor}
         setTimeEntries={setTimeEntries}
         timeEntries={timeEntries}
         loading={loading}
+        barVisibility={barVisibility}
+        toggleBarVisibility={toggleBarVisibility}
       />
+
+      <ToggleElement isVisible={barVisibility}>
+        <BarChart items={items} />
+      </ToggleElement>
 
       <TableDisplay handleSelectedKeys={handleSelectedKeys} items={items} sortDescriptor={sortDescriptor} onSort={sort} />
 
