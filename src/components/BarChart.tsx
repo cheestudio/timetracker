@@ -89,7 +89,7 @@ const BarChart = ({ items }: { items: TimeEntryProps[] }) => {
             family: '__Inter_e66fe9',
           },
           callback: (value: Date, index: number) => {
-            const dateLabels = result.uniqueDates;
+            const dateLabels = data.labels;
             if (dateLabels && dateLabels.length > index) {
               const dateStr = dateLabels[index];
               return moment(dateStr).format('ddd MM/DD');
@@ -117,14 +117,15 @@ const BarChart = ({ items }: { items: TimeEntryProps[] }) => {
         }
       },
       tooltip: {
+        enabled: false,
         label: false,
         mode: 'index',
         intersect: true,
         displayColors: false,
         callbacks: {
           title: (tooltipItems: any) => {
-            const date = new Date(tooltipItems[0].label);
-            return moment(date).format('dddd, MMMM Do');
+            const tooltipDate = new Date(tooltipItems[0].label);
+            return moment(tooltipItems[0].label).format('dddd, MMMM Do');
           }
         },
         titleFont: {
