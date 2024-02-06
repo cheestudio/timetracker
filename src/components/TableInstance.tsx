@@ -299,7 +299,7 @@ const TableInstance = ({ client }: { client: string }) => {
 
       <TableDisplay handleSelectedKeys={handleSelectedKeys} items={items} sortDescriptor={sortDescriptor} onSort={sort} />
 
-      <div className="sticky bottom-0 flex justify-between py-3 bg-[#070707]/95">
+      <div className="sticky bottom-0 flex justify-between py-3 bg-[#070707]/95 backdrop-blur-md">
         <SelectEntry
           selectedKeys={selectedKeys}
           deleteTimeEntry={deleteTimeEntry}
