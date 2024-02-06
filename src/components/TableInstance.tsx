@@ -5,7 +5,7 @@ import { useState, useEffect, useMemo } from "react";
 import { TimeEntryProps, SortDirection } from "@/lib/types";
 import { supabase } from "@/lib/utils";
 import { Button, SortDescriptor } from "@nextui-org/react";
-import { convertTime, convertToDecimalHours, getTodayRange, getWeekRange, getLastTwoWeeks, getThisMonthRange, getYesterdayRange, debounceWithValue } from "@/lib/utils";
+import { convertTime, convertToDecimalHours, getTodayRange, getWeekRange, getLastTwoWeeks, getThisMonthRange, getLastMonthRange, getYesterdayRange, debounceWithValue } from "@/lib/utils";
 import { DateRange } from 'react-day-picker';
 import moment from 'moment-timezone';
 import SubmitTime from "./SubmitTime";
@@ -16,10 +16,12 @@ import TableRowControls from './TableRowControls';
 import BarChart from "./BarChart";
 import ToggleElement from './ToggleElement';
 import useVisibility from '@/lib/useVisibility';
+import TimeTotal from './TimeTotal';
+import SelectEntry from './SelectEntry';
 
 const TableInstance = ({ client }: { client: string }) => {
 
-  const { isVisible:barVisibility, toggleVisibility:toggleBarVisibility } = useVisibility(false);
+  const { isVisible: barVisibility, toggleVisibility: toggleBarVisibility } = useVisibility(false);
 
   /* Time Converison
   ========================================================= */
@@ -116,6 +118,9 @@ const TableInstance = ({ client }: { client: string }) => {
         else if (selectedDateRange === 'two_weeks') {
           range = getLastTwoWeeks();
         }
+        else if (selectedDateRange === 'last_month') {
+          range = getLastMonthRange();
+        }
         else if (selectedDateRange === 'this_month') {
           range = getThisMonthRange();
         }
@@ -128,6 +133,7 @@ const TableInstance = ({ client }: { client: string }) => {
           range = [start, end];
         }
         if (range) {
+          console.log(range);
           const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
           const momentRangeStart = moment(range[0]);
           const momentRangeEnd = moment(range[1]);
@@ -262,7 +268,7 @@ const TableInstance = ({ client }: { client: string }) => {
   }
 
   return (
-    <div className="flex flex-col gap-4 table-instance pt-[180px]">
+    <div className={`flex flex-col gap-4 table-instance pt-[20px] has-[.time-submit-form.translate-y-0]:pt-[180px] transition-all`}>
 
       <SubmitTime />
 
@@ -293,29 +299,16 @@ const TableInstance = ({ client }: { client: string }) => {
 
       <TableDisplay handleSelectedKeys={handleSelectedKeys} items={items} sortDescriptor={sortDescriptor} onSort={sort} />
 
-      <div className="flex justify-between">
-        {selectedKeys && selectedKeys.length > 0 &&
-          <div>
-            <Button
-              variant="flat"
-              color="warning"
-              onPress={() => deleteTimeEntry()}>
-              Remove Selected
-            </Button>
-          </div>
-        }
-
-        {!!timeEntries.length &&
-          <div className="ml-auto">
-            <h2 className="text-2xl">
-              <strong>
-                {selectedKeys.length > 0 ? 'Selected: ' : 'Total: '}
-              </strong>
-              {convertTime(calculatedTime).toString()} <span className="mx-2">|</span> {convertToDecimalHours(calculatedTime).toString()}
-            </h2>
-          </div>
-        }
-
+      <div className="sticky bottom-0 flex justify-between py-3 bg-[#070707]/95">
+        <SelectEntry
+          selectedKeys={selectedKeys}
+          deleteTimeEntry={deleteTimeEntry}
+        />
+        <TimeTotal
+          timeEntries={timeEntries}
+          selectedKeys={selectedKeys}
+          calculatedTime={calculatedTime}
+        />
       </div>
 
       {viewableRows != -1 &&

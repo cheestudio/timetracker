@@ -88,6 +88,13 @@ export const getThisMonthRange = () => {
   return [firstDay, lastDay];
 };
 
+export const getLastMonthRange = () => {
+  const date = new Date();
+  const firstDay = new Date(date.getFullYear(), date.getMonth() - 1, 1);
+  const lastDay = new Date(date.getFullYear(), date.getMonth(), 0, 23, 59, 59, 999);
+  return [firstDay, lastDay];
+};
+
 export const getLastTwoWeeks = () => {
   const today = new Date();
   const end = new Date(today);

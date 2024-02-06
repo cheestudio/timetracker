@@ -23,8 +23,6 @@ const TableRowControls = ({ timeEntries, viewableRows, selectedDateRange, handle
     }
   }, [isVisible,resetSearch]);
 
-
-
   return (
     <>
       <div className="flex justify-end gap-5 table-row-controls">
@@ -69,7 +67,7 @@ const TableRowControls = ({ timeEntries, viewableRows, selectedDateRange, handle
         <div className="flex-[1_1_auto]">
           <Select
             radius="sm"
-            defaultSelectedKeys={new Set(["this_week"])}
+            defaultSelectedKeys={new Set(["this_month"])}
             onChange={handleDateRange}
             disallowEmptySelection={true}
             variant="bordered"
@@ -77,11 +75,11 @@ const TableRowControls = ({ timeEntries, viewableRows, selectedDateRange, handle
             labelPlacement="outside"
             placeholder="Select"
           >
-            <SelectItem key="all">All</SelectItem>
             <SelectItem key="yesterday">Yesterday</SelectItem>
             <SelectItem key="today">Today</SelectItem>
             <SelectItem key="last_week">Last Week</SelectItem>
             <SelectItem key="this_week">This Week</SelectItem>
+            <SelectItem key="last_month">Last Month</SelectItem>
             <SelectItem key="this_month">This Month</SelectItem>
             <SelectItem key="custom">Custom</SelectItem>
           </Select>
@@ -98,7 +96,6 @@ const TableRowControls = ({ timeEntries, viewableRows, selectedDateRange, handle
         <div className="flex-[0_1_40px] self-end text-center">
           <Button isLoading={loading} variant="light" isIconOnly onPress={toggleVisibility}>
             {isVisible ? <XMarkIcon className="w-7 h-7" /> : <MagnifyingGlassIcon className="w-7 h-7" />}
-
           </Button>
         </div>
         <div className="flex-[0_1_40px] self-end text-center">
