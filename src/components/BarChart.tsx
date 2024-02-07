@@ -1,4 +1,5 @@
 import { TimeEntryProps } from "@/lib/types";
+import { convertTime, convertDecimalTime } from "@/lib/utils";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -45,7 +46,6 @@ const BarChart = ({ items }: { items: TimeEntryProps[] }) => {
   }
   const result = processData(items);
   const hoursTracked = result.totalTimeTracked.map(t => t / 3600);
-
   /* Data
   ========================================================= */
   const data = {
@@ -92,7 +92,7 @@ const BarChart = ({ items }: { items: TimeEntryProps[] }) => {
             const dateLabels = data.labels;
             if (dateLabels && dateLabels.length > index) {
               const dateStr = dateLabels[index];
-              return moment(dateStr).format('ddd MM/DD');
+              return moment(dateStr).format('ddd M/DD');
             }
             return value;
           }
@@ -109,7 +109,7 @@ const BarChart = ({ items }: { items: TimeEntryProps[] }) => {
         anchor: 'end',
         align: 'top',
         formatter: (value: number, context: any) => {
-          return value.toFixed(2);
+          return convertDecimalTime(value);
         },
         font: {
           size: 13,
