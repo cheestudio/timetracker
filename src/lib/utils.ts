@@ -40,6 +40,11 @@ export const convertToDecimalHours = (seconds: number) => {
   return `${hours.toFixed(2)} hours`;
 };
 
+export const convertDecimalTime = (decimalTime:number) => {
+  var hours = Math.floor(decimalTime);
+  var minutes = Math.round((decimalTime - hours) * 60);
+  return hours + ":" + (minutes < 10 ? '0' : '') + minutes;
+}
 
 export const formatDate = (dateString: string) => {
   const [year, month, day] = dateString.split('-').map(part => parseInt(part, 10));

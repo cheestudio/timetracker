@@ -24,8 +24,8 @@ const TableRowControls = ({ timeEntries, viewableRows, selectedDateRange, handle
   }, [isVisible,resetSearch]);
 
   return (
-    <>
-      <div className="flex justify-end gap-5 table-row-controls">
+    <div className="top-0 sticky w-full py-3 bg-[#070707]/95 backdrop-blur-md z-50">
+      <div className="flex justify-end gap-5 table-row-controls ">
         <div className="flex-[1_1_auto] mr-auto ml-0">
           <ClientSelector />
         </div>
@@ -127,7 +127,7 @@ const TableRowControls = ({ timeEntries, viewableRows, selectedDateRange, handle
         </div>
       </ToggleElement>
 
-    </>
+    </div>
   );
 };
 

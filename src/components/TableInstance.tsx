@@ -18,6 +18,7 @@ import ToggleElement from './ToggleElement';
 import useVisibility from '@/lib/useVisibility';
 import TimeTotal from './TimeTotal';
 import SelectEntry from './SelectEntry';
+import TableInfo from './TableInfo';
 
 const TableInstance = ({ client }: { client: string }) => {
 
@@ -133,7 +134,6 @@ const TableInstance = ({ client }: { client: string }) => {
           range = [start, end];
         }
         if (range) {
-          console.log(range);
           const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
           const momentRangeStart = moment(range[0]);
           const momentRangeEnd = moment(range[1]);
@@ -298,18 +298,13 @@ const TableInstance = ({ client }: { client: string }) => {
       </ToggleElement>
 
       <TableDisplay handleSelectedKeys={handleSelectedKeys} items={items} sortDescriptor={sortDescriptor} onSort={sort} />
-
-      <div className="sticky bottom-0 flex justify-between py-3 bg-[#070707]/95 backdrop-blur-md">
-        <SelectEntry
-          selectedKeys={selectedKeys}
-          deleteTimeEntry={deleteTimeEntry}
-        />
-        <TimeTotal
-          timeEntries={timeEntries}
-          selectedKeys={selectedKeys}
-          calculatedTime={calculatedTime}
-        />
-      </div>
+      
+      <TableInfo
+        timeEntries={timeEntries}
+        selectedKeys={selectedKeys}
+        calculatedTime={calculatedTime}
+        deleteTimeEntry={deleteTimeEntry}
+      />
 
       {viewableRows != -1 &&
         <PaginateTable page={page} pages={pages} setPage={setPage} paginationKey={paginationKey} />
