@@ -48,6 +48,7 @@ const TableInstance = ({ client }: { client: string }) => {
   const [selectedClient, setSelectedClient] = useState<number>(0);
   const [selectedUser, setSelectedUser] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [tableKey, setTableKey] = useState(0);
 
   const handleDateRange: TableRowControlsProps['handleDateRange'] = (e) => {
     setSelectedDateRange(e.target.value);
@@ -156,6 +157,8 @@ const TableInstance = ({ client }: { client: string }) => {
         setTimeEntries(entries);
         calculateTotalHours(data);
         setLoading(false);
+        setSelectedKeys([]);
+        setTableKey((prevKey) => prevKey + 1);
       }
     };
     fetchTimeEntries();
@@ -198,7 +201,7 @@ const TableInstance = ({ client }: { client: string }) => {
   ========================================================= */
   const deleteTimeEntry = async () => {
     const keyArray = Array.from(selectedKeys);
-    const entryIds = keyArray.map((key) => (key as TimeEntryProps).entry_id);
+    const entryIds = keyArray.map((key) => (key as TimeEntryProps)?.entry_id);
     const { error } = await supabase
       .from('TimeEntries')
       .delete()
@@ -297,8 +300,14 @@ const TableInstance = ({ client }: { client: string }) => {
         <BarChart items={items} />
       </ToggleElement>
 
-      <TableDisplay handleSelectedKeys={handleSelectedKeys} items={items} sortDescriptor={sortDescriptor} onSort={sort} />
-      
+      <TableDisplay
+        key={tableKey}
+        handleSelectedKeys={handleSelectedKeys}
+        items={items}
+        sortDescriptor={sortDescriptor}
+        onSort={sort}
+      />
+
       <TableInfo
         timeEntries={timeEntries}
         selectedKeys={selectedKeys}
@@ -307,7 +316,12 @@ const TableInstance = ({ client }: { client: string }) => {
       />
 
       {viewableRows != -1 &&
-        <PaginateTable page={page} pages={pages} setPage={setPage} paginationKey={paginationKey} />
+        <PaginateTable
+          page={page}
+          pages={pages}
+          setPage={setPage}
+          paginationKey={paginationKey}
+        />
       }
 
     </div>

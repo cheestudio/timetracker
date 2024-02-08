@@ -135,11 +135,11 @@ export const UTCtoLocal = (utc:string) => {
   export const formatTime = (time: string) => {
     const regexPattern = /^(\d{1,2})(?::(\d{2}))?\s*(am|pm|AM|PM)?$/;
     const militaryTimePattern = /^([01]\d|2[0-3]):?([0-5]\d)$/;
-    const conciseTimePattern = /^(\d{1,2})(\d{2})(am|pm|AM|PM)?$/;
+    const decimalTimePattern = /^(\d{1,2})(\d{2})(am|pm|AM|PM)?$/;
     let match = time.match(regexPattern);
     let formattedTime;
 
-    if (match) {
+    if (match) { // match any time pattern
       let hours = parseInt(match[1], 10);
       const minutes = match[2] ? match[2] : '00';
       const ampm = match[3] ? match[3].toUpperCase() : (hours < 12 ? 'AM' : 'PM');
@@ -149,19 +149,20 @@ export const UTCtoLocal = (utc:string) => {
         hours += 12;
       }
       formattedTime = `${hours % 12 || 12}:${minutes} ${ampm}`;
-    } else {
+    } 
+    else { // match military time, e.g. 1430 -> 2:30
       match = time.match(militaryTimePattern);
       if (match) {
         let hours = parseInt(match[1], 10);
         const minutes = match[2];
         const ampm = hours >= 12 ? 'PM' : 'AM';
         formattedTime = `${hours % 12 || 12}:${minutes} ${ampm}`;
-      } else {
-        match = time.match(conciseTimePattern);
+      } 
+      else { //match decimal time, e.g. 230 -> 2:30
+        match = time.match(decimalTimePattern);
         if (match) {
           let hours = parseInt(match[1], 10);
           let minutes = match[2];
-          // let ampm = match[3] ? match[3].toUpperCase() : 'AM';
           let ampm = match[3] ? match[3].toUpperCase() : (hours < 12 ? 'AM' : 'PM');
           formattedTime = `${hours % 12 || 12}:${minutes} ${ampm}`;
         }
