@@ -59,7 +59,6 @@ const SubmitTime = () => {
         }
       }
       setEndTime(formattedTime);
-
     }
   }
 
@@ -159,8 +158,8 @@ const SubmitTime = () => {
           billable: billable,
           owner: user?.session?.user.user_metadata.name.split(' ')[0],
           user_id: user.session?.user.id,
-          start_time: timeState.startTime,
-          end_time: timeState.endTime,
+          start_time: timeToUTC(startTime),
+          end_time: timeToUTC(endTime),
         }
       ]);
     if (error) {
