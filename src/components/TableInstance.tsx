@@ -105,34 +105,38 @@ const TableInstance = ({ client }: { client: string }) => {
 
       if (selectedDateRange !== 'all') {
         let range;
-        if (selectedDateRange === 'today') {
-          range = getTodayRange();
-        }
-        else if (selectedDateRange === 'yesterday') {
-          range = getYesterdayRange();
-        }
-        else if (selectedDateRange === 'this_week') {
-          range = getWeekRange();
-        }
-        else if (selectedDateRange === 'last_week') {
-          range = getWeekRange(true);
-        }
-        else if (selectedDateRange === 'two_weeks') {
-          range = getLastTwoWeeks();
-        }
-        else if (selectedDateRange === 'last_month') {
-          range = getLastMonthRange();
-        }
-        else if (selectedDateRange === 'this_month') {
-          range = getThisMonthRange();
-        }
-        else if (selectedDateRange === 'custom') {
-          const start = customDateRange?.from;
-          const end = customDateRange?.to;
-          if (!start || !end) {
-            return;
-          }
-          range = [start, end];
+        switch (selectedDateRange) {
+          case 'today':
+            range = getTodayRange();
+            break;
+          case 'yesterday':
+            range = getYesterdayRange();
+            break;
+          case 'this_week':
+            range = getWeekRange();
+            break;
+          case 'last_week':
+            range = getWeekRange(true);
+            break;
+          case 'two_weeks':
+            range = getLastTwoWeeks();
+            break;
+          case 'last_month':
+            range = getLastMonthRange();
+            break;
+          case 'this_month':
+            range = getThisMonthRange();
+            break;
+          case 'custom':
+            const start = customDateRange?.from;
+            const end = customDateRange?.to;
+            if (!start || !end) {
+              return;
+            }
+            range = [start, end];
+            break;
+          default:
+            range = undefined;
         }
         if (range) {
           const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -142,7 +146,7 @@ const TableInstance = ({ client }: { client: string }) => {
             .gte('date', momentRangeStart.tz(userTimeZone).format('MM/DD/YYYY'))
             .lte('date', momentRangeEnd.tz(userTimeZone).format('MM/DD/YYYY'));
         }
-      }
+      }      
 
       const { data, error } = await query;
       if (error) {
