@@ -3,7 +3,7 @@ import { Button, Input, Switch, cn, Checkbox } from '@nextui-org/react';
 import { useEffect, useState, useRef, useReducer } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { PlayCircleIcon, PauseCircleIcon, ArrowPathIcon, ClockIcon, CalendarDaysIcon, ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
-import { timeToSeconds, timeToUTC, formatTimeInput, calculateElapsedTime, timerInputFormat, userTimeZone, today} from '@/lib/utils';
+import { timeToSeconds, timeToUTC, formatTimeInput, calculateElapsedTime, timerInputFormat, userTimeZone, today } from '@/lib/utils';
 import moment from 'moment-timezone';
 import toast from 'react-hot-toast';
 import ClientSubmit from './ClientSubmit';
@@ -27,32 +27,16 @@ const SubmitTime = () => {
 
   /* Handle Time Inputs
   ========================================================= */
-  const timeEntryReducer = (state: any, action: any) => {
-    switch (action.type) {
-      case 'SET_START_TIME':
-        return { ...state, startTime: timeToUTC(action.payload) };
-      case 'SET_END_TIME':
-        return { ...state, endTime: timeToUTC(action.payload) };
-      default:
-        return state;
-    }
-  }
-
-  const [timeState, timeDispatch] = useReducer(timeEntryReducer, { startTime: '', endTime: '' });
-
-  const handleManualInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-
+  const handleSetTime = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.id === 'startTime') {
-      timeDispatch({ type: 'SET_START_TIME', payload: e.target.value });
       const formattedTime = formatTimeInput(startTime) || '0:00';
       setStartTime(formattedTime);
-    } 
-
-    else if (e.target.id === 'endTime') {
-      timeDispatch({ type: 'SET_END_TIME', payload: e.target.value });
+    }
+    if (e.target.id === 'endTime') {
+      const militaryTimePattern = /^([01]\d|2[0-3]):?([0-5]\d)$/;
+      const isMilitary = militaryTimePattern.test(endTime);
       let formattedTime = formatTimeInput(endTime) || '0:00';
-      // Automatic AM/PM application
-      if (!e.target.value.toLowerCase().includes('am') && !e.target.value.toLowerCase().includes('pm')) {
+      if ((!isMilitary) && (!e.target.value.toLowerCase().includes('am') && !e.target.value.toLowerCase().includes('pm'))) {
         if (startTime.includes('AM') || startTime.includes('PM')) {
           const amPm = startTime.slice(-2);
           formattedTime = `${formattedTime.split(' ')[0]} ${amPm}`;
@@ -83,26 +67,26 @@ const SubmitTime = () => {
     setStartTime('0:00');
     setEndTime('0:00');
   }
-  
+
   useEffect(() => {
     let interval: NodeJS.Timeout | undefined = undefined;
     if (timerRunning) {
-      const start = performance.now(); 
+      const start = performance.now();
       interval = setInterval(() => {
         const now = performance.now();
-        const elapsedTime = now - start; 
+        const elapsedTime = now - start;
         const hours = Math.floor(elapsedTime / 3600000);
         const minutes = Math.floor((elapsedTime % 3600000) / 60000);
         const seconds = Math.floor((elapsedTime % 60000) / 1000);
         setTimeTracked(`${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`);
-        setTimerSeconds(Math.floor(elapsedTime / 1000)); 
+        setTimerSeconds(Math.floor(elapsedTime / 1000));
       }, 1000);
     } else {
       clearInterval(interval);
     }
     return () => clearInterval(interval);
   }, [timerRunning]);
-  
+
 
   const handleTimerInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!timerRunning) {
@@ -112,12 +96,12 @@ const SubmitTime = () => {
       const totalSeconds = hours * 3600 + minutes * 60 + seconds;
       setTimerSeconds(totalSeconds);
     }
-  }  
+  }
 
   const handleInputFocus = (e: any) => {
     e.target.select();
   };
-  
+
   const handleTimerBlur = (e: any) => {
     const currentValue = e.target.value;
     if (currentValue === timeInputRef.current) {
@@ -171,11 +155,11 @@ const SubmitTime = () => {
       setTimeTracked('');
     }
   };
-  
+
   const handleClient = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setClient(e.target.value);
   }
-  
+
   return (
     <div className={`fixed top-0 left-0 w-full py-5 px-5 bg-black/50 backdrop-blur-md ${timerRunning ? 'border-secondary' : 'border-[#333]'} border-b-1 time-submit-form z-[9999] transition-transform ${toggleBar ? 'translate-y-[-100%]' : 'translate-y-0'}`}>
       <form onSubmit={handleSubmit}>
@@ -187,7 +171,7 @@ const SubmitTime = () => {
               defaultSelected
               startContent={<CalendarDaysIcon />}
               endContent={<ClockIcon />}
-              onChange={()=>setTimeMode(timeMode === 'timer' ? 'entry' : 'timer' )}
+              onChange={() => setTimeMode(timeMode === 'timer' ? 'entry' : 'timer')}
               classNames={{
                 base: cn(
                   "inline-flex flex-row-reverse w-full items-center",
@@ -207,7 +191,7 @@ const SubmitTime = () => {
             </Checkbox>
           </div>
           <div className="flex-[0_1_200px]">
-            <ClientSubmit client={client} handleClient={handleClient}/>
+            <ClientSubmit client={client} handleClient={handleClient} />
           </div>
           <div className="flex-auto">
             <Input
@@ -256,7 +240,7 @@ const SubmitTime = () => {
                   id="startTime"
                   onFocus={handleInputFocus}
                   onChange={(e) => setStartTime(e.target.value)}
-                  onBlur={(e: any) => handleManualInput(e)}
+                  onBlur={(e: any) => handleSetTime(e)}
                   value={startTime}
                 />
 
@@ -274,7 +258,7 @@ const SubmitTime = () => {
                   id="endTime"
                   onFocus={handleInputFocus}
                   onChange={(e) => setEndTime(e.target.value)}
-                  onBlur={(e: any) => handleManualInput(e)}
+                  onBlur={(e: any) => handleSetTime(e)}
                   value={endTime}
                 />
               </div>
