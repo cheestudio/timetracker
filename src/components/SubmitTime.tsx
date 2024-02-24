@@ -316,7 +316,7 @@ const SubmitTime = () => {
         </div>
 
         <Button className="w-full max-w-[200px] mx-auto block bg-[#081D25]" variant="flat" color="primary" type="submit">Add Time Entry</Button>
-{timerSeconds}
+        
       </form>
       {!timerRunning &&
         <Button
