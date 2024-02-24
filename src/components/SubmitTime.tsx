@@ -128,6 +128,7 @@ const SubmitTime = () => {
     else {
       const timeRange = calculateElapsedTime(startTime, endTime);
       totalTime = timeToSeconds(timeRange);
+      restartTimer();
     }
     const { data: user, error: userError } = await supabase.auth.getSession()
     const { data, error } = await supabase
@@ -152,7 +153,7 @@ const SubmitTime = () => {
       toast.success('Time entry added');
       window.dispatchEvent(new CustomEvent('timeEntriesModified'));
       setTask('');
-      setTimeTracked('');
+      restartTimer();
     }
   };
 
@@ -315,7 +316,7 @@ const SubmitTime = () => {
         </div>
 
         <Button className="w-full max-w-[200px] mx-auto block bg-[#081D25]" variant="flat" color="primary" type="submit">Add Time Entry</Button>
-
+{timerSeconds}
       </form>
       {!timerRunning &&
         <Button

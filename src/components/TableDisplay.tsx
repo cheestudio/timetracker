@@ -55,6 +55,7 @@ const TableDisplay = ({ items, sortDescriptor, onSort, handleSelectedKeys }: { i
                 </div>
               </TableCell>
               <TableCell>
+                {row.time_tracked}
                 <div>{convertTime(parseInt(row.time_tracked))}</div>
               </TableCell>
               <TableCell>{row.owner}</TableCell>
