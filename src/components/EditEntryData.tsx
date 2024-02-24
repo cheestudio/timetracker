@@ -85,7 +85,6 @@ const EditEntryData = ({ entryData, closeToggle }: { entryData: TimeEntryProps, 
           value={endTime}
           onChange={(e) => setEndTime(e.target.value)}
         />
-        Seconds:{seconds}
         <Input
           label="Duration"
           radius="sm"
