@@ -1,8 +1,7 @@
 "use client";
 
-import { TableRowControlsProps } from '@/lib/types';
+import { TableRowControlsProps, TimeEntryProps, SortDirection } from '@/lib/types';
 import { useState, useEffect, useMemo } from "react";
-import { TimeEntryProps, SortDirection } from "@/lib/types";
 import { supabase } from "@/lib/utils";
 import { Button, SortDescriptor } from "@nextui-org/react";
 import { convertTime, convertToDecimalHours, getTodayRange, getWeekRange, getLastTwoWeeks, getThisMonthRange, getLastMonthRange, getYesterdayRange, debounceWithValue } from "@/lib/utils";
@@ -77,84 +76,30 @@ const TableInstance = ({ client }: { client: string }) => {
   }
 
   useEffect(() => {
+    
     const fetchTimeEntries = async () => {
-      let query = supabase
-        .from('TimeEntries')
-        .select(`
-          *,
-          Clients (
-            client_name
-          )
-    `)
-        .order('date', { ascending: true });
+      const response = await fetch('/api/entries', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          client,
+          selectedUser,
+          customDateRange,
+          selectedDateRange,
+          searchQuery
+        })
+      });
+      const data = await response.json();
 
-      if (parseInt(client) !== 0) {
-        query = query
-          .eq('client_id', client);
-      }
-
-      if (selectedUser !== 'all') {
-        query = query
-          .textSearch('owner', selectedUser);
-      }
-
-      if (searchQuery !== '') {
-        query = query
-          .ilike('task', `%${searchQuery}%`);
-      }
-
-      if (selectedDateRange !== 'all') {
-        let range;
-        switch (selectedDateRange) {
-          case 'today':
-            range = getTodayRange();
-            break;
-          case 'yesterday':
-            range = getYesterdayRange();
-            break;
-          case 'this_week':
-            range = getWeekRange();
-            break;
-          case 'last_week':
-            range = getWeekRange(true);
-            break;
-          case 'two_weeks':
-            range = getLastTwoWeeks();
-            break;
-          case 'last_month':
-            range = getLastMonthRange();
-            break;
-          case 'this_month':
-            range = getThisMonthRange();
-            break;
-          case 'custom':
-            const start = customDateRange?.from;
-            const end = customDateRange?.to;
-            if (!start || !end) {
-              return;
-            }
-            range = [start, end];
-            break;
-          default:
-            range = undefined;
-        }
-        if (range) {
-          const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-          const momentRangeStart = moment(range[0]);
-          const momentRangeEnd = moment(range[1]);
-          query = query
-            .gte('date', momentRangeStart.tz(userTimeZone).format('MM/DD/YYYY'))
-            .lte('date', momentRangeEnd.tz(userTimeZone).format('MM/DD/YYYY'));
-        }
-      }      
-
-      const { data, error } = await query;
-      if (error) {
-        console.error('Error fetching data: ', error);
+      if (response.status !== 200) {
+        console.error('Error fetching data: ', response.statusText);
         return [];
       }
+      
       if (data) {
-        const entries = data.map(entry => ({
+        const entries = data.map((entry: TimeEntryProps) => ({
           ...entry,
           client_name: entry.Clients?.client_name
         }));
@@ -165,6 +110,7 @@ const TableInstance = ({ client }: { client: string }) => {
         setTableKey((prevKey) => prevKey + 1);
       }
     };
+
     fetchTimeEntries();
     const handleNewEntry = () => {
       fetchTimeEntries();
@@ -210,6 +156,7 @@ const TableInstance = ({ client }: { client: string }) => {
       .from('TimeEntries')
       .delete()
       .in('entry_id', entryIds);
+      
     if (error) {
       console.error('Error deleting data: ', error);
     }

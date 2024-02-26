@@ -12,6 +12,10 @@ export interface TimeEntryProps {
   billable: boolean;
   start_time: string;
   end_time: string;
+  Clients: {
+    client_name: string;
+    client_id: string;
+  };
   client_name: any;
   client_id: string;
 }

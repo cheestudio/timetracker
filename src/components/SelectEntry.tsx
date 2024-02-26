@@ -1,6 +1,6 @@
 import { Button } from '@nextui-org/react';
 
-const SelectEntry = ({ selectedKeys, deleteTimeEntry }: { selectedKeys: any, deleteTimeEntry: any }) => {
+const SelectEntry = ({ selectedKeys, deleteTimeEntry }: { selectedKeys: [], deleteTimeEntry: () => void }) => {
   return (
     <>
       {selectedKeys && selectedKeys.length > 0 &&
