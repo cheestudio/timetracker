@@ -60,9 +60,9 @@ export async function POST(request: Request): Promise<Response> {
                 case 'custom':
                     const start = customDateRange?.from;
                     const end = customDateRange?.to;
-                    // if (!start || !end) {
-                    //     return;
-                    // }
+                    if (!start || !end) {
+                        throw new Error('Invalid date range');
+                    }
                     range = [start, end];
                     break;
                 default:
@@ -78,7 +78,7 @@ export async function POST(request: Request): Promise<Response> {
             }
         }
 
-        const { data, error } = await query;
+        const { data } = await query;
 
         return new Response(JSON.stringify(data), {
             status: 200,
