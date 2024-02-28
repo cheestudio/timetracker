@@ -56,11 +56,10 @@ export const formatDate = (dateString: string) => {
 }
 
 export const getTodayRange = () => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const end = new Date(today);
-  end.setHours(23, 59, 59, 999);
-  return [today, end];
+  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const start = moment.tz(userTimeZone).startOf('day').toDate();
+  const end = moment.tz(userTimeZone).endOf('day').toDate();
+  return [start, end];
 };
 
 export const getYesterdayRange = () => {
