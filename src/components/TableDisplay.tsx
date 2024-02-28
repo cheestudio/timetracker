@@ -7,6 +7,8 @@ import toast from 'react-hot-toast';
 
 const TableDisplay = ({ items, sortDescriptor, onSort, handleSelectedKeys }: { items: any, sortDescriptor: SortDescriptor, onSort: any, handleSelectedKeys: any }) => {
 
+  console.log(items);
+
   return (
     <>
       <Table
