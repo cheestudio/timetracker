@@ -95,7 +95,6 @@ const TableInstance = ({ client }: { client: string }) => {
 
       if (response.status !== 200) {
         console.error('Error fetching data: ', response.statusText);
-        return [];
       }
       
       if (data) {
