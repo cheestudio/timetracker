@@ -39,7 +39,7 @@ export async function POST(request: Request): Promise<Response> {
                     range = getTodayRange(userTimeZone);
                     break;
                 case 'yesterday':
-                    range = getYesterdayRange();
+                    range = getYesterdayRange(userTimeZone);
                     break;
                 case 'this_week':
                     range = getWeekRange();
