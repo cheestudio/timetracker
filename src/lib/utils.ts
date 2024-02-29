@@ -55,8 +55,7 @@ export const formatDate = (dateString: string) => {
   return `${formattedMonth}/${formattedDay}/${formattedYear}`;
 }
 
-export const getTodayRange = () => {
-  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+export const getTodayRange = (userTimeZone: string) => {
   const start = moment.tz(userTimeZone).startOf('day').toDate();
   const end = moment.tz(userTimeZone).endOf('day').toDate();
   return [start, end];
@@ -70,43 +69,30 @@ export const getYesterdayRange = () => {
 };
 
 export const getWeekRange = (lastWeek = false) => {
-  const today = new Date();
-  const dayOfWeek = today.getDay();
+  const today = moment();
+  const dayOfWeek = today.day();
   const offset = lastWeek ? -7 : 0;
-
-  const start = new Date(today);
-  start.setDate(today.getDate() - dayOfWeek + offset);
-  start.setHours(0, 0, 0, 0);
-
-  const end = new Date(start);
-  end.setDate(start.getDate() + 6);
-  end.setHours(23, 59, 59, 999);
-  
-  return [start, end];
+  const start = today.clone().subtract(dayOfWeek, 'days').add(offset, 'days').startOf('day');
+  const end = start.clone().add(6, 'days').endOf('day');
+  return [start.toDate(), end.toDate()];
 };
 
 export const getThisMonthRange = () => {
-  const date = new Date();
-  const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
-  const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59, 999);
-  return [firstDay, lastDay];
+  const start = moment().startOf('month');
+  const end = moment().endOf('month');
+  return [start.toDate(), end.toDate()];
 };
 
 export const getLastMonthRange = () => {
-  const date = new Date();
-  const firstDay = new Date(date.getFullYear(), date.getMonth() - 1, 1);
-  const lastDay = new Date(date.getFullYear(), date.getMonth(), 0, 23, 59, 59, 999);
-  return [firstDay, lastDay];
+  const start = moment().subtract(1, 'month').startOf('month');
+  const end = moment().subtract(1, 'month').endOf('month');
+  return [start.toDate(), end.toDate()];
 };
 
 export const getLastTwoWeeks = () => {
-  const today = new Date();
-  const end = new Date(today);
-  end.setHours(23, 59, 59, 999);
-  const start = new Date(today);
-  start.setDate(today.getDate() - 13);
-  start.setHours(0, 0, 0, 0);
-  return [start, end];
+  const end = moment().endOf('day');
+  const start = moment().subtract(13, 'days').startOf('day');
+  return [start.toDate(), end.toDate()];
 };
 
 /* Client Fetch

@@ -2,7 +2,7 @@
 
 import { TableRowControlsProps, TimeEntryProps, SortDirection } from '@/lib/types';
 import { useState, useEffect, useMemo } from "react";
-import { supabase } from "@/lib/utils";
+import { supabase, userTimeZone } from "@/lib/utils";
 import { Button, SortDescriptor } from "@nextui-org/react";
 import { convertTime, convertToDecimalHours, getTodayRange, getWeekRange, getLastTwoWeeks, getThisMonthRange, getLastMonthRange, getYesterdayRange, debounceWithValue } from "@/lib/utils";
 import { DateRange } from 'react-day-picker';
@@ -88,7 +88,8 @@ const TableInstance = ({ client }: { client: string }) => {
           selectedUser,
           customDateRange,
           selectedDateRange,
-          searchQuery
+          searchQuery,
+          userTimeZone
         })
       });
       const data = await response.json();
