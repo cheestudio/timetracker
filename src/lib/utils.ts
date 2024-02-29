@@ -61,8 +61,7 @@ export const getTodayRange = (userTimeZone: string) => {
   return [start, end];
 };
 
-export const getYesterdayRange = () => {
-  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+export const getYesterdayRange = (userTimeZone: string) => {
   const start = moment.tz(userTimeZone).subtract(1, 'days').startOf('day').toDate();
   const end = moment.tz(userTimeZone).subtract(1, 'days').endOf('day').toDate();
   return [start, end];
