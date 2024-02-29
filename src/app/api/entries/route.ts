@@ -1,12 +1,11 @@
-import { supabase } from "@/lib/utils";
-import { getTodayRange, getWeekRange, getLastTwoWeeks, getThisMonthRange, getLastMonthRange, getYesterdayRange } from "@/lib/utils";
+import { supabase, getTodayRange, getWeekRange, getLastTwoWeeks, getThisMonthRange, getLastMonthRange, getYesterdayRange } from "@/lib/utils";
 import moment from 'moment-timezone';
 
 export async function POST(request: Request): Promise<Response> {
 
-    const { client, selectedUser, customDateRange, selectedDateRange, searchQuery } = await request.json();
-
+    
     try {
+        const { client, selectedUser, customDateRange, selectedDateRange, searchQuery, userTimeZone } = await request.json();
 
         let query = supabase
             .from('TimeEntries')
@@ -37,7 +36,7 @@ export async function POST(request: Request): Promise<Response> {
             let range;
             switch (selectedDateRange) {
                 case 'today':
-                    range = getTodayRange();
+                    range = getTodayRange(userTimeZone);
                     break;
                 case 'yesterday':
                     range = getYesterdayRange();
