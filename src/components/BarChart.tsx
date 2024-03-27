@@ -86,7 +86,7 @@ const BarChart = ({ items }: { items: TimeEntryProps[] }) => {
           color: '#fff',
           font: {
             size: 11,
-            family: '__Inter_e66fe9',
+            family: 'Arial',
           },
           callback: (value: Date, index: number) => {
             const dateLabels = data.labels;
@@ -113,7 +113,7 @@ const BarChart = ({ items }: { items: TimeEntryProps[] }) => {
         },
         font: {
           size: 13,
-          family: '__Inter_e66fe9',
+          family: 'Arial',
         }
       },
       tooltip: {
@@ -130,11 +130,11 @@ const BarChart = ({ items }: { items: TimeEntryProps[] }) => {
         },
         titleFont: {
           size: 13,
-          family: '__Inter_e66fe9',
+          family: 'Arial',
         },
         bodyFont: {
           size: 13,
-          family: '__Inter_e66fe9',
+          family: 'Arial',
         },
         padding: 15,
         animation: {
