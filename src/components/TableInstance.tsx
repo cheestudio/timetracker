@@ -98,8 +98,10 @@ const TableInstance = ({ client }: { client: string }) => {
         console.error('Error fetching data: ', response.statusText);
       }
       
-      if (data) {
-        const entries = data.map((entry: TimeEntryProps) => ({
+      console.log('isarray', Array.isArray(data));
+
+      if (Array.isArray(data)) {
+        const entries = data?.map((entry: TimeEntryProps) => ({
           ...entry,
           client_name: entry.Clients?.client_name
         }));

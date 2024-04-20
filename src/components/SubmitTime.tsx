@@ -152,7 +152,8 @@ const SubmitTime = () => {
     } else {
       toast.success('Time entry added');
       window.dispatchEvent(new CustomEvent('timeEntriesModified'));
-      setTask('');
+      setTask('test');
+      setBillable(false);
       restartTimer();
     }
   };
@@ -187,6 +188,7 @@ const SubmitTime = () => {
             <Checkbox
               radius="none"
               onChange={(e) => setBillable(e.target.checked)}
+              isSelected={billable}
             >
               Billable
             </Checkbox>
