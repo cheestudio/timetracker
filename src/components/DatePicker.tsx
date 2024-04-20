@@ -2,7 +2,7 @@
 
 import React, {useEffect} from "react"
 import { CalendarIcon } from "@radix-ui/react-icons"
-import { addDays, format } from "date-fns"
+import { subDays, addDays, format } from "date-fns"
 import { DateRange } from "react-day-picker";
 import { CustomDateRangeProps } from "@/lib/types";
 
@@ -18,8 +18,8 @@ import {
 export function DatePickerWithRange({ handleCustomDateRange }: CustomDateRangeProps) {
 
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(2024, 0, 20),
-    to: addDays(new Date(2024, 0, 20), 20),
+    from: new Date(),
+    to: new Date(),
   });
 
   const handleDateChange = (newDate: DateRange | undefined) => {
