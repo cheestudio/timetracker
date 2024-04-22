@@ -152,7 +152,7 @@ const SubmitTime = () => {
     } else {
       toast.success('Time entry added');
       window.dispatchEvent(new CustomEvent('timeEntriesModified'));
-      setTask('test');
+      setTask('');
       setBillable(false);
       restartTimer();
     }
