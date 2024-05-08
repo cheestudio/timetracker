@@ -20,6 +20,19 @@ export interface TimeEntryProps {
   client_id: string;
 }
 
+export interface ToggleProps {
+  date: string;
+  task: string;
+  time_tracked: number;
+  entry_id: number;
+  client_id: string;
+  billable: boolean;
+  owner: string;
+  user_id: string;
+  start_time: string;
+  end_time: string;
+}
+
 export interface TableRowControlsProps {
   loading: boolean;
   selectedClient: number;
