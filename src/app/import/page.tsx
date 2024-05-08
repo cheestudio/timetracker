@@ -75,8 +75,6 @@ export default function Import() {
     };
   });
 
-  console.log(formattedData);
-
   /* Supabase
   ========================================================= */
 
