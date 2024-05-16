@@ -3,7 +3,8 @@ import { convertTime, formatDate, UTCtoLocal } from "@/lib/utils";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import { TimeEntryProps } from "@/lib/types";
 
-const TogglEntries = ({ data }: { data: TimeEntryProps[] }) => {
+
+const TogglEntries = ({ data, handleSelectedKeys }: { data: TimeEntryProps[], handleSelectedKeys: (keys: any) => void }) => {
 
   const getClientName = (clientId: number) => {
     switch (clientId) {
@@ -23,7 +24,10 @@ const TogglEntries = ({ data }: { data: TimeEntryProps[] }) => {
   return (
     <>
       {data.length > 0 &&
-        <Table>
+        <Table
+          selectionMode="multiple"
+          onSelectionChange={handleSelectedKeys}
+        >
           <TableHeader>
             <TableColumn key="task" width="25%">Task</TableColumn>
             <TableColumn key="date">Date</TableColumn>

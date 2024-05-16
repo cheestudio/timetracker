@@ -10,7 +10,6 @@ console.log('dates',start_date,end_date);
   });
 
   try {
-    console.log('dates',params.toString());
     const url = `https://api.track.toggl.com/api/v9/me/time_entries?${params.toString()}`;
     const response = await fetch(url, {
       method: "GET",
@@ -20,7 +19,6 @@ console.log('dates',start_date,end_date);
       }
     });
     const data = await response.json();
-    console.log(data);
     if (!Array.isArray(data)) {
       return new Response(JSON.stringify({ error: 'Nothing found' }), {
         status: 500,

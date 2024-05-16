@@ -26,7 +26,6 @@ export function DatePickerWithRange({ handleCustomDateRange }: CustomDateRangePr
     const updatedDate = newDate;
     setDate(updatedDate);
     handleCustomDateRange(updatedDate);
-    console.log(newDate);
   }
 
   const handleDayClick = (day: Date) => {
