@@ -1,6 +1,6 @@
 "use client"
 
-import React, {useEffect} from "react"
+import React, { useEffect } from "react"
 import { CalendarIcon } from "@radix-ui/react-icons"
 import { subDays, addDays, format } from "date-fns"
 import { DateRange } from "react-day-picker";
@@ -26,10 +26,32 @@ export function DatePickerWithRange({ handleCustomDateRange }: CustomDateRangePr
     const updatedDate = newDate;
     setDate(updatedDate);
     handleCustomDateRange(updatedDate);
+    console.log(newDate);
+  }
+
+  const handleDayClick = (day: Date) => {
+    setDate((prev) => {
+      if (prev?.to) {
+        return { from: day, to: undefined };
+      }
+      if (prev?.from) {
+        return { from: prev.from, to: day };
+      }
+      return { from: day, to: undefined };
+    });
+  };
+
+  const handleSingleDate = () => {
+    if(date?.to == undefined) {
+      setDate({ from: date?.from, to: date?.from });
+      handleCustomDateRange({ from: date?.from, to: date?.from });
+    }
   }
 
   return (
-    <Popover>
+    <Popover
+     onOpenChange={handleSingleDate}
+    >
       <PopoverTrigger asChild>
         <Button
           id="date"
@@ -63,6 +85,7 @@ export function DatePickerWithRange({ handleCustomDateRange }: CustomDateRangePr
           selected={date}
           onSelect={(newDate) => handleDateChange(newDate)}
           numberOfMonths={2}
+          onDayClick={handleDayClick}
         />
       </PopoverContent>
     </Popover>

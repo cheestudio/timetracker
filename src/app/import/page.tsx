@@ -16,10 +16,11 @@ export default function Import() {
   const [customDateRange, setCustomDateRange] = useState<DateRange | undefined>(undefined);
   const [togglData, setTogglData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const hasEntries = customDateRange?.from && customDateRange?.to;
+  const hasEntries = customDateRange?.from || customDateRange?.to;
 
   const handleCustomDateRange = (dateRange: DateRange | undefined) => {
     setCustomDateRange(dateRange || undefined);
+    console.log(dateRange);
   }
 
   const setClientId = (projectId: number) => {
@@ -52,17 +53,25 @@ export default function Import() {
           "end_date": toDate,
         }),
       });
+      if (resp.status === 500) {
+        toast.error('No entries found, adjust the dates and try again',{
+           duration: 5000,
+        });
+        setLoading(false);
+        setTogglData([]);
+        return;
+      }
       const data = await resp.json();
       setTogglData(data);
       setLoading(false);
     }
     catch (err) {
-      console.error(err);
+      console.log('whoops');
     }
   };
   const formattedData = togglData.map((entry: any) => {
     return {
-      date: moment(entry.at).tz(userTimeZone).utc().format(),
+      date: moment(entry.at).utc().format(),
       task: entry.description,
       time_tracked: entry.duration,
       entry_id: uuidv4(),

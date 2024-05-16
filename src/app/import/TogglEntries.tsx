@@ -4,7 +4,7 @@ import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import { TimeEntryProps } from "@/lib/types";
 
 const TogglEntries = ({ data }: { data: TimeEntryProps[] }) => {
-  
+
   const getClientName = (clientId: number) => {
     switch (clientId) {
       case 3:
@@ -22,7 +22,7 @@ const TogglEntries = ({ data }: { data: TimeEntryProps[] }) => {
 
   return (
     <>
-      {data.length > 0 ?
+      {data.length > 0 &&
         <Table>
           <TableHeader>
             <TableColumn key="task" width="25%">Task</TableColumn>
@@ -61,10 +61,6 @@ const TogglEntries = ({ data }: { data: TimeEntryProps[] }) => {
             ))}
           </TableBody>
         </Table>
-        :
-        <>
-        <p className="my-5 text-lg text-center">No entries found within that date range.</p>
-        </>
       }
     </>
   )
