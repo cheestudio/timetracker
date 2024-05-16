@@ -33,7 +33,7 @@ export default function Import() {
       case 202509688:
         return 7;
       default:
-        return 'Chee';
+        return 1;
     }
   }
 
