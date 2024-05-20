@@ -1,4 +1,4 @@
-import { supabase, getTodayRange, getWeekRange, getLastTwoWeeks, getThisMonthRange, getLastMonthRange, getYesterdayRange } from "@/lib/utils";
+import { supabase, getTodayRange, getWeekRange, getLastTwoWeeks, getThisMonthRange, getLastMonthRange, getYesterdayRange, getThisYearRange } from "@/lib/utils";
 import moment from 'moment-timezone';
 
 export async function POST(request: Request): Promise<Response> {
@@ -55,6 +55,9 @@ export async function POST(request: Request): Promise<Response> {
                     break;
                 case 'this_month':
                     range = getThisMonthRange();
+                    break;
+                case 'this_year':
+                    range = getThisYearRange();
                     break;
                 case 'custom':
                     const start = customDateRange?.from;
