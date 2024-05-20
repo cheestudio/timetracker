@@ -78,6 +78,15 @@ const TableInstance = ({ client }: { client: string }) => {
   useEffect(() => {
     
     const fetchTimeEntries = async () => {
+      let dateRange;
+      if (selectedDateRange === "this_year") {
+        const startOfYear = moment().startOf('year').format();
+        const endOfYear = moment().endOf('year').format();
+        dateRange = { start: startOfYear, end: endOfYear };
+      } else {
+        dateRange = customDateRange;
+      }
+
       const response = await fetch('/api/entries', {
         method: 'POST',
         headers: {
@@ -86,7 +95,7 @@ const TableInstance = ({ client }: { client: string }) => {
         body: JSON.stringify({
           client,
           selectedUser,
-          customDateRange,
+          dateRange,
           selectedDateRange,
           searchQuery,
           userTimeZone
