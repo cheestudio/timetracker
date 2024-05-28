@@ -30,7 +30,6 @@ const BarChart = ({ items }: { items: TimeEntryProps[] }) => {
   /* Process Data
   ========================================================= */
   function processData(items: any) {
-    console.log(items);
     const dateMap = new Map();
     items.forEach((item: any) => {
       const { date, time_tracked } = item;

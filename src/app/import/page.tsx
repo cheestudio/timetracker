@@ -84,21 +84,17 @@ export default function Import() {
       const data = await resp.json();
       setTogglData(data);
       const mappedData = mapTogglData(data);
-      console.log(mappedData)
       setFormattedData(mappedData);
       setSelectedKeys([]);
       setLoading(false);
     }
     catch (err) {
-      console.log('whoops');
+      console.error('Error mapping data:', err);
     }
   };
 
   /* Supabase
   ========================================================= */
-
-  console.log(selectedKeys);
-
   const handleSubmit = async () => {
     try {
       const { data: user, error: userError } = await supabase.auth.getSession();

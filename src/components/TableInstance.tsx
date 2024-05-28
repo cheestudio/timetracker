@@ -138,13 +138,6 @@ const TableInstance = ({ client }: { client: string }) => {
 
   }, [client, selectedUser, customDateRange, selectedDateRange, searchQuery]);
 
-  // useEffect(() => {
-  //   calculateTotalHours(selectedKeys);
-  //   if (selectedKeys.length === 0) {
-  //     calculateTotalHours(timeEntries);
-  //   }
-  // }, [selectedKeys, timeEntries])
-
   /* Delete Rows
   ========================================================= */
   const deleteTimeEntry = async () => {

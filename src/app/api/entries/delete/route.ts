@@ -4,14 +4,6 @@ export async function DELETE(request: Request): Promise<Response> {
 
   try {
     const { entryIds } = await request.json();
-    console.log(entryIds);
-
-    // if (!entryIds || entryIds.length === 0) {
-    //   return new Response(JSON.stringify({ error: 'No entryIds provided' }), {
-    //     status: 400,
-    //     headers: { 'Content-Type': 'application/json' }
-    //   });
-    // }
 
     const { error } = await supabase
       .from('TimeEntries')
