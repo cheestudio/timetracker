@@ -1,7 +1,7 @@
 "use client";
 
 import { TableRowControlsProps, TimeEntryProps, SortDirection } from '@/lib/types';
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { supabase, userTimeZone } from "@/lib/utils";
 import { Button, SortDescriptor } from "@nextui-org/react";
 import { convertTime, convertToDecimalHours, getTodayRange, getWeekRange, getLastTwoWeeks, getThisMonthRange, getLastMonthRange, getYesterdayRange, debounceWithValue } from "@/lib/utils";
@@ -18,6 +18,8 @@ import useVisibility from '@/lib/useVisibility';
 import TimeTotal from './TimeTotal';
 import SelectEntry from './SelectEntry';
 import TableInfo from './TableInfo';
+import { useSelectedRows } from '@/lib/useSelectedRows';
+
 
 const TableInstance = ({ client }: { client: string }) => {
 
@@ -26,8 +28,7 @@ const TableInstance = ({ client }: { client: string }) => {
   /* Time Converison
   ========================================================= */
   const [calculatedTime, setCalculatedTime] = useState(0);
-
-  const calculateTotalHours = (entries: TimeEntryProps[]) => {
+  const calculateTotalHours = useCallback((entries: TimeEntryProps[]) => {
     let totalHours = 0;
     if (entries.length === 0) {
       return;
@@ -36,7 +37,7 @@ const TableInstance = ({ client }: { client: string }) => {
       totalHours += parseInt(entry?.time_tracked, 10);
     });
     setCalculatedTime(totalHours);
-  };
+  },[]);
 
   /* Time Entries
   ========================================================= */
@@ -48,6 +49,10 @@ const TableInstance = ({ client }: { client: string }) => {
   const [selectedUser, setSelectedUser] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [tableKey, setTableKey] = useState(0);
+  const { selectedKeys, handleSelectedKeys, setSelectedKeys } = useSelectedRows({ 
+    entries: timeEntries,
+    onSelectionChange: calculateTotalHours
+  });
 
   const handleDateRange: TableRowControlsProps['handleDateRange'] = (e) => {
     setSelectedDateRange(e.target.value);
@@ -76,7 +81,7 @@ const TableInstance = ({ client }: { client: string }) => {
   }
 
   useEffect(() => {
-    
+
     const fetchTimeEntries = async () => {
       let dateRange;
       if (selectedDateRange === "this_year") {
@@ -106,8 +111,6 @@ const TableInstance = ({ client }: { client: string }) => {
       if (response.status !== 200) {
         console.error('Error fetching data: ', response.statusText);
       }
-      
-      console.log('isarray', Array.isArray(data));
 
       if (Array.isArray(data)) {
         const entries = data?.map((entry: TimeEntryProps) => ({
@@ -135,30 +138,12 @@ const TableInstance = ({ client }: { client: string }) => {
 
   }, [client, selectedUser, customDateRange, selectedDateRange, searchQuery]);
 
-  /* Selected Rows
-  ========================================================= */
-  const [selectedKeys, setSelectedKeys] = useState([] as any);
-  const handleSelectedKeys = (keys: any) => {
-    if (keys === 'all') {
-      if (selectedKeys.length === timeEntries.length) {
-        setSelectedKeys([]);
-      }
-      else {
-        setSelectedKeys(timeEntries);
-      }
-    }
-    else {
-      const keyArray = Array.from(keys);
-      const mappedRows = keyArray.map((key) => timeEntries.find((row: TimeEntryProps) => row.entry_id === key));
-      setSelectedKeys(mappedRows);
-      calculateTotalHours(mappedRows);
-      if (keyArray.length === 0) {
-        calculateTotalHours(timeEntries);
-      }
-    }
-  }
-
-  console.log(selectedKeys);
+  // useEffect(() => {
+  //   calculateTotalHours(selectedKeys);
+  //   if (selectedKeys.length === 0) {
+  //     calculateTotalHours(timeEntries);
+  //   }
+  // }, [selectedKeys, timeEntries])
 
   /* Delete Rows
   ========================================================= */
@@ -169,7 +154,7 @@ const TableInstance = ({ client }: { client: string }) => {
       .from('TimeEntries')
       .delete()
       .in('entry_id', entryIds);
-      
+
     if (error) {
       console.error('Error deleting data: ', error);
     }

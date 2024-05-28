@@ -1,28 +1,24 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { TimeEntryProps } from "./types";
 
-export function useSelectedRows({ entries }: { entries: TimeEntryProps[] }) {
+export function useSelectedRows({ entries, onSelectionChange }: { entries: TimeEntryProps[], onSelectionChange?:(selectedEntries: TimeEntryProps[]) => void }) {
 
   const [selectedKeys, setSelectedKeys] = useState([] as any);
 
-  const handleSelectedKeys = (keys: any) => {
+  const handleSelectedKeys = useCallback((keys: any) => {
+    let newSelectedKeys: TimeEntryProps[] = [];
     if (keys === 'all') {
-      if (selectedKeys.length === entries.length) {
-        setSelectedKeys([]);
-      }
-      else {
-        setSelectedKeys(entries);
-        console.log('selected entries');
-      }
+        newSelectedKeys = selectedKeys.length === entries.length ? [] : [...entries];
     }
     else {
       const keyArray = Array.from(keys);
-      const mappedRows = keyArray.map((key) =>
+      newSelectedKeys = keyArray.map((key) =>
         entries.find((row: TimeEntryProps) =>
-          row.entry_id === key)).filter(Boolean);
-      setSelectedKeys(mappedRows);
+          row.entry_id === key)).filter(Boolean) as TimeEntryProps[];
     }
-  }
+    setSelectedKeys(newSelectedKeys);
+    onSelectionChange?.(newSelectedKeys);
+  },[entries, selectedKeys, onSelectionChange]);
 
 
   return { selectedKeys, setSelectedKeys, handleSelectedKeys };
