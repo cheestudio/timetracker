@@ -94,6 +94,12 @@ export const getLastTwoWeeks = () => {
   return [start.toDate(), end.toDate()];
 };
 
+export const getThisYearRange = () => {
+  const start = moment().startOf('year').toDate();
+  const end = moment().endOf('year').toDate();
+  return [start, end];
+};
+
 /* Client Fetch
 ========================================================= */
 export const listClients = async () => {

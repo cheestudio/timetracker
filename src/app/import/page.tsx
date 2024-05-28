@@ -13,7 +13,6 @@ import toast from 'react-hot-toast';
 import { useSelectedRows } from '@/lib/useSelectedRows';
 import { TimeEntryProps } from '@/lib/types';
 
-
 const mapTogglData = (data: any[]) => {
   return data.map((entry) => ({
     date: moment(entry.at).utc().format(),
@@ -44,15 +43,16 @@ const setClientId = (projectId: number) => {
   }
 }
 
-
 export default function Import() {
+
 
   const [customDateRange, setCustomDateRange] = useState<DateRange | undefined>(undefined);
   const [togglData, setTogglData] = useState([]);
   const [formattedData, setFormattedData] = useState([] as any);
   const [loading, setLoading] = useState(false);
   const hasEntries = customDateRange?.from || customDateRange?.to;
-  const { selectedKeys, handleSelectedKeys } = useSelectedRows({ entries: formattedData });
+  const { selectedKeys, handleSelectedKeys, setSelectedKeys } = useSelectedRows({ entries: formattedData });
+  
 
   const handleCustomDateRange = (dateRange: DateRange | undefined) => {
     setCustomDateRange(dateRange || undefined);
@@ -84,7 +84,9 @@ export default function Import() {
       const data = await resp.json();
       setTogglData(data);
       const mappedData = mapTogglData(data);
+      console.log(mappedData)
       setFormattedData(mappedData);
+      setSelectedKeys([]);
       setLoading(false);
     }
     catch (err) {
