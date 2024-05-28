@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { TimeEntryProps } from "./types";
 
-export function useSelectedRows({entries}: {entries: TimeEntryProps[]}) {
+export function useSelectedRows({ entries }: { entries: TimeEntryProps[] }) {
 
   const [selectedKeys, setSelectedKeys] = useState([] as any);
 
@@ -12,14 +12,18 @@ export function useSelectedRows({entries}: {entries: TimeEntryProps[]}) {
       }
       else {
         setSelectedKeys(entries);
+        console.log('selected entries');
       }
     }
     else {
       const keyArray = Array.from(keys);
-      const mappedRows = keyArray.map((key) => entries.find((row: TimeEntryProps) => row.entry_id === key));
+      const mappedRows = keyArray.map((key) =>
+        entries.find((row: TimeEntryProps) =>
+          row.entry_id === key)).filter(Boolean);
       setSelectedKeys(mappedRows);
     }
   }
+
 
   return { selectedKeys, setSelectedKeys, handleSelectedKeys };
 }

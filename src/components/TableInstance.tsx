@@ -158,6 +158,8 @@ const TableInstance = ({ client }: { client: string }) => {
     }
   }
 
+  console.log(selectedKeys);
+
   /* Delete Rows
   ========================================================= */
   const deleteTimeEntry = async () => {
