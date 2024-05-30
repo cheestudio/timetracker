@@ -1,7 +1,8 @@
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, SortDescriptor, Button } from "@nextui-org/react";
-import { convertTime, formatDate, UTCtoLocal } from "@/lib/utils";
+import { convertTime, formatDate, UTCtoLocal, setTimezone } from "@/lib/utils";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import { TimeEntryProps } from "@/lib/types";
+
 
 
 const TogglEntries = ({ data, handleSelectedKeys }: { data: TimeEntryProps[], handleSelectedKeys: (keys: any) => void }) => {
@@ -48,9 +49,9 @@ const TogglEntries = ({ data, handleSelectedKeys }: { data: TimeEntryProps[], ha
                     {row.start_time && row.end_time &&
                       <div>
                         <span className="start-time">
-                          {UTCtoLocal(row.start_time)}
+                          {UTCtoLocal(row.start_time, setTimezone("Matt"))}
                         </span> - <span className="end-time">
-                          {UTCtoLocal(row.end_time)}
+                          {UTCtoLocal(row.end_time, setTimezone("Matt"))}
                         </span>
                       </div>
                     }
