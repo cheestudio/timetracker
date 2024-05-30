@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
-import { supabase, timeToSeconds, timeToUTC, calculateElapsedTime, UTCtoLocal, convertTime } from '@/lib/utils';
+import { supabase, timeToSeconds, timeToUTC, calculateElapsedTime, UTCtoLocal, convertTime, setTimezone } from '@/lib/utils';
 import { TimeEntryProps } from "@/lib/types";
 import { Button, Input, Checkbox, cn } from "@nextui-org/react";
+
 import ClientSubmit from './ClientSubmit';
 import toast from 'react-hot-toast';
 
 const EditEntryData = ({ entryData, closeToggle }: { entryData: TimeEntryProps, closeToggle: () => void }) => {
 
   const [formData, setFormData] = useState({ ...entryData });
-  const [startTime, setStartTime] = useState(UTCtoLocal(entryData.start_time));
-  const [endTime, setEndTime] = useState(UTCtoLocal(entryData.end_time));
+  const [startTime, setStartTime] = useState(UTCtoLocal(entryData.start_time, setTimezone(entryData.owner)));
+  const [endTime, setEndTime] = useState(UTCtoLocal(entryData.end_time, setTimezone(entryData.owner)));
   const elapsedTime = calculateElapsedTime(startTime, endTime);
+
+
   const seconds = timeToSeconds(elapsedTime);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

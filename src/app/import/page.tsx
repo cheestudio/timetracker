@@ -93,6 +93,8 @@ export default function Import() {
     }
   };
 
+  console.log(selectedKeys);
+
   /* Supabase
   ========================================================= */
   const handleSubmit = async () => {

@@ -116,8 +116,17 @@ export const listClients = async () => {
 
 /* UTC string to Local
 ========================================================= */
-export const UTCtoLocal = (utc:string) => {
-  return new Date(utc).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+export const UTCtoLocal = (utc: string, timezone: string) => {
+  return moment.tz(utc, timezone ? timezone : userTimeZone).format('h:mm A');
+}
+
+
+export const setTimezone = (owner: string) => {
+  if (owner === 'Lars') {
+    return 'America/New_York';
+  } else {
+    return 'America/Los_Angeles';
+  }
 }
 
 /* Convert Time Input to UTC

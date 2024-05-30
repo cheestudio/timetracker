@@ -1,13 +1,15 @@
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, SortDescriptor, Button } from "@nextui-org/react";
 import { TimeEntryProps } from "@/lib/types";
-import { formatDate, convertTime, UTCtoLocal } from "@/lib/utils";
+import { formatDate, convertTime, UTCtoLocal, setTimezone } from "@/lib/utils";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import EditEntry from "./EditEntry";
+
 import toast from 'react-hot-toast';
 
 const TableDisplay = ({ items, sortDescriptor, onSort, handleSelectedKeys }: { items: any, sortDescriptor: SortDescriptor, onSort: any, handleSelectedKeys: any }) => {
-  
+
   return (
+
     <>
       <Table
         selectionMode="multiple"
@@ -49,9 +51,10 @@ const TableDisplay = ({ items, sortDescriptor, onSort, handleSelectedKeys }: { i
                   {row.start_time && row.end_time &&
                     <div>
                       <span className="start-time">
-                        {UTCtoLocal(row.start_time)}</span> - <span className="end-time">{UTCtoLocal(row.end_time)}</span>
+                        {UTCtoLocal(row.start_time, setTimezone(row.owner))}</span> - <span className="end-time">{UTCtoLocal(row.end_time, setTimezone(row.owner))}</span>
                     </div>
                   }
+
                 </div>
               </TableCell>
               <TableCell>
