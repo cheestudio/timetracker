@@ -1,7 +1,6 @@
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Table, TableHeader, TableBody, TableColumn, TableRow, TableCell } from "@nextui-org/react";
+import { Modal, ModalContent, ModalBody, Button, useDisclosure } from "@nextui-org/react";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import EditEntryData from "./EditEntryData";
-import { supabase } from "@/lib/utils";
 
 const EditEntry = ({ entryData }: { entryData: any }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
