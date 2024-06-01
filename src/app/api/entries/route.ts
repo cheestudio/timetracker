@@ -7,7 +7,10 @@ export async function POST(request: Request): Promise<Response> {
     try {
         const { client, selectedUser, customDateRange, selectedDateRange, searchQuery, userTimeZone } = await request.json();
 
+        console.log(customDateRange);
+
         let query = supabase
+
             .from('TimeEntries')
             .select(`
           *,
@@ -64,6 +67,7 @@ export async function POST(request: Request): Promise<Response> {
                     const end = customDateRange?.to;
                     if (!start || !end) {
                         throw new Error('Invalid date range');
+
                     }
                     range = [start, end];
                     break;
@@ -77,8 +81,9 @@ export async function POST(request: Request): Promise<Response> {
                 query = query
                     .gte('date', momentRangeStart.tz(userTimeZone).format('MM/DD/YYYY'))
                     .lte('date', momentRangeEnd.tz(userTimeZone).format('MM/DD/YYYY'));
-            }
+                }
         }
+
 
         const { data } = await query;
 
