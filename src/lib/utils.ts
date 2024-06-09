@@ -235,11 +235,9 @@ export const setTimezone = (owner: string) => {
     if (hoursMatch) {
       hours = hoursMatch[1].padStart(2, '0');
     }
-  
-    console.log(cleanInput);
+
     // Handle input without 'h', 'm', or 's'
     if (cleanInput.includes('.')) {
-      console.log('fractional time', cleanInput);
       const [whole, fraction] = cleanInput.split('.');
       const totalMinutes = parseInt(whole, 10) * 60 + Math.round(parseFloat(`0.${fraction}`) * 60);
       hours = Math.floor(totalMinutes / 60).toString().padStart(2, '0');

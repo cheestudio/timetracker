@@ -7,8 +7,6 @@ export async function POST(request: Request): Promise<Response> {
     try {
         const { client, selectedUser, customDateRange, selectedDateRange, searchQuery, userTimeZone } = await request.json();
 
-        console.log(customDateRange);
-
         let query = supabase
 
             .from('TimeEntries')

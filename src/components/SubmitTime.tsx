@@ -21,7 +21,7 @@ const SubmitTime = () => {
   const [timerRunning, setTimerRunning] = useState<boolean>(false);
   const [timerSeconds, setTimerSeconds] = useState<number>(0);
   const [timeTracked, setTimeTracked] = useState<string>('0:00:00');
-  const [timeMode, setTimeMode] = useState<string>("entry");
+  const [timeMode, setTimeMode] = useState<string>("timer");
   const [toggleBar, setToggleBar] = useState<boolean>(false);
   const [billable, setBillable] = useState<boolean>(false);
 
@@ -107,13 +107,13 @@ const SubmitTime = () => {
     if (currentValue === timeInputRef.current) {
       return; // don't run if value is unchanged
     }
-
     const formattedTime = timerInputFormat(currentValue);
     setTimeTracked(formattedTime);
     setStartTime(moment().format('h:mm A'));
+    const newStartTime = moment().format('h:mm A');
     const [hours, minutes, seconds] = formattedTime.split(':').map(Number);
     const durationMs = (hours * 3600000) + (minutes * 60000) + (seconds * 1000);
-    const newEndTime = moment(startTime, 'h:mm A').add(durationMs, 'milliseconds').format('h:mm A');
+    const newEndTime = moment(newStartTime, 'h:mm A').add(durationMs, 'milliseconds').format('h:mm A');
     setEndTime(newEndTime);
     timeInputRef.current = formattedTime;
   };
@@ -307,10 +307,10 @@ const SubmitTime = () => {
                     value={timeTracked}
                   />
                 </div>
-                <Button variant="light" isIconOnly onPress={() => toggleTimer()}>
+                <Button tabIndex={-1} variant="light" isIconOnly onPress={() => toggleTimer()}>
                   {timerRunning ? <PauseCircleIcon /> : <PlayCircleIcon />}
                 </Button>
-                <Button variant="light" isIconOnly onPress={() => restartTimer()}>
+                <Button tabIndex={-1} variant="light" isIconOnly onPress={() => restartTimer()}>
                   <ArrowPathIcon className="w-[30px]" />
                 </Button>
               </div>
