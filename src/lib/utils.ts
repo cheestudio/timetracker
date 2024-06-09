@@ -219,36 +219,54 @@ export const setTimezone = (owner: string) => {
   
   /* Timer Input
   ========================================================= */
-
   export const timerInputFormat = (input: string) => {
-    const cleanInput = String(input).replace(/\D/g, '').replace(/^0+/, '');
-    let
-      hours: string | number = '0',
-      minutes: string | number = '0',
-      seconds: string | number = '00';
+    // Remove all non-digit characters except 'h', 'm', and 's'
+    const cleanInput = String(input).replace(/[^0-9hms.]/g, '').replace(/^0+/, '');
+  
+    // Initialize hours, minutes, and seconds with default values
+    let hours: string | number = '0';
+    let minutes: string | number = '00';
+    let seconds: string | number = '00';
+  
+    // Check for 'h', 'm', and 's' in the input
+    const hoursMatch = cleanInput.match(/(\d+)h/);
 
-    if (cleanInput.length === 1 || cleanInput.length === 2) {
-      minutes = cleanInput.padStart(2, '0');
-
-      const totalMinutes = parseInt(cleanInput, 10);
-
-      if (totalMinutes >= 0 && totalMinutes <= 99) {
-        hours = Math.floor(totalMinutes / 60);
-        minutes = totalMinutes % 60;
-        minutes = minutes.toString().padStart(2, '0');
-      }
-
-    } else if (cleanInput.length === 3) {
-      hours = cleanInput.substring(0, 1);
-      minutes = cleanInput.substring(1, 3);
-    } else if (cleanInput.length === 4) {
-      hours = cleanInput.substring(0, 2);
-      minutes = cleanInput.substring(2, 4);
-    } else {
-      hours = cleanInput.substring(0, cleanInput.length - 4);
-      minutes = cleanInput.substring(cleanInput.length - 4, cleanInput.length - 2);
-      seconds = cleanInput.substring(cleanInput.length - 2);
+    // Extract hours, minutes, and seconds if present
+    if (hoursMatch) {
+      hours = hoursMatch[1].padStart(2, '0');
     }
+  
+    console.log(cleanInput);
+    // Handle input without 'h', 'm', or 's'
+    if (cleanInput.includes('.')) {
+      console.log('fractional time', cleanInput);
+      const [whole, fraction] = cleanInput.split('.');
+      const totalMinutes = parseInt(whole, 10) * 60 + Math.round(parseFloat(`0.${fraction}`) * 60);
+      hours = Math.floor(totalMinutes / 60).toString().padStart(2, '0');
+      minutes = (totalMinutes % 60).toString().padStart(2, '0');
+    } 
+    else if (!hoursMatch) {
+      if (cleanInput.length === 1 || cleanInput.length === 2) {
+        minutes = cleanInput.padStart(2, '0');
+        const totalMinutes = parseInt(cleanInput, 10);
+        if (totalMinutes >= 0 && totalMinutes <= 99) {
+          hours = Math.floor(totalMinutes / 60);
+          minutes = (totalMinutes % 60).toString().padStart(2, '0');
+        }
+      } else if (cleanInput.length === 3) {
+        hours = cleanInput.substring(0, 1);
+        minutes = cleanInput.substring(1, 3);
+      } else if (cleanInput.length === 4) {
+        hours = cleanInput.substring(0, 2);
+        minutes = cleanInput.substring(2, 4);
+      } else {
+        hours = cleanInput.substring(0, cleanInput.length - 4);
+        minutes = cleanInput.substring(cleanInput.length - 4, cleanInput.length - 2);
+        seconds = cleanInput.substring(cleanInput.length - 2);
+      }
+    }
+  
+    // Return the formatted time string
     return `${hours}:${minutes}:${seconds}`;
   };
 
@@ -257,6 +275,7 @@ export const setTimezone = (owner: string) => {
 
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { createSearchParamsBailoutProxy } from 'next/dist/client/components/searchparams-bailout-proxy';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
