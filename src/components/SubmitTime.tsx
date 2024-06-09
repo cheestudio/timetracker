@@ -105,8 +105,9 @@ const SubmitTime = () => {
   const handleTimerBlur = (e: any) => {
     const currentValue = e.target.value;
     if (currentValue === timeInputRef.current) {
-      return;
+      return; // don't run if value is unchanged
     }
+
     const formattedTime = timerInputFormat(currentValue);
     setTimeTracked(formattedTime);
     setStartTime(moment().format('h:mm A'));
@@ -114,6 +115,7 @@ const SubmitTime = () => {
     const durationMs = (hours * 3600000) + (minutes * 60000) + (seconds * 1000);
     const newEndTime = moment(startTime, 'h:mm A').add(durationMs, 'milliseconds').format('h:mm A');
     setEndTime(newEndTime);
+    timeInputRef.current = formattedTime;
   };
 
   /* Supabase
@@ -318,7 +320,7 @@ const SubmitTime = () => {
         </div>
 
         <Button className="w-full max-w-[200px] mx-auto block bg-[#081D25]" variant="flat" color="primary" type="submit">Add Time Entry</Button>
-        
+
       </form>
       {!timerRunning &&
         <Button
