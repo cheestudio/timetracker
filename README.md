@@ -1,1 +1,1 @@
-## Chee Time Tracker utilizing NextJS & Supabase stack.
+## Chee Time Tracker utilizing NextJS & Supabase
