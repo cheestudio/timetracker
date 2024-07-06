@@ -6,14 +6,13 @@ const TimeEntriesContext = createContext<ReturnType<typeof useTimeEntries> | nul
 export const useTimeEntriesContext = () => {
   const context = useContext(TimeEntriesContext);
   if (!context) {
-    throw new Error('no');
+    throw new Error("useTimeEntries must be used within a TimeEntriesContext provider");
   }
   return context;
 }
 
 export const TimeEntriesProvider = ({children}: {children: React.ReactNode}) => {
   const timeEntriesState = useTimeEntries();
-  // console.log('timeEntriesContext',timeEntriesState)
   return (
     <TimeEntriesContext.Provider value={timeEntriesState}>
       {children}
