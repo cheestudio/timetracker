@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { TimeEntryProps } from "./types";
+import { TimeEntryProps } from "../types/types";
 
 export function useSelectedRows({ entries, onSelectionChange }: { entries: TimeEntryProps[], onSelectionChange?:(selectedEntries: TimeEntryProps[]) => void }) {
 

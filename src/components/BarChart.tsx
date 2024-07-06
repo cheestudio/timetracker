@@ -1,4 +1,4 @@
-import { TimeEntryProps } from "@/lib/types";
+import { TimeEntryProps } from "@/types/types";
 import { convertTime, convertDecimalTime } from "@/lib/utils";
 import {
   Chart as ChartJS,

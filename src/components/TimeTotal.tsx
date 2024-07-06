@@ -1,8 +1,9 @@
-import { TimeEntryProps } from '@/lib/types';
+import { TimeEntryProps } from '@/types/types';
 import { convertTime, convertToDecimalHours } from '@/lib/utils';
 import React from 'react';
 
 const TimeTotal = ({timeEntries, selectedKeys, calculatedTime} : {timeEntries: any, selectedKeys: any, calculatedTime: number}) => {
+  
   return (
     <>
       {!!timeEntries?.length &&

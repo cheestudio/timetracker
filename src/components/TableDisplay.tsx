@@ -1,5 +1,5 @@
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, SortDescriptor, Button } from "@nextui-org/react";
-import { TimeEntryProps } from "@/lib/types";
+import { TimeEntryProps } from "@/types/types";
 import { formatDate, convertTime, UTCtoLocal, setTimezone } from "@/lib/utils";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import EditEntry from "./EditEntry";
@@ -58,7 +58,7 @@ const TableDisplay = ({ items, sortDescriptor, onSort, handleSelectedKeys }: { i
                 </div>
               </TableCell>
               <TableCell>
-                <div>{convertTime(parseInt(row.time_tracked))}</div>
+                <div>{convertTime(row.time_tracked)}</div>
               </TableCell>
               <TableCell>{row.owner}</TableCell>
               <TableCell>{row.client_name}</TableCell>

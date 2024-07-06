@@ -6,7 +6,10 @@ import { PlayCircleIcon, PauseCircleIcon, ArrowPathIcon, ClockIcon, CalendarDays
 import { timeToSeconds, timeToUTC, formatTimeInput, calculateElapsedTime, timerInputFormat, userTimeZone, today } from '@/lib/utils';
 import moment from 'moment-timezone';
 import toast from 'react-hot-toast';
-import ClientSubmit from './ClientSubmit';
+import ClientSubmit from './ClientDropdown';
+import useTimeEntries from '@/hooks/useTimeEntries';
+import { TimeEntryProps } from '@/types/types';
+import { useTimeEntriesContext } from '@/context/TimeEntriesContext';
 
 const SubmitTime = () => {
 
@@ -24,6 +27,7 @@ const SubmitTime = () => {
   const [timeMode, setTimeMode] = useState<string>("timer");
   const [toggleBar, setToggleBar] = useState<boolean>(false);
   const [billable, setBillable] = useState<boolean>(false);
+  const { addEntry } = useTimeEntriesContext();
 
   /* Handle Time Inputs
   ========================================================= */
@@ -132,31 +136,45 @@ const SubmitTime = () => {
       totalTime = timeToSeconds(timeRange);
       restartTimer();
     }
-    const { data: user, error: userError } = await supabase.auth.getSession()
-    const { data, error } = await supabase
-      .from('TimeEntries')
-      .insert([
-        {
-          date: moment(date).tz(userTimeZone).utc().format(),
-          task,
-          time_tracked: totalTime,
-          entry_id: uuidv4(),
-          client_id: parseInt(client),
-          billable: billable,
-          owner: user?.session?.user.user_metadata.name.split(' ')[0],
-          user_id: user.session?.user.id,
-          start_time: timeToUTC(startTime),
-          end_time: timeToUTC(endTime),
-        }
-      ]);
-    if (error) {
-      console.log('Error:', error);
-    } else {
-      toast.success('Time entry added');
-      window.dispatchEvent(new CustomEvent('timeEntriesModified'));
-      setTask('');
-      setBillable(false);
-      restartTimer();
+
+    const { data: clientData, error: clientError } = await supabase
+      .from('Clients')
+      .select('client_name')
+      .eq('id', parseInt(client))
+      .single();
+
+    if (clientError) {
+      console.error('Error fetching client name:', clientError);
+      return;
+    }
+
+    const { data: user, error: userError } = await supabase.auth.getSession();
+    const entryToSubmit: TimeEntryProps = {
+      date: moment(date).tz(userTimeZone).utc().format(),
+      task,
+      time_tracked: totalTime,
+      entry_id: uuidv4(),
+      client_id: parseInt(client),
+      client_name: clientData?.client_name,
+      billable: billable,
+      owner: user?.session?.user.user_metadata.name.split(' ')[0],
+      user_id: user.session?.user.id,
+      start_time: timeToUTC(startTime),
+      end_time: timeToUTC(endTime),
+    }
+    try {
+      await addEntry(entryToSubmit);
+      if (entryToSubmit !== undefined) {
+        setTask('');
+        setBillable(false);
+        restartTimer();
+        toast.success('Time entry added');
+      } else {
+        toast.error('Failed to add time entry');
+      }
+    } catch (error) {
+      console.error('Error adding entry:', error);
+      toast.error('An error occurred while adding the time entry');
     }
   };
 

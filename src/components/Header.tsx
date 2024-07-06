@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/utils';
-import { useTimesheet } from '@/lib/TimesheetContext';
+import { useTimesheet } from '@/context/TimesheetContext';
 
 const Header = () => {
   const pathname = usePathname();

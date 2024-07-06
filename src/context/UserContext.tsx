@@ -1,7 +1,7 @@
 import { useState, createContext, useContext, useEffect } from "react";
-import { supabase } from "./utils";
+import { supabase } from "../lib/utils";
 import { useRouter } from "next/navigation";
-import { UserContextType } from "./types";
+import { UserContextType } from "../types/types";
 
 export const UserContext = createContext<UserContextType>({} as UserContextType);
 

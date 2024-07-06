@@ -10,8 +10,8 @@ import { supabase, userTimeZone } from '@/lib/utils';
 import TogglEntries from './TogglEntries';
 import moment from 'moment-timezone';
 import toast from 'react-hot-toast';
-import { useSelectedRows } from '@/lib/useSelectedRows';
-import { TimeEntryProps } from '@/lib/types';
+import { useSelectedRows } from '@/hooks/useSelectedRows';
+import { TimeEntryProps } from '@/types/types';
 
 const mapTogglData = (data: any[]) => {
   return data.map((entry) => ({

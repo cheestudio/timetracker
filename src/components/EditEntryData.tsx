@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { supabase, timeToSeconds, timeToUTC, calculateElapsedTime, UTCtoLocal, convertTime, setTimezone } from '@/lib/utils';
-import { TimeEntryProps } from "@/lib/types";
+import { supabase, timeToSeconds, timeToUTC, calculateElapsedTime, UTCtoLocal, convertTime, setTimezone, selectedClient } from '@/lib/utils';
+import { TimeEntryProps } from "@/types/types";
 import { Button, Input, Checkbox, cn } from "@nextui-org/react";
 
-import ClientSubmit from './ClientSubmit';
+import ClientDropdown from './ClientDropdown';
 import toast from 'react-hot-toast';
+import { useTimeEntriesContext } from '@/context/TimeEntriesContext';
 
 const EditEntryData = ({ entryData, closeToggle }: { entryData: TimeEntryProps, closeToggle: () => void }) => {
 
@@ -12,9 +13,9 @@ const EditEntryData = ({ entryData, closeToggle }: { entryData: TimeEntryProps, 
   const [startTime, setStartTime] = useState(UTCtoLocal(entryData.start_time, setTimezone(entryData.owner)));
   const [endTime, setEndTime] = useState(UTCtoLocal(entryData.end_time, setTimezone(entryData.owner)));
   const elapsedTime = calculateElapsedTime(startTime, endTime);
-
-
+  const { updateEntry } = useTimeEntriesContext();
   const seconds = timeToSeconds(elapsedTime);
+
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -26,26 +27,22 @@ const EditEntryData = ({ entryData, closeToggle }: { entryData: TimeEntryProps, 
     setFormData({ ...formData, [name]: checked });
   };
 
-  const updateEntry = async () => {
-    const updatedEntryData = {
+  const handleEditEntry = async () => {
+
+    const clientName = await selectedClient(formData.client_id);
+
+    const entry = {
       task: formData.task,
       date: formData.date,
       time_tracked: seconds,
-      client_id: parseInt(formData.client_id),
+      client_id: formData.client_id,
+      client_name: clientName,
       billable: formData.billable,
       start_time: timeToUTC(startTime),
       end_time: timeToUTC(endTime),
+      entry_id: formData.entry_id
     }
-    const { data, error } = await supabase
-      .from('TimeEntries')
-      .update(updatedEntryData)
-      .eq('entry_id', formData.entry_id);
-
-    if (error) {
-      console.error('Error updating entry:', error);
-      return;
-    }
-    window.dispatchEvent(new CustomEvent('timeEntriesModified'));
+    await updateEntry(entry, entry.entry_id);
     toast.success('Entry Updated!');
     closeToggle();
   };
@@ -113,10 +110,10 @@ const EditEntryData = ({ entryData, closeToggle }: { entryData: TimeEntryProps, 
         >
           Billable
         </Checkbox>
-        <ClientSubmit client={formData.client_id.toString()} handleClient={handleInputChange} />
+        <ClientDropdown client={formData.client_id.toString()} handleClient={handleInputChange} />
       </div>
       <div className="flex justify-end mt-3 mb-5">
-        <Button variant="flat" color="primary" onClick={updateEntry}>Update Entry</Button>
+        <Button variant="flat" color="primary" onClick={handleEditEntry}>Update Entry</Button>
       </div>
     </>
   );

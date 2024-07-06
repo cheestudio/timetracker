@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { supabase } from '@/lib/utils';
 import { useSearchParams } from 'next/navigation';
-import TableInstance from '@/components/TableInstance';
+import TableInstanceReducer from '@/components/TableInstanceReducer';
 import { useTimesheet } from '@/context/TimesheetContext';
 
 const TimeSheet = () => {
@@ -23,7 +23,7 @@ const TimeSheet = () => {
     <>
       <div className="flex flex-col gap-10">
         
-        <TableInstance client={currentClient} />
+        <TableInstanceReducer client={currentClient} />
 
       </div>
 

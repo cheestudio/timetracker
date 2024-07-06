@@ -1,6 +1,6 @@
 import { useState, createContext, useContext } from "react";
 import { useSearchParams } from 'next/navigation';
-import { TimesheetContextType } from "./types";
+import { TimesheetContextType } from "../types/types";
 
 export const TimesheetContext = createContext<TimesheetContextType>({} as TimesheetContextType);
 

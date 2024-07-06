@@ -1,9 +1,7 @@
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, SortDescriptor, Button } from "@nextui-org/react";
 import { convertTime, formatDate, UTCtoLocal, setTimezone } from "@/lib/utils";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
-import { TimeEntryProps } from "@/lib/types";
-
-
+import { TimeEntryProps } from "@/types/types";
 
 const TogglEntries = ({ data, handleSelectedKeys }: { data: TimeEntryProps[], handleSelectedKeys: (keys: any) => void }) => {
 

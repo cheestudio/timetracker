@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { signInWithGoogle } from '@/lib/utils';
 import { Button } from '@nextui-org/react';
 import { useRouter } from 'next/navigation'
-import { useUser } from '@/lib/UserContext';
+import { useUser } from '@/context/UserContext';
 import Image from 'next/image';
 import logo from '@/app/assets/logo.svg';
 

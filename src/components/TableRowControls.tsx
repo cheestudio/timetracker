@@ -1,12 +1,12 @@
 import React, { useRef } from "react";
 
 import { Button, Input, Select, SelectItem, Tooltip } from "@nextui-org/react";
-import { TableRowControlsProps } from "@/lib/types";
+import { TableRowControlsProps } from "@/types/types";
 import { useEffect, useState } from "react";
 import { ChartBarSquareIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { DatePickerWithRange } from "./DatePicker";
 import ClientSelector from "./ClientSelector";
-import useVisibility from "@/lib/useVisibility";
+import useVisibility from "@/hooks/useVisibility";
 import ToggleElement from "./ToggleElement";
 
 const TableRowControls = ({ timeEntries, viewableRows, selectedDateRange, handleCustomDateRange, handleUser, selectedUser, handleViewableRows, handleDateRange, handleSearch, loading, barVisibility, toggleBarVisibility, resetSearch }: TableRowControlsProps) => {
@@ -50,7 +50,7 @@ const TableRowControls = ({ timeEntries, viewableRows, selectedDateRange, handle
             radius="sm"
             value={viewableRows}
             onChange={handleViewableRows}
-            defaultSelectedKeys={new Set(["1000"])}
+            defaultSelectedKeys={new Set(["100"])}
             variant="bordered"
             label="Viewable Rows"
             labelPlacement="outside"
@@ -67,7 +67,7 @@ const TableRowControls = ({ timeEntries, viewableRows, selectedDateRange, handle
         <div className="flex-[1_1_auto]">
           <Select
             radius="sm"
-            defaultSelectedKeys={new Set(["this_week"])}
+            defaultSelectedKeys={new Set(["today"])}
             onChange={handleDateRange}
             disallowEmptySelection={true}
             variant="bordered"

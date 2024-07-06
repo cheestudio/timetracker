@@ -1,23 +1,25 @@
 import { SortDescriptor } from "@nextui-org/react";
+import { Moment } from "moment-timezone";
 import { DateRange } from "react-day-picker";
 
 export interface TimeEntryProps {
-  key: string;
+  key?: string;
   date: string;
   task: string;
-  duration: string;
-  time_tracked: string;
+  duration?: string;
+  time_tracked: number;
   entry_id: string;
-  owner: string;
+  owner?: string | undefined;
   billable: boolean;
-  start_time: string;
-  end_time: string;
-  Clients: {
+  start_time: string | Moment;
+  end_time: string | Moment;
+  Clients?: {
     client_name: string;
-    client_id: string;
+    client_id: string | number;
   };
   client_name: any;
-  client_id: string;
+  client_id: string | number;
+  user_id?: string | number | undefined;
 }
 
 export interface ToggleProps {
@@ -47,7 +49,7 @@ export interface TableRowControlsProps {
   handleSearch: (e: React.ChangeEvent<HTMLInputElement>) => void;
   sortDescriptor: SortDescriptor;
   setSortDescriptor: React.Dispatch<React.SetStateAction<SortDescriptor>>;
-  setTimeEntries: React.Dispatch<React.SetStateAction<any[]>>;
+  setTimeEntries?: React.Dispatch<React.SetStateAction<any[]>>;
   timeEntries: any[];
   barVisibility: boolean;
   toggleBarVisibility: () => void;

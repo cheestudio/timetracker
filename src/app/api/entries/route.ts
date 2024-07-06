@@ -3,7 +3,7 @@ import moment from 'moment-timezone';
 
 export async function POST(request: Request): Promise<Response> {
 
-    
+
     try {
         const { client, selectedUser, customDateRange, selectedDateRange, searchQuery, userTimeZone } = await request.json();
 
@@ -79,7 +79,7 @@ export async function POST(request: Request): Promise<Response> {
                 query = query
                     .gte('date', momentRangeStart.tz(userTimeZone).format('MM/DD/YYYY'))
                     .lte('date', momentRangeEnd.tz(userTimeZone).format('MM/DD/YYYY'));
-                }
+            }
         }
 
 

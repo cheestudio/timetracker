@@ -4,7 +4,7 @@ import React, { useEffect } from "react"
 import { CalendarIcon } from "@radix-ui/react-icons"
 import { subDays, addDays, format } from "date-fns"
 import { DateRange } from "react-day-picker";
-import { CustomDateRangeProps } from "@/lib/types";
+import { CustomDateRangeProps } from "@/types/types";
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"

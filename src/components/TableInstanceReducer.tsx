@@ -17,8 +17,9 @@ import { DateRange } from 'react-day-picker';
 import { useSelectedRows } from '@/hooks/useSelectedRows';
 import { useTimeEntriesContext } from '@/context/TimeEntriesContext';
 
-const TableInstance = ({ client }: { client: string }) => {
+const TableInstanceReduce = ({ client }: { client: string }) => {
 
+  
   /* Table State
   ========================================================= */
   const { isVisible: barVisibility, toggleVisibility: toggleBarVisibility } = useVisibility(false);
@@ -210,8 +211,9 @@ const TableInstance = ({ client }: { client: string }) => {
         />
       }
 
+
     </div>
   );
 };
 
-export default TableInstance;
+export default TableInstanceReduce;
