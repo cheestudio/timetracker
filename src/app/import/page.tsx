@@ -42,7 +42,7 @@ const setClientId = (projectId: number) => {
   }
 }
 
-export function Import() {
+export default function Import() {
 
 
   const [customDateRange, setCustomDateRange] = useState<DateRange | undefined>(undefined);
