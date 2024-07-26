@@ -1,17 +1,16 @@
 import { supabase } from '@/lib/utils';
+import { useEffect, useState, useRef } from 'react';
 import { Button, Input, Switch, cn, Checkbox } from '@nextui-org/react';
-import { useEffect, useState, useRef, useReducer } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { PlayCircleIcon, PauseCircleIcon, ArrowPathIcon, ClockIcon, CalendarDaysIcon, ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { timeToSeconds, timeToUTC, formatTimeInput, calculateElapsedTime, timerInputFormat, userTimeZone, today } from '@/lib/utils';
-import moment from 'moment-timezone';
-import toast from 'react-hot-toast';
-import ClientSubmit from './ClientDropdown';
-import useTimeEntries from '@/hooks/useTimeEntries';
+import { ClientDropdown } from './ClientDropdown';
 import { TimeEntryProps } from '@/types/types';
 import { useTimeEntriesContext } from '@/context/TimeEntriesContext';
+import moment from 'moment-timezone';
+import toast from 'react-hot-toast';
 
-const SubmitTime = () => {
+export function SubmitTime() {
 
   /* State
   ========================================================= */
@@ -214,7 +213,7 @@ const SubmitTime = () => {
             </Checkbox>
           </div>
           <div className="flex-[0_1_200px]">
-            <ClientSubmit client={client} handleClient={handleClient} />
+            <ClientDropdown client={client} handleClient={handleClient} />
           </div>
           <div className="flex-auto">
             <Input
@@ -353,5 +352,3 @@ const SubmitTime = () => {
 
   )
 }
-
-export default SubmitTime

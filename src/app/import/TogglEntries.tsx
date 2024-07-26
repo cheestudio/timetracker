@@ -3,7 +3,7 @@ import { convertTime, formatDate, UTCtoLocal, setTimezone } from "@/lib/utils";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import { TimeEntryProps } from "@/types/types";
 
-const TogglEntries = ({ data, handleSelectedKeys }: { data: TimeEntryProps[], handleSelectedKeys: (keys: any) => void }) => {
+export function TogglEntries ({ data, handleSelectedKeys }: { data: TimeEntryProps[], handleSelectedKeys: (keys: any) => void }) {
 
   const getClientName = (clientId: number) => {
     switch (clientId) {
@@ -70,5 +70,3 @@ const TogglEntries = ({ data, handleSelectedKeys }: { data: TimeEntryProps[], ha
 }
 
 export default TogglEntries;
-
-

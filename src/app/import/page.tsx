@@ -6,12 +6,11 @@ import { Button } from '@nextui-org/react';
 import { DateRange } from "react-day-picker";
 import { DatePickerWithRange } from "@/components/DatePicker";
 import { v4 as uuidv4 } from 'uuid';
-import { supabase, userTimeZone } from '@/lib/utils';
-import TogglEntries from './TogglEntries';
+import { supabase } from '@/lib/utils';
+import { TogglEntries } from './TogglEntries';
+import { useSelectedRows } from '@/hooks/useSelectedRows';
 import moment from 'moment-timezone';
 import toast from 'react-hot-toast';
-import { useSelectedRows } from '@/hooks/useSelectedRows';
-import { TimeEntryProps } from '@/types/types';
 
 const mapTogglData = (data: any[]) => {
   return data.map((entry) => ({
@@ -43,7 +42,7 @@ const setClientId = (projectId: number) => {
   }
 }
 
-export default function Import() {
+export function Import() {
 
 
   const [customDateRange, setCustomDateRange] = useState<DateRange | undefined>(undefined);

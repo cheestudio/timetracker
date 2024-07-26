@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
-import { supabase, timeToSeconds, timeToUTC, calculateElapsedTime, UTCtoLocal, convertTime, setTimezone, selectedClient } from '@/lib/utils';
+import { useState } from 'react';
+import { timeToSeconds, timeToUTC, calculateElapsedTime, UTCtoLocal, convertTime, setTimezone, selectedClient } from '@/lib/utils';
 import { TimeEntryProps } from "@/types/types";
 import { Button, Input, Checkbox, cn } from "@nextui-org/react";
-
-import ClientDropdown from './ClientDropdown';
-import toast from 'react-hot-toast';
+import { ClientDropdown } from './ClientDropdown';
 import { useTimeEntriesContext } from '@/context/TimeEntriesContext';
+import toast from 'react-hot-toast';
 
-const EditEntryData = ({ entryData, closeToggle }: { entryData: TimeEntryProps, closeToggle: () => void }) => {
+export function EditEntryData({ entryData, closeToggle }: { entryData: TimeEntryProps, closeToggle: () => void }) {
 
   const [formData, setFormData] = useState({ ...entryData });
   const [startTime, setStartTime] = useState(UTCtoLocal(entryData.start_time, setTimezone(entryData.owner)));
@@ -118,5 +117,3 @@ const EditEntryData = ({ entryData, closeToggle }: { entryData: TimeEntryProps, 
     </>
   );
 };
-
-export default EditEntryData;

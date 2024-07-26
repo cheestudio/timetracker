@@ -1,15 +1,14 @@
-import React, { useRef } from "react";
-
+import { useRef } from "react";
 import { Button, Input, Select, SelectItem, Tooltip } from "@nextui-org/react";
 import { TableRowControlsProps } from "@/types/types";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { ChartBarSquareIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { DatePickerWithRange } from "./DatePicker";
-import ClientSelector from "./ClientSelector";
+import { ClientSelector } from "./ClientSelector";
+import { ToggleElement } from "./ToggleElement";
 import useVisibility from "@/hooks/useVisibility";
-import ToggleElement from "./ToggleElement";
 
-const TableRowControls = ({ timeEntries, viewableRows, selectedDateRange, handleCustomDateRange, handleUser, selectedUser, handleViewableRows, handleDateRange, handleSearch, loading, barVisibility, toggleBarVisibility, resetSearch }: TableRowControlsProps) => {
+export function TableRowControls({ timeEntries, viewableRows, selectedDateRange, handleCustomDateRange, handleUser, selectedUser, handleViewableRows, handleDateRange, handleSearch, loading, barVisibility, toggleBarVisibility, resetSearch }: TableRowControlsProps) {
 
   const { isVisible, toggleVisibility } = useVisibility(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -131,5 +130,3 @@ const TableRowControls = ({ timeEntries, viewableRows, selectedDateRange, handle
     </div>
   );
 };
-
-export default TableRowControls;

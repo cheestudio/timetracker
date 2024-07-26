@@ -1,6 +1,5 @@
 "use client";
 export const dynamic = 'force-dynamic';
-import { useEffect } from 'react';
 import { signInWithGoogle } from '@/lib/utils';
 import { Button } from '@nextui-org/react';
 import { useRouter } from 'next/navigation'

@@ -1,9 +1,9 @@
 import { Modal, ModalContent, ModalBody, Button, useDisclosure } from "@nextui-org/react";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
-import EditEntryData from "./EditEntryData";
+import { EditEntryData } from "./EditEntryData";
 import { TimeEntryProps } from "@/types/types";
 
-const EditEntry = ({ entryData }: { entryData: TimeEntryProps }) => {
+export function EditEntry({ entryData }: { entryData: TimeEntryProps }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   return (
     <>
@@ -38,5 +38,3 @@ const EditEntry = ({ entryData }: { entryData: TimeEntryProps }) => {
     </>
   );
 }
-
-export default EditEntry

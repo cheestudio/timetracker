@@ -4,7 +4,7 @@ import { listClients } from "@/lib/utils";
 import { Select, SelectItem } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 
-function ClientSelector({ isSubmit }: { isSubmit?: boolean }) {
+export function ClientSelector({ isSubmit }: { isSubmit?: boolean }) {
 
   const { currentClient, setCurrentClient } = useTimesheet();
   const [clients, setClients] = useState([]);
@@ -48,5 +48,3 @@ function ClientSelector({ isSubmit }: { isSubmit?: boolean }) {
     </Select>
   );
 }
-
-export default ClientSelector;

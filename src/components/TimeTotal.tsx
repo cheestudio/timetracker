@@ -1,8 +1,6 @@
-import { TimeEntryProps } from '@/types/types';
 import { convertTime, convertToDecimalHours } from '@/lib/utils';
-import React from 'react';
 
-const TimeTotal = ({timeEntries, selectedKeys, calculatedTime} : {timeEntries: any, selectedKeys: any, calculatedTime: number}) => {
+export function TimeTotal({timeEntries, selectedKeys, calculatedTime} : {timeEntries: any, selectedKeys: any, calculatedTime: number}) {
   
   return (
     <>
@@ -19,5 +17,3 @@ const TimeTotal = ({timeEntries, selectedKeys, calculatedTime} : {timeEntries: a
     </>
   );
 }
-
-export default TimeTotal;

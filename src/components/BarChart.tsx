@@ -13,7 +13,7 @@ import { Bar } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import moment from "moment-timezone";
 
-const BarChart = ({ items }: { items: TimeEntryProps[] }) => {
+export function BarChart({ items }: { items: TimeEntryProps[] }) {
 
   /* Plugins
   ========================================================= */
@@ -168,5 +168,3 @@ const BarChart = ({ items }: { items: TimeEntryProps[] }) => {
     </>
   );
 }
-
-export default BarChart;

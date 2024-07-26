@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/utils';
 import { useTimesheet } from '@/context/TimesheetContext';
 
-const Header = () => {
+export function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const { currentClient } = useTimesheet();
@@ -48,5 +48,3 @@ const Header = () => {
     </div>
   )
 }
-
-export default Header;

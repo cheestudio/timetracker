@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { useTimesheet } from '@/context/TimesheetContext';
+import { useEffect, useState } from 'react';
 import { listClients } from "@/lib/utils";
 import { Select, SelectItem } from '@nextui-org/react';
-import { useRouter } from 'next/navigation';
 
-function ClientSubmit({client, handleClient}: any) {
+export function ClientDropdown({client, handleClient}: any) {
 
   const [clients, setClients] = useState([]);
 
@@ -39,5 +37,3 @@ function ClientSubmit({client, handleClient}: any) {
     </Select>
   );
 }
-
-export default ClientSubmit;

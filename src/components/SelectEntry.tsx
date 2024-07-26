@@ -1,6 +1,6 @@
 import { Button } from '@nextui-org/react';
 
-const SelectEntry = ({ selectedKeys, deleteTimeEntry }: { selectedKeys: [], deleteTimeEntry: () => void }) => {
+export function SelectEntry({ selectedKeys, deleteTimeEntry }: { selectedKeys: [], deleteTimeEntry: () => void }) {
   return (
     <>
       {selectedKeys && selectedKeys.length > 0 &&
@@ -16,5 +16,3 @@ const SelectEntry = ({ selectedKeys, deleteTimeEntry }: { selectedKeys: [], dele
     </>
   );
 }
-
-export default SelectEntry;

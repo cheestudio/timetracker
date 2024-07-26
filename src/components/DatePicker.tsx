@@ -1,8 +1,8 @@
 "use client"
 
-import React, { useEffect } from "react"
+import { useState } from "react"
 import { CalendarIcon } from "@radix-ui/react-icons"
-import { subDays, addDays, format } from "date-fns"
+import { format } from "date-fns"
 import { DateRange } from "react-day-picker";
 import { CustomDateRangeProps } from "@/types/types";
 
@@ -17,7 +17,7 @@ import {
 
 export function DatePickerWithRange({ handleCustomDateRange }: CustomDateRangeProps) {
 
-  const [date, setDate] = React.useState<DateRange | undefined>({
+  const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(),
     to: new Date(),
   });

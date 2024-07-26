@@ -2,11 +2,10 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, SortDe
 import { TimeEntryProps } from "@/types/types";
 import { formatDate, convertTime, UTCtoLocal, setTimezone } from "@/lib/utils";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
-import EditEntry from "./EditEntry";
-
+import { EditEntry } from "./EditEntry";
 import toast from 'react-hot-toast';
 
-const TableDisplay = ({ items, sortDescriptor, onSort, handleSelectedKeys }: { items: any, sortDescriptor: SortDescriptor, onSort: any, handleSelectedKeys: any }) => {
+export function TableDisplay({ items, sortDescriptor, onSort, handleSelectedKeys }: { items: any, sortDescriptor: SortDescriptor, onSort: any, handleSelectedKeys: any }) {
 
   return (
 
@@ -73,5 +72,3 @@ const TableDisplay = ({ items, sortDescriptor, onSort, handleSelectedKeys }: { i
     </>
   );
 };
-
-export default TableDisplay;

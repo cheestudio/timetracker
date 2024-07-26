@@ -1,6 +1,6 @@
 import { Button, Link } from '@nextui-org/react';
 
-const ListClients = ({ clients }: { clients: any }) => {
+export function ListClients({ clients }: { clients: any }) {
   return (
     <div className="grid grid-cols-3 gap-x-10 gap-y-5">
       {clients.map((client: any) => (
@@ -11,5 +11,3 @@ const ListClients = ({ clients }: { clients: any }) => {
     </div>
   )
 }
-
-export default ListClients;

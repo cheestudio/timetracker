@@ -1,12 +1,11 @@
 "use client"
 
 import { useEffect } from 'react';
-import { supabase } from '@/lib/utils';
 import { useSearchParams } from 'next/navigation';
-import TableInstance from '@/components/TableInstance';
+import { TableInstance } from '@/components/TableInstance';
 import { useTimesheet } from '@/context/TimesheetContext';
 
-const TimeSheet = () => {
+export default function TimeSheet() {
 
   const params = useSearchParams();
   const { currentClient, setCurrentClient } = useTimesheet();
@@ -31,5 +30,3 @@ const TimeSheet = () => {
 
   );
 };
-
-export default TimeSheet;
