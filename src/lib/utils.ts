@@ -114,7 +114,8 @@ export const listClients = async () => {
     cache: 'no-store'
   });
   const data = await response.json();
-  return data;
+  const filteredData = data.filter((client:any)=>client.id !== 4); // remove RT
+  return filteredData;
 }
 
 /* Client Submit Lookup
