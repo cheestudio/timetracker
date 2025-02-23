@@ -184,33 +184,35 @@ export function SubmitTime() {
   return (
     <div className={`fixed top-0 left-0 w-full py-5 px-5 bg-black/50 backdrop-blur-md ${timerRunning ? 'border-secondary' : 'border-[#333]'} border-b-1 time-submit-form z-[9999] transition-transform ${toggleBar ? 'translate-y-[-100%]' : 'translate-y-0'}`}>
       <form onSubmit={handleSubmit}>
-        <div className="flex items-start justify-between gap-x-5 gap-y-3">
+        <div className="grid items-start justify-between md:flex gap-x-5 gap-y-3">
 
-          <div className="flex-[0_1_75px] self-center">
-            <Switch
-              color="primary"
-              defaultSelected
-              startContent={<CalendarDaysIcon />}
-              endContent={<ClockIcon />}
-              onChange={() => setTimeMode(timeMode === 'timer' ? 'entry' : 'timer')}
-              classNames={{
-                base: cn(
-                  "inline-flex flex-row-reverse w-full items-center",
-                  "justify-between cursor-pointer rounded-sm gap-4 p-2 border-1 border-content1 hover:border-primary bg-content1",
-                ),
-                wrapper: "bg-secondary"
-              }}
-            >
-            </Switch>
-          </div>
-          <div className="flex-[0_1_100px] self-center">
-            <Checkbox
-              radius="none"
-              onChange={(e) => setBillable(e.target.checked)}
-              isSelected={billable}
-            >
-              Billable
-            </Checkbox>
+          <div className="flex gap-5 md:contents">
+            <div className="flex-[0_1_75px] self-center">
+              <Switch
+                color="primary"
+                defaultSelected
+                startContent={<CalendarDaysIcon />}
+                endContent={<ClockIcon />}
+                onChange={() => setTimeMode(timeMode === 'timer' ? 'entry' : 'timer')}
+                classNames={{
+                  base: cn(
+                    "inline-flex flex-row-reverse w-full items-center",
+                    "justify-between cursor-pointer rounded-sm gap-4 p-2 border-1 border-content1 hover:border-primary bg-content1",
+                  ),
+                  wrapper: "bg-secondary"
+                }}
+              >
+              </Switch>
+            </div>
+            <div className="flex-[0_1_100px] self-center">
+              <Checkbox
+                radius="none"
+                onChange={(e) => setBillable(e.target.checked)}
+                isSelected={billable}
+              >
+                Billable
+              </Checkbox>
+            </div>
           </div>
           <div className="flex-[0_1_200px]">
             <ClientDropdown client={client} handleClient={handleClient} />
@@ -336,7 +338,7 @@ export function SubmitTime() {
 
         </div>
 
-        <Button className="w-full max-w-[200px] mx-auto block bg-[#081D25]" variant="flat" color="primary" type="submit">Add Time Entry</Button>
+        <Button className="w-full max-w-[200px] mx-auto block bg-[#081D25] max-md:mt-5" variant="flat" color="primary" type="submit">Add Time Entry</Button>
 
       </form>
       {!timerRunning &&

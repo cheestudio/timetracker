@@ -8,7 +8,7 @@ import { ClientSelector } from "./ClientSelector";
 import { ToggleElement } from "./ToggleElement";
 import useVisibility from "@/hooks/useVisibility";
 
-export function TableRowControls({ timeEntries, viewableRows, selectedDateRange, handleCustomDateRange, handleUser, selectedUser, handleViewableRows, handleDateRange, handleSearch, loading, barVisibility, toggleBarVisibility, resetSearch }: TableRowControlsProps) {
+export function TableRowControls({ ...props }: TableRowControlsProps) {
 
   const { isVisible, toggleVisibility } = useVisibility(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -18,21 +18,21 @@ export function TableRowControls({ timeEntries, viewableRows, selectedDateRange,
       searchInputRef.current.focus();
     }
     if (!isVisible) {
-      resetSearch();
+      props.resetSearch();
     }
-  }, [isVisible,resetSearch]);
+  }, [props, isVisible]);
 
   return (
-    <div className="top-0 sticky w-full py-3 bg-[#070707]/95 backdrop-blur-md z-50">
-      <div className="flex justify-end gap-5 table-row-controls ">
-        <div className="flex-[1_1_auto] mr-auto ml-0">
+    <div className="top-0 md:sticky w-full p-3 bg-[#070707]/95 backdrop-blur-md z-50">
+      <div className="flex flex-col justify-end gap-5 table-row-controls md:flex-row">
+        <div className="flex-[1_1_auto]">
           <ClientSelector />
         </div>
         <div className="flex-[1_1_auto]">
           <Select
             radius="sm"
-            value={selectedUser}
-            onChange={handleUser}
+            value={props.selectedUser}
+            onChange={props.handleUser}
             variant="bordered"
             label="Owner"
             labelPlacement="outside"
@@ -47,8 +47,8 @@ export function TableRowControls({ timeEntries, viewableRows, selectedDateRange,
         <div className="flex-[1_1_auto]">
           <Select
             radius="sm"
-            value={viewableRows}
-            onChange={handleViewableRows}
+            value={props.viewableRows}
+            onChange={props.handleViewableRows}
             defaultSelectedKeys={new Set(["100"])}
             variant="bordered"
             label="Viewable Rows"
@@ -67,7 +67,7 @@ export function TableRowControls({ timeEntries, viewableRows, selectedDateRange,
           <Select
             radius="sm"
             defaultSelectedKeys={new Set(["today"])}
-            onChange={handleDateRange}
+            onChange={props.handleDateRange}
             disallowEmptySelection={true}
             variant="bordered"
             label="Date Range"
@@ -85,25 +85,27 @@ export function TableRowControls({ timeEntries, viewableRows, selectedDateRange,
           </Select>
         </div>
 
-        {selectedDateRange === "custom" &&
+        {props.selectedDateRange === "custom" &&
           <div className="flex-[1_1_auto]">
             <DatePickerWithRange
-              handleCustomDateRange={handleCustomDateRange}
+              handleCustomDateRange={props.handleCustomDateRange}
             />
           </div>
         }
 
-        <div className="flex-[0_1_40px] self-end text-center">
-          <Button isLoading={loading} variant="light" isIconOnly onPress={toggleVisibility}>
-            {isVisible ? <XMarkIcon className="w-7 h-7" /> : <MagnifyingGlassIcon className="w-7 h-7" />}
-          </Button>
-        </div>
-        <div className="flex-[0_1_40px] self-end text-center">
-          <Button isIconOnly variant="light" onPress={() => toggleBarVisibility()}>
-            <Tooltip content={barVisibility ? "Toggle Chart" : "Toggle Chart"}>
-              <ChartBarSquareIcon className="w-7 h-7" />
-            </Tooltip>
-          </Button>
+        <div className="flex gap-5 place-content-center md:contents">
+          <div className="flex-[0_1_40px] self-end text-center">
+            <Button isLoading={props.loading} variant="light" isIconOnly onPress={toggleVisibility}>
+              {isVisible ? <XMarkIcon className="w-7 h-7" /> : <MagnifyingGlassIcon className="w-7 h-7" />}
+            </Button>
+          </div>
+          <div className="flex-[0_1_40px] self-end text-center">
+            <Button isIconOnly variant="light" onPress={() => props.toggleBarVisibility()}>
+              <Tooltip content={props.barVisibility ? "Toggle Chart" : "Toggle Chart"}>
+                <ChartBarSquareIcon className="w-7 h-7" />
+              </Tooltip>
+            </Button>
+          </div>
         </div>
 
       </div>
@@ -120,7 +122,7 @@ export function TableRowControls({ timeEntries, viewableRows, selectedDateRange,
               }}
               type="text"
               id="timer_time"
-              onChange={handleSearch}
+              onChange={props.handleSearch}
               ref={searchInputRef}
             />
           </div>

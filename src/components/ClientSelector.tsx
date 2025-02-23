@@ -27,6 +27,7 @@ export function ClientSelector({ isSubmit }: { isSubmit?: boolean }) {
   return (
 
     <Select
+      className="max-md:w-full"
       radius="sm"
       value={currentClient}
       onChange={handleClient}
