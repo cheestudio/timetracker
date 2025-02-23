@@ -243,52 +243,39 @@ export const calculateElapsedTime = (startTime: string | undefined, endTime: str
 /* Timer Input
 ========================================================= */
 export const timerInputFormat = (input: string) => {
-  // Remove all non-digit characters except 'h', 'm', and 's'
-  const cleanInput = String(input).replace(/[^0-9hms.]/g, '').replace(/^0+/, '');
-
-  // Initialize hours, minutes, and seconds with default values
-  let hours: string | number = '0';
-  let minutes: string | number = '00';
-  let seconds: string | number = '00';
-
-  // Check for 'h', 'm', and 's' in the input
-  const hoursMatch = cleanInput.match(/(\d+)h/);
-
-  // Extract hours, minutes, and seconds if present
-  if (hoursMatch) {
-    hours = hoursMatch[1].padStart(2, '0');
-  }
-
-  // Handle input without 'h', 'm', or 's'
+  // Remove all non-digit characters except decimal point
+  const cleanInput = String(input).replace(/[^0-9.]/g, '');
+  
+  let hours = 0;
+  let minutes = 0;
+  
+  // Handle decimal input (e.g., "3.5" -> "3:30")
   if (cleanInput.includes('.')) {
-    const [whole, fraction] = cleanInput.split('.');
-    const totalMinutes = parseInt(whole, 10) * 60 + Math.round(parseFloat(`0.${fraction}`) * 60);
-    hours = Math.floor(totalMinutes / 60).toString().padStart(2, '0');
-    minutes = (totalMinutes % 60).toString().padStart(2, '0');
-  }
-  else if (!hoursMatch) {
-    if (cleanInput.length === 1 || cleanInput.length === 2) {
-      minutes = cleanInput.padStart(2, '0');
-      const totalMinutes = parseInt(cleanInput, 10);
-      if (totalMinutes >= 0 && totalMinutes <= 99) {
-        hours = Math.floor(totalMinutes / 60);
-        minutes = (totalMinutes % 60).toString().padStart(2, '0');
-      }
-    } else if (cleanInput.length === 3) {
-      hours = cleanInput.substring(0, 1);
-      minutes = cleanInput.substring(1, 3);
-    } else if (cleanInput.length === 4) {
-      hours = cleanInput.substring(0, 2);
-      minutes = cleanInput.substring(2, 4);
+    const [wholeHours, fraction] = cleanInput.split('.');
+    hours = parseInt(wholeHours, 10);
+    minutes = Math.round(parseFloat(`0.${fraction}`) * 60);
+  } 
+  // Handle two digits or less (e.g., "90" -> "1:30", "5" -> "5:00")
+  else if (cleanInput.length <= 2) {
+    const num = parseInt(cleanInput, 10);
+    if (num <= 16) {
+      hours = num;
     } else {
-      hours = cleanInput.substring(0, cleanInput.length - 4);
-      minutes = cleanInput.substring(cleanInput.length - 4, cleanInput.length - 2);
-      seconds = cleanInput.substring(cleanInput.length - 2);
+      hours = Math.floor(num / 60);
+      minutes = num % 60;
     }
   }
+// Handle more than two digits (treat as HHMM format)
+  else {
+    hours = parseInt(cleanInput.slice(0, -2), 10);
+    minutes = parseInt(cleanInput.slice(-2), 10);
+  }
 
-  // Return the formatted time string
-  return `${hours}:${minutes}:${seconds}`;
+  // Format output with padding
+  const formattedHours = hours.toString().padStart(1, '0');
+  const formattedMinutes = minutes.toString().padStart(2, '0');
+  
+  return `${formattedHours}:${formattedMinutes}:00`;
 };
 
 /* ShadCN
