@@ -114,7 +114,7 @@ export const listClients = async () => {
     cache: 'no-store'
   });
   const data = await response.json();
-  const filteredData = data.filter((client:any)=>client.id !== 4); // remove RT
+  const filteredData = data.filter((client: any) => client.id !== 4); // remove RT
   return filteredData;
 }
 
@@ -146,7 +146,7 @@ export const UTCtoLocal = (utc: string | Moment, timezone: string) => {
 
 
 export const setTimezone = (owner: string | undefined) => {
- if (owner === 'Lars') {
+  if (owner === 'Lars') {
     return 'America/New_York';
   }
   return 'America/Los_Angeles';
@@ -244,17 +244,30 @@ export const calculateElapsedTime = (startTime: string | undefined, endTime: str
 ========================================================= */
 export const timerInputFormat = (input: string) => {
   // Remove all non-digit characters except decimal point
-  const cleanInput = String(input).replace(/[^0-9.]/g, '');
-  
+  const cleanInput = String(input).replace(/[^0-9.hm]/g, '');
+
   let hours = 0;
   let minutes = 0;
-  
+
   // Handle decimal input (e.g., "3.5" -> "3:30")
   if (cleanInput.includes('.')) {
     const [wholeHours, fraction] = cleanInput.split('.');
     hours = parseInt(wholeHours, 10);
     minutes = Math.round(parseFloat(`0.${fraction}`) * 60);
-  } 
+  }
+  // format time if hours/minutes are entered (e.g. 3h 30m)
+  else if (cleanInput.includes('m') || cleanInput.includes('h')) {
+    const timeString = cleanInput.match(/\d+[hm]/g) || [];
+    timeString.forEach(time => {
+      console.log(time);
+      const value = parseInt(time, 10);
+      if (time.endsWith('h')) {
+        hours += value;
+      } else if (time.endsWith('m')) {
+        minutes += value;
+      }
+    });
+  }
   // Handle two digits or less (e.g., "90" -> "1:30", "5" -> "5:00")
   else if (cleanInput.length <= 2) {
     const num = parseInt(cleanInput, 10);
@@ -265,7 +278,7 @@ export const timerInputFormat = (input: string) => {
       minutes = num % 60;
     }
   }
-// Handle more than two digits (treat as HHMM format)
+  // Handle more than two digits (treat as HHMM format)
   else {
     hours = parseInt(cleanInput.slice(0, -2), 10);
     minutes = parseInt(cleanInput.slice(-2), 10);
@@ -274,7 +287,7 @@ export const timerInputFormat = (input: string) => {
   // Format output with padding
   const formattedHours = hours.toString().padStart(1, '0');
   const formattedMinutes = minutes.toString().padStart(2, '0');
-  
+
   return `${formattedHours}:${formattedMinutes}:00`;
 };
 
