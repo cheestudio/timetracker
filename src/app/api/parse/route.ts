@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { v4 as uuidv4 } from 'uuid';
 
 const OPENCODE_ENDPOINT = 'https://opencode.ai/zen/go/v1/chat/completions';
 const MODEL = 'mimo-v2.5-pro';
@@ -13,9 +12,6 @@ export async function POST(request: NextRequest) {
     }
 
     const apiKey = process.env.OPENCODE_API_KEY;
-    if (!apiKey || apiKey === 'your_key_here') {
-      return NextResponse.json({ error: 'OPENCODE_API_KEY not configured' }, { status: 500 });
-    }
 
     const clientList = clients
       ?.map((c: { id: number; name: string }) => `- ${c.name} (id: ${c.id})`)

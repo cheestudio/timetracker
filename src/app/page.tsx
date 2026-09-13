@@ -1,4 +1,5 @@
 "use client";
+import { useEffect } from "react";
 export const dynamic = "force-dynamic";
 import { signInWithGoogle } from "@/lib/utils";
 import { Button } from "@nextui-org/react";
@@ -8,13 +9,14 @@ import Image from "next/image";
 import logo from "@/app/assets/logo.svg";
 
 export default function Home() {
-  const { user, loggedIn } = useUser();
+  const { loggedIn } = useUser();
   const router = useRouter();
-  console.log(loggedIn);
 
-  if (loggedIn) {
-    router.push("/submit/");
-  }
+  useEffect(() => {
+    if (loggedIn) {
+      router.push("/submit/");
+    }
+  }, [loggedIn, router]);
 
   return (
     <main className="px-12 text-center">
