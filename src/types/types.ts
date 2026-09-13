@@ -69,3 +69,10 @@ export interface TimesheetContextType {
 export type CustomDateRangeProps = Pick<TableRowControlsProps, 'handleCustomDateRange'>
 
 export type SortDirection = 'ascending' | 'descending' | undefined;
+
+export interface ParsedTimeEntry {
+  client: string | null;
+  date: string;
+  task: string;
+  duration: string | null;
+}

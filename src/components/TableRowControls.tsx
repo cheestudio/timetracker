@@ -2,7 +2,13 @@ import { useRef } from "react";
 import { Button, Input, Select, SelectItem, Tooltip } from "@nextui-org/react";
 import { TableRowControlsProps } from "@/types/types";
 import { useEffect } from "react";
-import { ChartBarSquareIcon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  ChartBarSquareIcon,
+  MagnifyingGlassIcon,
+  XMarkIcon,
+  PlusCircleIcon,
+} from "@heroicons/react/24/outline";
+import Link from "next/link";
 import { DatePickerWithRange } from "./DatePicker";
 import { ClientSelector } from "./ClientSelector";
 import { ToggleElement } from "./ToggleElement";
@@ -16,7 +22,10 @@ function ClientSelectorWrap() {
   );
 }
 
-function UserSelection({ selectedUser, handleUser }: Pick<TableRowControlsProps, 'selectedUser' | 'handleUser'>) {
+function UserSelection({
+  selectedUser,
+  handleUser,
+}: Pick<TableRowControlsProps, "selectedUser" | "handleUser">) {
   return (
     <div className="flex-[1_1_auto]">
       <Select
@@ -37,7 +46,10 @@ function UserSelection({ selectedUser, handleUser }: Pick<TableRowControlsProps,
   );
 }
 
-function RowsSelection({ viewableRows, handleViewableRows }: Pick<TableRowControlsProps, 'viewableRows' | 'handleViewableRows'>) {
+function RowsSelection({
+  viewableRows,
+  handleViewableRows,
+}: Pick<TableRowControlsProps, "viewableRows" | "handleViewableRows">) {
   return (
     <div className="flex-[1_1_auto]">
       <Select
@@ -61,7 +73,9 @@ function RowsSelection({ viewableRows, handleViewableRows }: Pick<TableRowContro
   );
 }
 
-function DateSelection({ handleDateRange }: Pick<TableRowControlsProps, 'handleDateRange'>) {
+function DateSelection({
+  handleDateRange,
+}: Pick<TableRowControlsProps, "handleDateRange">) {
   return (
     <div className="flex-[1_1_auto]">
       <Select
@@ -87,7 +101,13 @@ function DateSelection({ handleDateRange }: Pick<TableRowControlsProps, 'handleD
   );
 }
 
-function ControlButtons({ loading, toggleVisibility, isVisible, toggleBarVisibility, barVisibility }: {
+function ControlButtons({
+  loading,
+  toggleVisibility,
+  isVisible,
+  toggleBarVisibility,
+  barVisibility,
+}: {
   loading: boolean;
   toggleVisibility: () => void;
   isVisible: boolean;
@@ -97,8 +117,17 @@ function ControlButtons({ loading, toggleVisibility, isVisible, toggleBarVisibil
   return (
     <div className="flex gap-5 place-content-center md:contents">
       <div className="flex-[0_1_40px] self-end text-center">
-        <Button isLoading={loading} variant="light" isIconOnly onPress={toggleVisibility}>
-          {isVisible ? <XMarkIcon className="w-7 h-7" /> : <MagnifyingGlassIcon className="w-7 h-7" />}
+        <Button
+          isLoading={loading}
+          variant="light"
+          isIconOnly
+          onPress={toggleVisibility}
+        >
+          {isVisible ? (
+            <XMarkIcon className="w-7 h-7" />
+          ) : (
+            <MagnifyingGlassIcon className="w-7 h-7" />
+          )}
         </Button>
       </div>
       <div className="flex-[0_1_40px] self-end text-center">
@@ -108,11 +137,23 @@ function ControlButtons({ loading, toggleVisibility, isVisible, toggleBarVisibil
           </Tooltip>
         </Button>
       </div>
+      <div className="flex-[0_1_40px] self-end text-center">
+        <Link href="/submit">
+          <Button isIconOnly variant="light">
+            <Tooltip content="Quick Add">
+              <PlusCircleIcon className="w-7 h-7" />
+            </Tooltip>
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 }
 
-function SearchInput({ handleSearch, searchInputRef }: {
+function SearchInput({
+  handleSearch,
+  searchInputRef,
+}: {
   handleSearch: (e: any) => void;
   searchInputRef: React.RefObject<HTMLInputElement>;
 }) {
@@ -125,7 +166,7 @@ function SearchInput({ handleSearch, searchInputRef }: {
           label="Search"
           labelPlacement="outside"
           classNames={{
-            input: 'text-lg font-bold text-white',
+            input: "text-lg font-bold text-white",
           }}
           type="text"
           id="timer_time"
@@ -153,15 +194,22 @@ export function TableRowControls({ ...props }: TableRowControlsProps) {
   return (
     <div className="top-0 md:sticky w-full p-3 bg-[#070707]/95 backdrop-blur-md z-50">
       <div className="flex flex-col justify-end gap-5 table-row-controls md:flex-row">
-
         <ClientSelectorWrap />
-        <UserSelection selectedUser={props.selectedUser} handleUser={props.handleUser} />
-        <RowsSelection viewableRows={props.viewableRows} handleViewableRows={props.handleViewableRows} />
+        <UserSelection
+          selectedUser={props.selectedUser}
+          handleUser={props.handleUser}
+        />
+        <RowsSelection
+          viewableRows={props.viewableRows}
+          handleViewableRows={props.handleViewableRows}
+        />
         <DateSelection handleDateRange={props.handleDateRange} />
 
         {props.selectedDateRange === "custom" && (
           <div className="flex-[1_1_auto]">
-            <DatePickerWithRange handleCustomDateRange={props.handleCustomDateRange} />
+            <DatePickerWithRange
+              handleCustomDateRange={props.handleCustomDateRange}
+            />
           </div>
         )}
 
@@ -175,7 +223,10 @@ export function TableRowControls({ ...props }: TableRowControlsProps) {
       </div>
 
       <ToggleElement isVisible={isVisible}>
-        <SearchInput handleSearch={props.handleSearch} searchInputRef={searchInputRef} />
+        <SearchInput
+          handleSearch={props.handleSearch}
+          searchInputRef={searchInputRef}
+        />
       </ToggleElement>
     </div>
   );

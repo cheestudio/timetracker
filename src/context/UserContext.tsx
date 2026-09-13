@@ -3,7 +3,9 @@ import { supabase } from "../lib/utils";
 import { useRouter } from "next/navigation";
 import { UserContextType } from "../types/types";
 
-export const UserContext = createContext<UserContextType>({} as UserContextType);
+export const UserContext = createContext<UserContextType>(
+  {} as UserContextType,
+);
 
 export const useUser = () => {
   const context = useContext(UserContext);
@@ -14,7 +16,6 @@ export const useUser = () => {
 };
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState({} as any);
   const router = useRouter();
@@ -28,28 +29,18 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }
 
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     isLocalhost = window.location.hostname.includes("localhost");
   }
 
   useEffect(() => {
     checkUser();
-    if (!loggedIn) {
-      // router.push('/');
-    }
-    console.log('loggedIn', loggedIn);
-  }, [loggedIn, router, isLocalhost]);
-
+  }, [loggedIn]);
 
   const value = {
     user,
-    loggedIn
-  }
+    loggedIn,
+  };
 
-  return (
-    <UserContext.Provider value={value}>
-      {children}
-    </UserContext.Provider>
-  )
-
-}
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
+};

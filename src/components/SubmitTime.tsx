@@ -1,28 +1,43 @@
-import { supabase } from '@/lib/utils';
-import { useEffect, useState, useRef } from 'react';
-import { Button, Input, Switch, cn, Checkbox } from '@nextui-org/react';
-import { v4 as uuidv4 } from 'uuid';
-import { PlayCircleIcon, PauseCircleIcon, ArrowPathIcon, ClockIcon, CalendarDaysIcon, ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
-import { timeToSeconds, timeToUTC, formatTimeInput, calculateElapsedTime, timerInputFormat, userTimeZone, today } from '@/lib/utils';
-import { ClientDropdown } from './ClientDropdown';
-import { TimeEntryProps } from '@/types/types';
-import { useTimeEntriesContext } from '@/context/TimeEntriesContext';
-import moment from 'moment-timezone';
-import toast from 'react-hot-toast';
+import { supabase } from "@/lib/utils";
+import { useEffect, useState, useRef } from "react";
+import { Button, Input, Switch, cn, Checkbox } from "@nextui-org/react";
+import { v4 as uuidv4 } from "uuid";
+import {
+  PlayCircleIcon,
+  PauseCircleIcon,
+  ArrowPathIcon,
+  ClockIcon,
+  CalendarDaysIcon,
+  ChevronUpIcon,
+  ChevronDownIcon,
+} from "@heroicons/react/24/outline";
+import {
+  timeToSeconds,
+  timeToUTC,
+  formatTimeInput,
+  calculateElapsedTime,
+  timerInputFormat,
+  userTimeZone,
+  today,
+} from "@/lib/utils";
+import { ClientDropdown } from "./ClientDropdown";
+import { TimeEntryProps } from "@/types/types";
+import { useTimeEntriesContext } from "@/context/TimeEntriesContext";
+import moment from "moment-timezone";
+import toast from "react-hot-toast";
 
 export function SubmitTime() {
-
   /* State
   ========================================================= */
-  const timeInputRef = useRef<string>('');
-  const [client, setClient] = useState<string>('');
+  const timeInputRef = useRef<string>("");
+  const [client, setClient] = useState<string>("");
   const [date, setDate] = useState<string>(today);
-  const [task, setTask] = useState<string>('');
+  const [task, setTask] = useState<string>("");
   const [startTime, setStartTime] = useState<string>("0:00");
   const [endTime, setEndTime] = useState<string>("0:00");
   const [timerRunning, setTimerRunning] = useState<boolean>(false);
   const [timerSeconds, setTimerSeconds] = useState<number>(0);
-  const [timeTracked, setTimeTracked] = useState<string>('0:00:00');
+  const [timeTracked, setTimeTracked] = useState<string>("0:00:00");
   const [timeMode, setTimeMode] = useState<string>("timer");
   const [toggleBar, setToggleBar] = useState<boolean>(false);
   const [billable, setBillable] = useState<boolean>(false);
@@ -31,23 +46,27 @@ export function SubmitTime() {
   /* Handle Time Inputs
   ========================================================= */
   const handleSetTime = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.id === 'startTime') {
-      const formattedTime = formatTimeInput(startTime) || '0:00';
+    if (e.target.id === "startTime") {
+      const formattedTime = formatTimeInput(startTime) || "0:00";
       setStartTime(formattedTime);
     }
-    if (e.target.id === 'endTime') {
+    if (e.target.id === "endTime") {
       const militaryTimePattern = /^([01]\d|2[0-3]):?([0-5]\d)$/;
       const isMilitary = militaryTimePattern.test(endTime);
-      let formattedTime = formatTimeInput(endTime) || '0:00';
-      if ((!isMilitary) && (!e.target.value.toLowerCase().includes('am') && !e.target.value.toLowerCase().includes('pm'))) {
-        if (startTime.includes('AM') || startTime.includes('PM')) {
+      let formattedTime = formatTimeInput(endTime) || "0:00";
+      if (
+        !isMilitary &&
+        !e.target.value.toLowerCase().includes("am") &&
+        !e.target.value.toLowerCase().includes("pm")
+      ) {
+        if (startTime.includes("AM") || startTime.includes("PM")) {
           const amPm = startTime.slice(-2);
-          formattedTime = `${formattedTime.split(' ')[0]} ${amPm}`;
+          formattedTime = `${formattedTime.split(" ")[0]} ${amPm}`;
         }
       }
       setEndTime(formattedTime);
     }
-  }
+  };
 
   /* Timer Controls
   ========================================================= */
@@ -55,21 +74,20 @@ export function SubmitTime() {
   const toggleTimer = () => {
     if (!timerRunning) {
       setTimerRunning(true);
-      setStartTime(moment().format('h:mm A'));
-    }
-    else {
+      setStartTime(moment().format("h:mm A"));
+    } else {
       setTimerRunning(false);
-      setEndTime(moment().format('h:mm A'));
+      setEndTime(moment().format("h:mm A"));
     }
-  }
+  };
 
   const restartTimer = () => {
     setTimerRunning(false);
     setTimerSeconds(0);
-    setTimeTracked('0:00:00');
-    setStartTime('0:00');
-    setEndTime('0:00');
-  }
+    setTimeTracked("0:00:00");
+    setStartTime("0:00");
+    setEndTime("0:00");
+  };
 
   useEffect(() => {
     let interval: NodeJS.Timeout | undefined = undefined;
@@ -81,7 +99,9 @@ export function SubmitTime() {
         const hours = Math.floor(elapsedTime / 3600000);
         const minutes = Math.floor((elapsedTime % 3600000) / 60000);
         const seconds = Math.floor((elapsedTime % 60000) / 1000);
-        setTimeTracked(`${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`);
+        setTimeTracked(
+          `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`,
+        );
         setTimerSeconds(Math.floor(elapsedTime / 1000));
       }, 1000);
     } else {
@@ -90,16 +110,15 @@ export function SubmitTime() {
     return () => clearInterval(interval);
   }, [timerRunning]);
 
-
   const handleTimerInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!timerRunning) {
       setTimeTracked(e.target.value);
       const formattedTime = timerInputFormat(e.target.value);
-      const [hours, minutes, seconds] = formattedTime.split(':').map(Number);
+      const [hours, minutes, seconds] = formattedTime.split(":").map(Number);
       const totalSeconds = hours * 3600 + minutes * 60 + seconds;
       setTimerSeconds(totalSeconds);
     }
-  }
+  };
 
   const handleInputFocus = (e: any) => {
     e.target.select();
@@ -112,11 +131,13 @@ export function SubmitTime() {
     }
     const formattedTime = timerInputFormat(currentValue);
     setTimeTracked(formattedTime);
-    setStartTime(moment().format('h:mm A'));
-    const newStartTime = moment().format('h:mm A');
-    const [hours, minutes, seconds] = formattedTime.split(':').map(Number);
-    const durationMs = (hours * 3600000) + (minutes * 60000) + (seconds * 1000);
-    const newEndTime = moment(newStartTime, 'h:mm A').add(durationMs, 'milliseconds').format('h:mm A');
+    setStartTime(moment().format("h:mm A"));
+    const newStartTime = moment().format("h:mm A");
+    const [hours, minutes, seconds] = formattedTime.split(":").map(Number);
+    const durationMs = hours * 3600000 + minutes * 60000 + seconds * 1000;
+    const newEndTime = moment(newStartTime, "h:mm A")
+      .add(durationMs, "milliseconds")
+      .format("h:mm A");
     setEndTime(newEndTime);
     timeInputRef.current = formattedTime;
   };
@@ -129,21 +150,20 @@ export function SubmitTime() {
     let totalTime;
     if (timerSeconds > 0) {
       totalTime = timerSeconds;
-    }
-    else {
+    } else {
       const timeRange = calculateElapsedTime(startTime, endTime);
       totalTime = timeToSeconds(timeRange);
       restartTimer();
     }
 
     const { data: clientData, error: clientError } = await supabase
-      .from('Clients')
-      .select('client_name')
-      .eq('id', parseInt(client))
+      .from("Clients")
+      .select("client_name")
+      .eq("id", parseInt(client))
       .single();
 
     if (clientError) {
-      console.error('Error fetching client name:', clientError);
+      console.error("Error fetching client name:", clientError);
       return;
     }
 
@@ -156,36 +176,37 @@ export function SubmitTime() {
       client_id: parseInt(client),
       client_name: clientData?.client_name,
       billable: billable,
-      owner: user?.session?.user.user_metadata.name.split(' ')[0],
+      owner: user?.session?.user.user_metadata.name.split(" ")[0],
       user_id: user.session?.user.id,
       start_time: timeToUTC(startTime),
       end_time: timeToUTC(endTime),
-    }
+    };
     try {
       await addEntry(entryToSubmit);
       if (entryToSubmit !== undefined) {
-        setTask('');
+        setTask("");
         setBillable(false);
         restartTimer();
-        toast.success('Time entry added');
+        toast.success("Time entry added");
       } else {
-        toast.error('Failed to add time entry');
+        toast.error("Failed to add time entry");
       }
     } catch (error) {
-      console.error('Error adding entry:', error);
-      toast.error('An error occurred while adding the time entry');
+      console.error("Error adding entry:", error);
+      toast.error("An error occurred while adding the time entry");
     }
   };
 
   const handleClient = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setClient(e.target.value);
-  }
+  };
 
   return (
-    <div className={`fixed top-0 left-0 w-full py-5 px-5 bg-black/50 backdrop-blur-md ${timerRunning ? 'border-secondary' : 'border-[#333]'} border-b-1 time-submit-form z-[9999] transition-transform ${toggleBar ? 'translate-y-[-100%]' : 'translate-y-0'}`}>
-      <form onSubmit={handleSubmit}>
+    <div
+      className={`fixed top-0 left-0 w-full py-5 px-5 bg-black/50 backdrop-blur-md ${timerRunning ? "border-secondary" : "border-[#333]"} border-b-1 time-submit-form z-[9999] transition-transform ${toggleBar ? "translate-y-[-100%]" : "translate-y-0"}`}
+    >
+      <form className="max-w-[1600px] mx-auto" onSubmit={handleSubmit}>
         <div className="grid items-start justify-between md:flex gap-x-5 gap-y-3">
-
           <div className="flex gap-5 md:contents">
             <div className="flex-[0_1_75px] self-center">
               <Switch
@@ -193,16 +214,17 @@ export function SubmitTime() {
                 defaultSelected
                 startContent={<CalendarDaysIcon />}
                 endContent={<ClockIcon />}
-                onChange={() => setTimeMode(timeMode === 'timer' ? 'entry' : 'timer')}
+                onChange={() =>
+                  setTimeMode(timeMode === "timer" ? "entry" : "timer")
+                }
                 classNames={{
                   base: cn(
                     "inline-flex flex-row-reverse w-full items-center",
                     "justify-between cursor-pointer rounded-sm gap-4 p-2 border-1 border-content1 hover:border-primary bg-content1",
                   ),
-                  wrapper: "bg-secondary"
+                  wrapper: "bg-secondary",
                 }}
-              >
-              </Switch>
+              ></Switch>
             </div>
             <div className="flex-[0_1_100px] self-center">
               <Checkbox
@@ -249,7 +271,7 @@ export function SubmitTime() {
             />
           </div>
 
-          {timeMode === 'entry' ?
+          {timeMode === "entry" ? (
             <>
               <div className="flex-[0_1_100px]">
                 <Input
@@ -267,7 +289,6 @@ export function SubmitTime() {
                   onBlur={(e: any) => handleSetTime(e)}
                   value={startTime}
                 />
-
               </div>
               <div className="flex-[0_1_100px]">
                 <Input
@@ -296,18 +317,20 @@ export function SubmitTime() {
                   placeholder="00:00"
                   className=""
                   classNames={{
-                    base: 'block w-full mb-5 text-xl font-bold text-white !opacity-100',
-                    input: 'text-lg font-bold text-white',
+                    base: "block w-full mb-5 text-xl font-bold text-white !opacity-100",
+                    input: "text-lg font-bold text-white",
                   }}
                   type="text"
                   value={calculateElapsedTime(startTime, endTime)}
                 />
-
               </div>
             </>
-            :
+          ) : (
             <div className="flex-[0_1_250px] self-center">
-              <div id="timer-toggle" className="flex items-center justify-center gap-5">
+              <div
+                id="timer-toggle"
+                className="flex items-center justify-center gap-5"
+              >
                 <div className="timer-results min-w-[65px]">
                   <Input
                     radius="sm"
@@ -316,7 +339,7 @@ export function SubmitTime() {
                     label=""
                     labelPlacement="outside"
                     classNames={{
-                      input: 'text-lg font-bold text-white',
+                      input: "text-lg font-bold text-white",
                     }}
                     type="text"
                     id="timer_time"
@@ -326,31 +349,49 @@ export function SubmitTime() {
                     value={timeTracked}
                   />
                 </div>
-                <Button tabIndex={-1} variant="light" isIconOnly onPress={() => toggleTimer()}>
+                <Button
+                  tabIndex={-1}
+                  variant="light"
+                  isIconOnly
+                  onPress={() => toggleTimer()}
+                >
                   {timerRunning ? <PauseCircleIcon /> : <PlayCircleIcon />}
                 </Button>
-                <Button tabIndex={-1} variant="light" isIconOnly onPress={() => restartTimer()}>
+                <Button
+                  tabIndex={-1}
+                  variant="light"
+                  isIconOnly
+                  onPress={() => restartTimer()}
+                >
                   <ArrowPathIcon className="w-[30px]" />
                 </Button>
               </div>
             </div>
-          }
-
+          )}
         </div>
 
-        <Button className="w-full max-w-[200px] mx-auto block bg-[#081D25] max-md:mt-5" variant="flat" color="primary" type="submit">Add Time Entry</Button>
-
-      </form>
-      {!timerRunning &&
         <Button
-          className={`absolute bottom-0 right-5 min-w-[10px] ${toggleBar ? 'translate-y-[150%]' : 'translate-y-[-10px]'}`}
+          className="w-full max-w-[200px] mx-auto block bg-[#081D25] max-md:mt-5"
+          variant="flat"
+          color="primary"
+          type="submit"
+        >
+          Add Time Entry
+        </Button>
+      </form>
+      {!timerRunning && (
+        <Button
+          className={`absolute bottom-0 right-5 min-w-[10px] ${toggleBar ? "translate-y-[150%]" : "translate-y-[-10px]"}`}
           isIconOnly
           onPress={() => setToggleBar(!toggleBar)}
         >
-          {toggleBar ? <ChevronDownIcon className="w-[20px]" /> : <ChevronUpIcon className="w-[20px]" />}
+          {toggleBar ? (
+            <ChevronDownIcon className="w-[20px]" />
+          ) : (
+            <ChevronUpIcon className="w-[20px]" />
+          )}
         </Button>
-      }
+      )}
     </div>
-
-  )
+  );
 }

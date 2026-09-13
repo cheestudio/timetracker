@@ -1,20 +1,36 @@
-import { useState } from 'react';
-import { timeToSeconds, timeToUTC, calculateElapsedTime, UTCtoLocal, convertTime, setTimezone, selectedClient } from '@/lib/utils';
+import { useState } from "react";
+import {
+  timeToSeconds,
+  timeToUTC,
+  calculateElapsedTime,
+  UTCtoLocal,
+  convertTime,
+  setTimezone,
+  selectedClient,
+} from "@/lib/utils";
 import { TimeEntryProps } from "@/types/types";
 import { Button, Input, Checkbox, cn } from "@nextui-org/react";
-import { ClientDropdown } from './ClientDropdown';
-import { useTimeEntriesContext } from '@/context/TimeEntriesContext';
-import toast from 'react-hot-toast';
+import { ClientDropdown } from "./ClientDropdown";
+import { useTimeEntriesContext } from "@/context/TimeEntriesContext";
+import toast from "react-hot-toast";
 
-export function EditEntryData({ entryData, closeToggle }: { entryData: TimeEntryProps, closeToggle: () => void }) {
-
+export function EditEntryData({
+  entryData,
+  closeToggle,
+}: {
+  entryData: TimeEntryProps;
+  closeToggle: () => void;
+}) {
   const [formData, setFormData] = useState({ ...entryData });
-  const [startTime, setStartTime] = useState(UTCtoLocal(entryData.start_time, setTimezone(entryData.owner)));
-  const [endTime, setEndTime] = useState(UTCtoLocal(entryData.end_time, setTimezone(entryData.owner)));
+  const [startTime, setStartTime] = useState(
+    UTCtoLocal(entryData.start_time, setTimezone(entryData.owner)),
+  );
+  const [endTime, setEndTime] = useState(
+    UTCtoLocal(entryData.end_time, setTimezone(entryData.owner)),
+  );
   const elapsedTime = calculateElapsedTime(startTime, endTime);
   const { updateEntry } = useTimeEntriesContext();
   const seconds = timeToSeconds(elapsedTime);
-
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -27,7 +43,6 @@ export function EditEntryData({ entryData, closeToggle }: { entryData: TimeEntry
   };
 
   const handleEditEntry = async () => {
-
     const clientName = await selectedClient(formData.client_id);
 
     const entry = {
@@ -39,10 +54,10 @@ export function EditEntryData({ entryData, closeToggle }: { entryData: TimeEntry
       billable: formData.billable,
       start_time: timeToUTC(startTime),
       end_time: timeToUTC(endTime),
-      entry_id: formData.entry_id
-    }
+      entry_id: formData.entry_id,
+    };
     await updateEntry(entry, entry.entry_id);
-    toast.success('Entry Updated!');
+    toast.success("Entry Updated!");
     closeToggle();
   };
 
@@ -56,7 +71,8 @@ export function EditEntryData({ entryData, closeToggle }: { entryData: TimeEntry
           variant="underlined"
           name="task"
           value={formData.task}
-          onChange={handleInputChange} />
+          onChange={handleInputChange}
+        />
         <Input
           label="Date"
           radius="sm"
@@ -65,7 +81,8 @@ export function EditEntryData({ entryData, closeToggle }: { entryData: TimeEntry
           type="date"
           name="date"
           value={formData.date}
-          onChange={handleInputChange} />
+          onChange={handleInputChange}
+        />
         <Input
           label="Start Time"
           radius="sm"
@@ -97,23 +114,24 @@ export function EditEntryData({ entryData, closeToggle }: { entryData: TimeEntry
           isSelected={formData.billable}
           onChange={handleCheckboxChange}
           name="billable"
-          classNames={
-            {
-              base: cn(
-                "flex-col-reverse p-1 justify-between",
-              ),
-              label: "w-full text-[14px]",
-              wrapper: "mt-3 mb-auto"
-            }
-          }
+          classNames={{
+            base: cn("flex-col-reverse p-1 justify-between"),
+            label: "w-full text-[14px]",
+            wrapper: "mt-3 mb-auto",
+          }}
         >
           Billable
         </Checkbox>
-        <ClientDropdown client={formData.client_id.toString()} handleClient={handleInputChange} />
+        <ClientDropdown
+          client={formData.client_id.toString()}
+          handleClient={handleInputChange}
+        />
       </div>
       <div className="flex justify-end mt-3 mb-5">
-        <Button variant="flat" color="primary" onClick={handleEditEntry}>Update Entry</Button>
+        <Button variant="flat" color="primary" onPress={handleEditEntry}>
+          Update Entry
+        </Button>
       </div>
     </>
   );
-};
+}
