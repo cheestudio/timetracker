@@ -1,3 +1,5 @@
+export const maxDuration = 60;
+
 import { NextRequest, NextResponse } from 'next/server';
 
 const OPENCODE_ENDPOINT = 'https://opencode.ai/zen/go/v1/chat/completions';
