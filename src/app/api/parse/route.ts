@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing input' }, { status: 400 });
     }
 
-    const apiKey = process.env.NEXT_PUBLIC_OPENCODE_API_KEY;
+    const apiKey = process.env.OPENCODE_API_KEY;
 
     const clientList = clients
       ?.map((c: { id: number; name: string }) => `- ${c.name} (id: ${c.id})`)
