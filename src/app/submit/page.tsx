@@ -97,7 +97,7 @@ export default function SubmitPage() {
       );
       setEditClient(match ? String(match.id) : "");
     } else {
-      setEditClient("");
+      setEditClient("1");
     }
 
     setEditDate(data.date || today);
@@ -197,7 +197,7 @@ export default function SubmitPage() {
         </Button>
       </div>
 
-      <h1 className="text-2xl font-bold">Add Entry</h1>
+      <h1 className="text-2xl font-bold mb-5">Add Entry</h1>
       {!parsed ? (
         /* ── Input Mode ── */
         <div className="space-y-4">
@@ -206,7 +206,7 @@ export default function SubmitPage() {
             variant="bordered"
             label="Describe your time entry"
             labelPlacement="outside"
-            placeholder={'e.g. "2 hours on logo design for Acme yesterday"'}
+            placeholder={'e.g. "worked on WordPress blocks for two hours"'}
             minRows={4}
             maxRows={8}
             value={input}
