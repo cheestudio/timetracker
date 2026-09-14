@@ -221,7 +221,7 @@ export default function SubmitPage() {
               isLoading={loading}
               isDisabled={!input.trim()}
             >
-              {loading ? "Parsing..." : "Parse"}
+              {loading ? "Processing..." : "Process"}
             </Button>
           </div>
         </div>
@@ -230,7 +230,7 @@ export default function SubmitPage() {
         <div className="space-y-5">
           <div className="p-4 rounded-lg bg-content2 border border-content3">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold">Parsed Entry</h2>
+              <h2 className="text-lg font-semibold">Processed Entry</h2>
               <Button
                 size="sm"
                 variant="light"
