@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Button, Input, Textarea } from "@nextui-org/react";
+import { Button, Checkbox, Input, Textarea } from "@nextui-org/react";
 import { v4 as uuidv4 } from "uuid";
 import moment from "moment-timezone";
 import toast from "react-hot-toast";
@@ -35,6 +35,7 @@ export default function SubmitPage() {
   const [loading, setLoading] = useState(false);
   const [clients, setClients] = useState<ClientOption[]>([]);
   const [parsed, setParsed] = useState<ParsedTimeEntry | null>(null);
+  const [autoSubmit, setAutoSubmit] = useState(true);
 
   // Editable fields for preview
   const [editClient, setEditClient] = useState<string>("");
@@ -79,9 +80,27 @@ export default function SubmitPage() {
         return;
       }
 
-      setParsed(data);
-      populateEditFields(data);
-      toast.success("Parsed successfully");
+      if (autoSubmit) {
+        const match = data.client
+          ? clients.find(
+              (client) =>
+                client.name.toLowerCase() === data.client!.toLowerCase(),
+            )
+          : null;
+        const resolvedClient = match ? String(match.id) : "1";
+
+        setParsed(data);
+        setEditClient(resolvedClient);
+        setEditDate(data.date || today);
+        setEditTask(data.task || "");
+        setEditDuration(data.duration || "0:00:00");
+
+        await autoSubmitEntry(data, resolvedClient);
+      } else {
+        setParsed(data);
+        populateEditFields(data);
+        toast.success("Parsed successfully");
+      }
     } catch (err) {
       console.error("Parse error:", err);
       toast.error("Network error — try again");
@@ -164,14 +183,74 @@ export default function SubmitPage() {
     setEditDuration("0:00:00");
   }
 
+  async function autoSubmitEntry(
+    data: ParsedTimeEntry,
+    resolvedClient: string,
+  ) {
+    if (!data.task?.trim()) {
+      toast.error("Task is required");
+      setParsed(data);
+      populateEditFields(data);
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      const duration = data.duration || "0:00:00";
+      const totalTime = timeToSeconds(
+        duration.split(":").slice(0, 2).join(":"),
+      );
+      const startTime = moment().format("h:mm A");
+      const [hours, minutes, seconds] = duration.split(":").map(Number);
+      const durationMs =
+        hours * 3600000 + minutes * 60000 + (seconds || 0) * 1000;
+      const endTime = moment(startTime, "h:mm A")
+        .add(durationMs, "milliseconds")
+        .format("h:mm A");
+
+      const selectedClientName =
+        clients.find((c) => String(c.id) === resolvedClient)?.name || "";
+
+      const { data: user } = await supabase.auth.getSession();
+
+      const entryToSubmit: TimeEntryProps = {
+        date: moment(data.date || today)
+          .tz(userTimeZone)
+          .utc()
+          .format(),
+        task: data.task!.trim(),
+        time_tracked: totalTime,
+        entry_id: uuidv4(),
+        client_id: parseInt(resolvedClient) || 0,
+        client_name: selectedClientName,
+        billable: true,
+        owner: "Lars",
+        user_id: user.session?.user.id,
+        start_time: timeToUTC(startTime),
+        end_time: timeToUTC(endTime),
+      };
+
+      await addEntry(entryToSubmit);
+      toast.success("Time entry added");
+      resetForm();
+    } catch (err) {
+      console.error("Auto-submit error:", err);
+      toast.error("Failed to add time entry");
+      setParsed(data);
+      populateEditFields(data);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
       e.preventDefault();
-      if (parsed) {
-        handleSubmit();
-      } else {
-        handleParse();
-      }
+      handleParse();
+    }
+    if (e.key === " " && (e.ctrlKey || e.metaKey) && parsed) {
+      handleSubmit();
     }
     if (e.key === "Escape" && parsed) {
       setParsed(null);
@@ -215,14 +294,23 @@ export default function SubmitPage() {
           />
           <div className="flex items-center justify-between">
             <p className="text-sm text-default-400">Ctrl+Enter to parse</p>
-            <Button
-              color="primary"
-              onPress={handleParse}
-              isLoading={loading}
-              isDisabled={!input.trim()}
-            >
-              {loading ? "Processing..." : "Process"}
-            </Button>
+            <div className="flex items-center gap-3">
+              <Checkbox
+                isSelected={autoSubmit}
+                onValueChange={setAutoSubmit}
+                size="sm"
+              >
+                Auto-submit
+              </Checkbox>
+              <Button
+                color="primary"
+                onPress={handleParse}
+                isLoading={loading}
+                isDisabled={!input.trim()}
+              >
+                {loading ? "Processing..." : "Process"}
+              </Button>
+            </div>
           </div>
         </div>
       ) : (
@@ -265,6 +353,7 @@ export default function SubmitPage() {
                 placeholder="What did you work on?"
                 value={editTask}
                 onChange={(e) => setEditTask(e.target.value)}
+                autoFocus
               />
 
               <Input
