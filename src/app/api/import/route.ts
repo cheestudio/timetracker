@@ -19,7 +19,7 @@ export async function POST(request: Request): Promise<Response> {
     const data = await response.json();
     if (!Array.isArray(data)) {
       return new Response(JSON.stringify({ error: 'Nothing found' }), {
-        status: 200,
+        status: 500,
         headers: { 'Content-Type': 'application/json' }
       });
     }

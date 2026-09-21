@@ -13,7 +13,6 @@ import moment from "moment-timezone";
 import toast from "react-hot-toast";
 
 const mapTogglData = (data: any[]) => {
-  console.log(data);
   if (data.length === 0) return;
   return data?.map((entry) => ({
     date: moment(entry.at).utc().format(),
@@ -76,7 +75,6 @@ export default function Import() {
         }),
       });
       const data = await resp.json();
-      console.log(data);
       if (data.length === 0) {
         setLoading(false);
         setTogglData([]);
