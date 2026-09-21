@@ -1,4 +1,4 @@
-const api_token = process.env.TOGGL_API_TOKEN;
+const api_token = process.env.NEXT_PUBLIC_TOGGL_API_TOKEN;
 
 export async function POST(request: Request): Promise<Response> {
   const { start_date, end_date } = await request.json();
@@ -19,7 +19,7 @@ export async function POST(request: Request): Promise<Response> {
     const data = await response.json();
     if (!Array.isArray(data)) {
       return new Response(JSON.stringify({ error: 'Nothing found' }), {
-        status: 500,
+        status: 200,
         headers: { 'Content-Type': 'application/json' }
       });
     }

@@ -13,7 +13,9 @@ import moment from "moment-timezone";
 import toast from "react-hot-toast";
 
 const mapTogglData = (data: any[]) => {
-  return data.map((entry) => ({
+  console.log(data);
+  if (data.length === 0) return;
+  return data?.map((entry) => ({
     date: moment(entry.at).utc().format(),
     task: entry.description,
     time_tracked: entry.duration,
@@ -73,15 +75,13 @@ export default function Import() {
           end_date: toDate,
         }),
       });
-      if (resp.status === 500) {
-        toast.error("No entries found, adjust the dates and try again", {
-          duration: 5000,
-        });
+      const data = await resp.json();
+      console.log(data);
+      if (data.length === 0) {
         setLoading(false);
         setTogglData([]);
         return;
       }
-      const data = await resp.json();
       setTogglData(data);
       const mappedData = mapTogglData(data);
       setFormattedData(mappedData);
@@ -89,10 +89,9 @@ export default function Import() {
       setLoading(false);
     } catch (err) {
       console.error("Error mapping data:", err);
+      return;
     }
   };
-
-  console.log(selectedKeys);
 
   /* Supabase
   ========================================================= */
