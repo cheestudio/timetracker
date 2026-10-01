@@ -40,7 +40,7 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <div className="flex items-start justify-center min-h-screen pt-12 pb-24 dark">
-          <div className="w-full max-w-[1920px] px-[5vw] inner">
+          <div className="w-full max-w-7xl inner">
             <Providers>{children}</Providers>
             <Toaster
               toastOptions={{
