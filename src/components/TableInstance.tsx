@@ -26,6 +26,8 @@ export function TableInstance({ client }: { client: string }) {
   ========================================================= */
   const { isVisible: barVisibility, toggleVisibility: toggleBarVisibility } =
     useVisibility(false);
+  const { isVisible: gridLayout, toggleVisibility: toggleGridLayout } =
+    useVisibility(true);
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedDateRange, setSelectedDateRange] = useState<string>("today");
   const [customDateRange, setCustomDateRange] = useState<DateRange | undefined>(
@@ -193,59 +195,65 @@ export function TableInstance({ client }: { client: string }) {
 
   return (
     <div
-      className={`flex flex-col gap-4 table-instance pt-[20px] has-[.time-submit-form.translate-y-0]:pt-[180px] transition-all`}
+      className={`grid grid-cols-1 gap-6 ${gridLayout ? "lg:grid-cols-4" : ""} table-instance`}
     >
-      <SubmitTime />
+      <SubmitTime gridLayout={gridLayout} />
 
-      <TableRowControls
-        viewableRows={viewableRows}
-        handleClient={handleClient}
-        handleUser={handleUser}
-        selectedUser={selectedUser}
-        selectedClient={parseInt(client)}
-        selectedDateRange={selectedDateRange}
-        handleCustomDateRange={handleCustomDateRange}
-        handleViewableRows={handleViewableRows}
-        handleDateRange={handleDateRange}
-        handleSearch={handleSearch}
-        resetSearch={resetSearch}
-        sortDescriptor={sortDescriptor}
-        setSortDescriptor={setSortDescriptor}
-        timeEntries={state.timeEntries}
-        loading={loading}
-        barVisibility={barVisibility}
-        toggleBarVisibility={toggleBarVisibility}
-      />
-
-      <ToggleElement isVisible={barVisibility}>
-        <BarChart items={items} />
-      </ToggleElement>
-
-      <div className="min-w-0 overflow-x-auto">
-        <TableDisplay
-          key={tableKey}
-          handleSelectedKeys={handleSelectedKeys}
-          items={items}
+      <div
+        className={`flex flex-col gap-4 min-w-0 ${gridLayout ? "lg:col-span-3" : ""}`}
+      >
+        <TableRowControls
+          viewableRows={viewableRows}
+          handleClient={handleClient}
+          handleUser={handleUser}
+          selectedUser={selectedUser}
+          selectedClient={parseInt(client)}
+          selectedDateRange={selectedDateRange}
+          handleCustomDateRange={handleCustomDateRange}
+          handleViewableRows={handleViewableRows}
+          handleDateRange={handleDateRange}
+          handleSearch={handleSearch}
+          resetSearch={resetSearch}
           sortDescriptor={sortDescriptor}
-          onSort={sort}
+          setSortDescriptor={setSortDescriptor}
+          timeEntries={state.timeEntries}
+          loading={loading}
+          barVisibility={barVisibility}
+          toggleBarVisibility={toggleBarVisibility}
+          gridLayout={gridLayout}
+          toggleGridLayout={toggleGridLayout}
         />
+
+        <ToggleElement isVisible={barVisibility}>
+          <BarChart items={items} />
+        </ToggleElement>
+
+        <div className="min-w-0 overflow-x-auto">
+          <TableDisplay
+            key={tableKey}
+            handleSelectedKeys={handleSelectedKeys}
+            items={items}
+            sortDescriptor={sortDescriptor}
+            onSort={sort}
+          />
+        </div>
+
+        <TableInfo
+          timeEntries={state.timeEntries}
+          selectedKeys={selectedKeys}
+          calculatedTime={calculatedTime}
+          deleteTimeEntry={deleteTimeEntry}
+        />
+
+        {viewableRows != -1 && (
+          <PaginateTable
+            page={page}
+            pages={pages}
+            setPage={setPage}
+            paginationKey={paginationKey}
+          />
+        )}
       </div>
-
-      <TableInfo
-        timeEntries={state.timeEntries}
-        selectedKeys={selectedKeys}
-        calculatedTime={calculatedTime}
-        deleteTimeEntry={deleteTimeEntry}
-      />
-
-      {viewableRows != -1 && (
-        <PaginateTable
-          page={page}
-          pages={pages}
-          setPage={setPage}
-          paginationKey={paginationKey}
-        />
-      )}
     </div>
   );
 }

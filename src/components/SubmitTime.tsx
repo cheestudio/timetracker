@@ -8,8 +8,6 @@ import {
   ArrowPathIcon,
   ClockIcon,
   CalendarDaysIcon,
-  ChevronUpIcon,
-  ChevronDownIcon,
 } from "@heroicons/react/24/outline";
 import {
   timeToSeconds,
@@ -26,7 +24,7 @@ import { useTimeEntriesContext } from "@/context/TimeEntriesContext";
 import moment from "moment-timezone";
 import toast from "react-hot-toast";
 
-export function SubmitTime() {
+export function SubmitTime({ gridLayout }: { gridLayout: boolean }) {
   /* State
   ========================================================= */
   const timeInputRef = useRef<string>("");
@@ -39,7 +37,6 @@ export function SubmitTime() {
   const [timerSeconds, setTimerSeconds] = useState<number>(0);
   const [timeTracked, setTimeTracked] = useState<string>("0:00:00");
   const [timeMode, setTimeMode] = useState<string>("timer");
-  const [toggleBar, setToggleBar] = useState<boolean>(false);
   const [billable, setBillable] = useState<boolean>(false);
   const { addEntry } = useTimeEntriesContext();
 
@@ -203,12 +200,16 @@ export function SubmitTime() {
 
   return (
     <div
-      className={`fixed top-0 left-0 w-full py-5 px-5 bg-black/50 backdrop-blur-md ${timerRunning ? "border-secondary" : "border-[#333]"} border-b-1 time-submit-form z-[9999] transition-transform ${toggleBar ? "translate-y-[-100%]" : "translate-y-0"}`}
+      className={`w-full self-start p-5 bg-black/50 backdrop-blur-md rounded-xl border-1 ${timerRunning ? "border-secondary" : "border-[#333]"} time-submit-form ${gridLayout ? "lg:sticky lg:top-[150px] lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto" : ""}`}
     >
-      <form className="max-w-[1600px] mx-auto" onSubmit={handleSubmit}>
-        <div className="grid items-start justify-between md:flex gap-x-5 gap-y-3">
-          <div className="flex gap-5 md:contents">
-            <div className="flex-[0_1_75px] self-center">
+      <form onSubmit={handleSubmit}>
+        <div
+          className={
+            gridLayout ? "flex flex-col gap-4" : "flex gap-4 items-center"
+          }
+        >
+          <div className="flex items-center gap-5">
+            <div className="flex-1">
               <Switch
                 color="primary"
                 defaultSelected
@@ -226,7 +227,7 @@ export function SubmitTime() {
                 }}
               ></Switch>
             </div>
-            <div className="flex-[0_1_100px] self-center">
+            <div>
               <Checkbox
                 radius="none"
                 onChange={(e) => setBillable(e.target.checked)}
@@ -236,10 +237,10 @@ export function SubmitTime() {
               </Checkbox>
             </div>
           </div>
-          <div className="flex-[0_1_200px]">
+          <div className="w-full">
             <ClientDropdown client={client} handleClient={handleClient} />
           </div>
-          <div className="flex-auto">
+          <div className="w-full">
             <Input
               radius="sm"
               isRequired
@@ -247,14 +248,14 @@ export function SubmitTime() {
               label="Task"
               labelPlacement="outside"
               placeholder="What did you work on?"
-              className="block w-full mb-5 text-white"
+              className="block w-full text-white"
               type="text"
               id="task"
               value={task}
               onChange={(e) => setTask(e.target.value)}
             />
           </div>
-          <div className="flex-[0_1_100px]">
+          <div className="w-full">
             <Input
               radius="sm"
               isRequired
@@ -262,7 +263,7 @@ export function SubmitTime() {
               label="Date"
               labelPlacement="outside"
               placeholder="Date"
-              className="block w-full mb-5 text-white"
+              className="block w-full text-white"
               type="date"
               id="date"
               value={date}
@@ -273,7 +274,7 @@ export function SubmitTime() {
 
           {timeMode === "entry" ? (
             <>
-              <div className="flex-[0_1_100px]">
+              <div className="w-full">
                 <Input
                   radius="sm"
                   isRequired
@@ -281,7 +282,7 @@ export function SubmitTime() {
                   label="Start Time"
                   labelPlacement="outside"
                   placeholder="Enter valid time"
-                  className="block w-full mb-5 text-white"
+                  className="block w-full text-white"
                   type="text"
                   id="startTime"
                   onFocus={handleInputFocus}
@@ -290,7 +291,7 @@ export function SubmitTime() {
                   value={startTime}
                 />
               </div>
-              <div className="flex-[0_1_100px]">
+              <div className="w-full">
                 <Input
                   radius="sm"
                   isRequired
@@ -298,7 +299,7 @@ export function SubmitTime() {
                   label="End Time"
                   labelPlacement="outside"
                   placeholder="Enter valid time"
-                  className="block w-full mb-5 text-white"
+                  className="block w-full text-white"
                   type="text"
                   id="endTime"
                   onFocus={handleInputFocus}
@@ -307,7 +308,7 @@ export function SubmitTime() {
                   value={endTime}
                 />
               </div>
-              <div className="flex-[0_1_80px]">
+              <div className="w-full">
                 <Input
                   radius="sm"
                   isDisabled
@@ -317,7 +318,7 @@ export function SubmitTime() {
                   placeholder="00:00"
                   className=""
                   classNames={{
-                    base: "block w-full mb-5 text-xl font-bold text-white !opacity-100",
+                    base: "block w-full text-xl font-bold text-white !opacity-100",
                     input: "text-lg font-bold text-white",
                   }}
                   type="text"
@@ -326,7 +327,7 @@ export function SubmitTime() {
               </div>
             </>
           ) : (
-            <div className="flex-[0_1_250px] self-center">
+            <div className="w-full">
               <div
                 id="timer-toggle"
                 className="flex items-center justify-center gap-5"
@@ -371,7 +372,7 @@ export function SubmitTime() {
         </div>
 
         <Button
-          className="w-full max-w-[200px] mx-auto block bg-[#081D25] max-md:mt-5"
+          className="w-full max-w-[200px] mx-auto block bg-[#081D25] mt-5"
           variant="flat"
           color="primary"
           type="submit"
@@ -379,19 +380,6 @@ export function SubmitTime() {
           Add Time Entry
         </Button>
       </form>
-      {!timerRunning && (
-        <Button
-          className={`absolute bottom-0 right-5 min-w-[10px] ${toggleBar ? "translate-y-[150%]" : "translate-y-[-10px]"}`}
-          isIconOnly
-          onPress={() => setToggleBar(!toggleBar)}
-        >
-          {toggleBar ? (
-            <ChevronDownIcon className="w-[20px]" />
-          ) : (
-            <ChevronUpIcon className="w-[20px]" />
-          )}
-        </Button>
-      )}
     </div>
   );
 }

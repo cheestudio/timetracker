@@ -7,6 +7,8 @@ import {
   MagnifyingGlassIcon,
   XMarkIcon,
   PlusCircleIcon,
+  ViewColumnsIcon,
+  Bars3Icon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { DatePickerWithRange } from "./DatePicker";
@@ -107,12 +109,16 @@ function ControlButtons({
   isVisible,
   toggleBarVisibility,
   barVisibility,
+  gridLayout,
+  toggleGridLayout,
 }: {
   loading: boolean;
   toggleVisibility: () => void;
   isVisible: boolean;
   toggleBarVisibility: () => void;
   barVisibility: boolean;
+  gridLayout: boolean;
+  toggleGridLayout: () => void;
 }) {
   return (
     <div className="flex gap-5 place-content-center md:contents">
@@ -134,6 +140,23 @@ function ControlButtons({
         <Button isIconOnly variant="light" onPress={toggleBarVisibility}>
           <Tooltip content="Toggle Chart">
             <ChartBarSquareIcon className="w-7 h-7" />
+          </Tooltip>
+        </Button>
+      </div>
+      <div className="flex-[0_1_40px] self-end text-center">
+        <Button isIconOnly variant="light" onPress={toggleGridLayout}>
+          <Tooltip
+            content={
+              gridLayout
+                ? "Switch to stacked layout"
+                : "Switch to sidebar layout"
+            }
+          >
+            {gridLayout ? (
+              <ViewColumnsIcon className="w-7 h-7" />
+            ) : (
+              <Bars3Icon className="w-7 h-7" />
+            )}
           </Tooltip>
         </Button>
       </div>
@@ -219,6 +242,8 @@ export function TableRowControls({ ...props }: TableRowControlsProps) {
           isVisible={isVisible}
           toggleBarVisibility={props.toggleBarVisibility}
           barVisibility={props.barVisibility}
+          gridLayout={props.gridLayout}
+          toggleGridLayout={props.toggleGridLayout}
         />
       </div>
 

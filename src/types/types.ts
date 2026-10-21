@@ -53,6 +53,8 @@ export interface TableRowControlsProps {
   timeEntries: any[];
   barVisibility: boolean;
   toggleBarVisibility: () => void;
+  gridLayout: boolean;
+  toggleGridLayout: () => void;
   resetSearch: () => void;
 }
 
