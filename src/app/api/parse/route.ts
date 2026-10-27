@@ -2,8 +2,8 @@ export const maxDuration = 60;
 
 import { NextRequest, NextResponse } from 'next/server';
 
-const OPENCODE_ENDPOINT = 'https://opencode.ai/zen/go/v1/chat/completions';
-const MODEL = 'mimo-v2.5-pro';
+const OPENCODE_ENDPOINT = 'https://opencode.ai/inference/go/openai/v1/chat/completions';
+const MODEL = 'mimo-v2.6-pro';
 
 export async function POST(request: NextRequest) {
   try {
